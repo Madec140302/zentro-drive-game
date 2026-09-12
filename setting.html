@@ -1,0 +1,592 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZENTRO DRIVE — Paramètres</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at top,#18243d 0%,#070b13 45%,#02040a 100%);
+    color:white;
+    min-height:100vh;
+}
+
+header{
+    height:75px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 35px;
+    background:rgba(5,8,15,.9);
+    border-bottom:1px solid rgba(255,255,255,.1);
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:900;
+    letter-spacing:5px;
+}
+
+nav{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+nav a{
+    color:#aaa;
+    text-decoration:none;
+    padding:10px 14px;
+    border-radius:10px;
+    transition:.2s;
+}
+
+nav a:hover,
+nav a.active{
+    color:white;
+    background:rgba(255,255,255,.1);
+}
+
+.container{
+    width:min(1000px,92%);
+    margin:40px auto 80px;
+}
+
+.title{
+    text-align:center;
+    margin-bottom:35px;
+}
+
+.title h1{
+    font-size:44px;
+    letter-spacing:4px;
+    margin-bottom:10px;
+}
+
+.title p{
+    color:#8f98a8;
+}
+
+.panel{
+    background:rgba(13,18,30,.86);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:22px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0 15px 45px rgba(0,0,0,.35);
+}
+
+.panel h2{
+    margin-bottom:20px;
+    font-size:21px;
+}
+
+.setting{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    padding:18px 0;
+    border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+.setting:last-child{
+    border-bottom:none;
+}
+
+.info h3{
+    font-size:17px;
+    margin-bottom:5px;
+}
+
+.info p{
+    color:#858e9f;
+    font-size:14px;
+}
+
+input[type="range"]{
+    width:220px;
+    accent-color:#4da3ff;
+}
+
+select{
+    background:#111827;
+    color:white;
+    border:1px solid #30394b;
+    padding:11px 14px;
+    border-radius:10px;
+    outline:none;
+}
+
+.toggle{
+    width:55px;
+    height:30px;
+    border-radius:20px;
+    background:#303746;
+    position:relative;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.toggle::after{
+    content:"";
+    position:absolute;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:white;
+    left:3px;
+    top:3px;
+    transition:.25s;
+}
+
+.toggle.on{
+    background:#287cff;
+}
+
+.toggle.on::after{
+    left:28px;
+}
+
+.value{
+    min-width:50px;
+    text-align:right;
+    color:#5faaff;
+    font-weight:bold;
+}
+
+.buttons{
+    display:flex;
+    gap:15px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:30px;
+}
+
+button{
+    border:none;
+    padding:14px 25px;
+    border-radius:12px;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:15px;
+    transition:.2s;
+}
+
+.save{
+    background:#247cff;
+}
+
+.reset{
+    background:#252c39;
+}
+
+.fullscreen{
+    background:#6b4cff;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.15);
+}
+
+.status{
+    text-align:center;
+    color:#72ff9a;
+    margin-top:18px;
+    min-height:20px;
+}
+
+footer{
+    text-align:center;
+    color:#5e6777;
+    padding:30px;
+}
+
+@media(max-width:700px){
+
+    header{
+        height:auto;
+        padding:18px;
+        flex-direction:column;
+        gap:15px;
+    }
+
+    nav{
+        justify-content:center;
+    }
+
+    nav a{
+        font-size:13px;
+        padding:8px 10px;
+    }
+
+    .title h1{
+        font-size:32px;
+    }
+
+    .setting{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    input[type="range"]{
+        width:100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">ZENTRO</div>
+
+<nav>
+<a href="index.html">Accueil</a>
+<a href="jeu.html">🎮 Jouer</a>
+<a href="garage.html">🔧 Garage</a>
+<a href="map.html">🗺️ Carte</a>
+<a href="voiture.html">🚗 Voitures</a>
+<a href="setting.html" class="active">⚙️ Settings</a>
+</nav>
+
+</header>
+
+<main class="container">
+
+<div class="title">
+<h1>⚙️ SETTINGS</h1>
+<p>Configure ton expérience Zentro Drive</p>
+</div>
+
+<section class="panel">
+
+<h2>🎮 Jeu</h2>
+
+<div class="setting">
+<div class="info">
+<h3>Qualité graphique</h3>
+<p>Choisis le niveau de détails du jeu.</p>
+</div>
+
+<select id="quality">
+<option value="low">Basse</option>
+<option value="medium" selected>Moyenne</option>
+<option value="high">Haute</option>
+</select>
+</div>
+
+<div class="setting">
+
+<div class="info">
+<h3>Ombres</h3>
+<p>Active ou désactive les ombres.</p>
+</div>
+
+<div class="toggle on" id="shadows"></div>
+
+</div>
+
+<div class="setting">
+
+<div class="info">
+<h3>Effets visuels</h3>
+<p>Flammes, éclairage et effets du véhicule.</p>
+</div>
+
+<div class="toggle on" id="effects"></div>
+
+</div>
+
+<div class="setting">
+
+<div class="info">
+<h3>Afficher les FPS</h3>
+<p>Affiche les performances pendant le jeu.</p>
+</div>
+
+<div class="toggle on" id="fps"></div>
+
+</div>
+
+</section>
+
+
+<section class="panel">
+
+<h2>🔊 Audio</h2>
+
+<div class="setting">
+
+<div class="info">
+<h3>Volume général</h3>
+<p>Régle le volume du jeu.</p>
+</div>
+
+<div style="display:flex;align-items:center;gap:15px">
+<input type="range" id="volume" min="0" max="100" value="70">
+<span class="value" id="volumeValue">70%</span>
+</div>
+
+</div>
+
+</section>
+
+
+<section class="panel">
+
+<h2>📱 Contrôles</h2>
+
+<div class="setting">
+
+<div class="info">
+<h3>Commandes tactiles</h3>
+<p>Affiche les commandes sur téléphone.</p>
+</div>
+
+<div class="toggle on" id="touch"></div>
+
+</div>
+
+<div class="setting">
+
+<div class="info">
+<h3>Vibrations</h3>
+<p>Active les vibrations compatibles.</p>
+</div>
+
+<div class="toggle on" id="vibration"></div>
+
+</div>
+
+<div class="setting">
+
+<div class="info">
+<h3>Sensibilité</h3>
+<p>Réglage de la direction.</p>
+</div>
+
+<select id="sensitivity">
+<option value="0.5">Faible</option>
+<option value="1" selected>Normale</option>
+<option value="1.5">Élevée</option>
+<option value="2">Très élevée</option>
+</select>
+
+</div>
+
+</section>
+
+
+<section class="panel">
+
+<h2>🖥️ Affichage</h2>
+
+<div class="buttons">
+
+<button class="fullscreen" onclick="fullscreen()">
+⛶ Plein écran
+</button>
+
+</div>
+
+</section>
+
+
+<div class="buttons">
+
+<button class="save" onclick="saveSettings()">
+💾 Sauvegarder
+</button>
+
+<button class="reset" onclick="resetSettings()">
+↩ Réinitialiser
+</button>
+
+</div>
+
+<div class="status" id="status"></div>
+
+</main>
+
+<footer>
+ZENTRO DRIVE © 2026
+</footer>
+
+
+<script>
+
+const volume = document.getElementById("volume");
+const volumeValue = document.getElementById("volumeValue");
+
+volume.addEventListener("input",()=>{
+    volumeValue.textContent = volume.value + "%";
+});
+
+
+function setupToggle(id){
+
+    const element = document.getElementById(id);
+
+    element.addEventListener("click",()=>{
+        element.classList.toggle("on");
+    });
+
+}
+
+
+setupToggle("shadows");
+setupToggle("effects");
+setupToggle("fps");
+setupToggle("touch");
+setupToggle("vibration");
+
+
+function getToggle(id){
+
+    return document
+        .getElementById(id)
+        .classList
+        .contains("on");
+
+}
+
+
+function saveSettings(){
+
+    const settings = {
+
+        quality:
+            document.getElementById("quality").value,
+
+        shadows:
+            getToggle("shadows"),
+
+        effects:
+            getToggle("effects"),
+
+        fps:
+            getToggle("fps"),
+
+        touch:
+            getToggle("touch"),
+
+        vibration:
+            getToggle("vibration"),
+
+        sensitivity:
+            document.getElementById("sensitivity").value,
+
+        volume:
+            document.getElementById("volume").value
+
+    };
+
+    localStorage.setItem(
+        "zentroSettings",
+        JSON.stringify(settings)
+    );
+
+    document.getElementById("status").textContent =
+        "✓ Paramètres sauvegardés";
+
+    setTimeout(()=>{
+        document.getElementById("status").textContent="";
+    },2500);
+
+}
+
+
+function loadSettings(){
+
+    const saved =
+        localStorage.getItem("zentroSettings");
+
+    if(!saved) return;
+
+    const settings =
+        JSON.parse(saved);
+
+    document.getElementById("quality").value =
+        settings.quality || "medium";
+
+    document.getElementById("sensitivity").value =
+        settings.sensitivity || "1";
+
+    document.getElementById("volume").value =
+        settings.volume ?? 70;
+
+    volumeValue.textContent =
+        document.getElementById("volume").value + "%";
+
+
+    setToggle("shadows",settings.shadows);
+    setToggle("effects",settings.effects);
+    setToggle("fps",settings.fps);
+    setToggle("touch",settings.touch);
+    setToggle("vibration",settings.vibration);
+
+}
+
+
+function setToggle(id,value){
+
+    const element =
+        document.getElementById(id);
+
+    if(value){
+        element.classList.add("on");
+    }else{
+        element.classList.remove("on");
+    }
+
+}
+
+
+function resetSettings(){
+
+    localStorage.removeItem("zentroSettings");
+
+    location.reload();
+
+}
+
+
+function fullscreen(){
+
+    if(!document.fullscreenElement){
+
+        document.documentElement.requestFullscreen();
+
+    }else{
+
+        document.exitFullscreen();
+
+    }
+
+}
+
+
+loadSettings();
+
+</script>
+
+</body>
+</html>
+```
