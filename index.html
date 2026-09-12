@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>ZENTRO DRIVE</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#050505;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+canvas{
+    display:block;
+}
+
+#loading{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:
+        radial-gradient(circle at center,#202020 0%,#080808 55%,#000 100%);
+    color:white;
+    transition:opacity .6s;
+}
+
+#loading h1{
+    margin:0;
+    font-size:42px;
+    letter-spacing:8px;
+}
+
+#loading p{
+    margin-top:12px;
+    color:#aaa;
+}
+
+.loaderBar{
+    width:260px;
+    height:5px;
+    margin-top:25px;
+    background:#333;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.loaderBar div{
+    width:35%;
+    height:100%;
+    background:white;
+    animation:loading 1.2s infinite;
+}
+
+@keyframes loading{
+    0%{transform:translateX(-120%)}
+    100%{transform:translateX(400%)}
+}
+
+#hud{
+    position:fixed;
+    z-index:20;
+    top:15px;
+    left:15px;
+    color:white;
+    pointer-events:none;
+    text-shadow:0 2px 8px #000;
+}
+
+#logo{
+    font-size:22px;
+    font-weight:bold;
+    letter-spacing:4px;
+}
+
+#speed{
+    margin-top:7px;
+    font-size:34px;
+    font-weight:bold;
+}
+
+#speed small{
+    font-size:14px;
+    color:#bbb;
+}
+
+#info{
+    margin-top:4px;
+    font-size:12px;
+    color:#bbb;
+}
+
+#fps{
+    margin-top:5px;
+    font-size:11px;
+    color:#aaa;
+}
+
+#message{
+    position:fixed;
+    z-index:30;
+    left:50%;
+    top:18px;
+    transform:translateX(-50%);
+    padding:8px 15px;
+    border-radius:20px;
+    background:rgba(0,0,0,.55);
+    color:#fff;
+    font-size:12px;
+    opacity:0;
+    transition:opacity .3s;
+    pointer-events:none;
+}
+
+#reset{
+    position:fixed;
+    z-index:30;
+    right:15px;
+    top:15px;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(0,0,0,.55);
+    color:white;
+    border-radius:12px;
+    padding:10px 14px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#touch{
+    position:fixed;
+    z-index:25;
+    left:0;
+    right:0;
+    bottom:15px;
+    display:flex;
+    justify-content:space-between;
+    padding:0 18px;
+    pointer-events:none;
+}
+
+.touchGroup{
+    display:flex;
+    gap:10px;
+}
+
+.touchBtn{
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(0,0,0,.45);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+    user-select:none;
+    pointer-events:auto;
+    backdrop-filter:blur(5px);
+}
+
+.touchBtn:active{
+    background:rgba(255,255,255,.25);
+    transform:scale(.94);
+}
+
+#dayNight{
+    position:fixed;
+    z-index:25;
+    right:15px;
+    bottom:105px;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(0,0,0,.5);
+    color:white;
+    border-radius:12px;
+    padding:10px 12px;
+    cursor:pointer;
+}
+
+@media (min-width:900px){
+    #touch{
+        display:none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="loading">
+    <h1>ZENTRO</h1>
+    <p>Chargement de la ville...</p>
+    <div class="loaderBar">
+        <div></div>
+    </div>
+</div>
+
+<div id="hud">
+    <div id="logo">ZENTRO DRIVE</div>
+    <div id="speed">0 <small>KM/H</small></div>
+    <div id="info">WASD / FLÈCHES • ESPACE = FREIN</div>
+    <div id="fps">FPS: --</div>
+</div>
+
+<div id="message"></div>
+
+<button id="reset">↻ RESET</button>
+<button id="dayNight">☀️ JOUR</button>
+
+<div id="touch">
+
+    <div class="touchGroup">
+        <div class="touchBtn" id="left">←</div>
+        <div class="touchBtn" id="right">→</div>
+    </div>
+
+    <div class="touchGroup">
+        <div class="touchBtn" id="brake">■</div>
+        <div class="touchBtn" id="forward">▲</div>
+    </div>
+
+</div>
+
+<script type="module">
+
+import * as THREE from
+"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+
+import { GLTFLoader } from
+"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js";
+
+import { DRACOLoader } from
+"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/DRACOLoader.js";
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let scene;
+let camera;
+let renderer;
+
+let player;
+let playerModel = null;
+
+let traffic = [];
+
+let speed = 0;
+let steering = 0;
+
+let day = true;
+
+let flameLeft;
+let flameRight;
+
+let clock = new THREE.Clock();
+
+const keys = {
+    forward:false,
+    backward:false,
+    left:false,
+    right:false,
+    brake:false
+};
+
+let fpsFrames = 0;
+let fpsTime = performance.now();
+
+
+/* =========================================================
+   SCÈNE
+========================================================= */
+
+scene = new THREE.Scene();
+
+scene.background = new THREE.Color(0x87b8e8);
+
+scene.fog = new THREE.Fog(
+    0x87b8e8,
+    70,
+    420
+);
+
+
+/* =========================================================
+   CAMÉRA
+========================================================= */
+
+camera = new THREE.PerspectiveCamera(
+    65,
+    innerWidth / innerHeight,
+    0.1,
+    1000
+);
+
+camera.position.set(
+    0,
+    5,
+    12
+);
+
+
+/* =========================================================
+   RENDERER
+========================================================= */
+
+renderer = new THREE.WebGLRenderer({
+    antialias:true,
+    powerPreference:"high-performance"
+});
+
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio,1.5)
+);
+
+renderer.setSize(
+    innerWidth,
+    innerHeight
+);
+
+renderer.shadowMap.enabled = true;
+
+renderer.shadowMap.type =
+    THREE.PCFSoftShadowMap;
+
+renderer.outputColorSpace =
+    THREE.SRGBColorSpace;
+
+renderer.toneMapping =
+    THREE.ACESFilmicToneMapping;
+
+renderer.toneMappingExposure = 1.1;
+
+document.body.appendChild(renderer.domElement);
+
+
+/* =========================================================
+   LUMIÈRES
+========================================================= */
+
+const ambient = new THREE.HemisphereLight(
+    0xffffff,
+    0x405060,
+    2
+);
+
+scene.add(ambient);
+
+
+const sun = new THREE.DirectionalLight(
+    0xffffff,
+    3
+);
+
+sun.position.set(
+    80,
+    120,
+    50
+);
+
+sun.castShadow = true;
+
+sun.shadow.mapSize.width = 2048;
+sun.shadow.mapSize.height = 2048;
+
+sun.shadow.camera.left = -150;
+sun.shadow.camera.right = 150;
+sun.shadow.camera.top = 150;
+sun.shadow.camera.bottom = -150;
+
+scene.add(sun);
+
+
+/* =========================================================
+   SOL
+========================================================= */
+
+const groundMaterial =
+    new THREE.MeshStandardMaterial({
+        color:0x3f4742,
+        roughness:1
+    });
+
+const ground =
+    new THREE.Mesh(
+        new THREE.PlaneGeometry(1000,1000),
+        groundMaterial
+    );
+
+ground.rotation.x = -Math.PI/2;
+
+ground.receiveShadow = true;
+
+scene.add(ground);
+
+
+/* =========================================================
+   ROUTES
+========================================================= */
+
+function createRoad(
+    x,
+    z,
+    width,
+    depth
+){
+
+    const material =
+        new THREE.MeshStandardMaterial({
+            color:0x202124,
+            roughness:1
+        });
+
+    const road =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                width,
+                .08,
+                depth
+            ),
+            material
+        );
+
+    road.position.set(
+        x,
+        .04,
+        z
+    );
+
+    road.receiveShadow = true;
+
+    scene.add(road);
+
+    return road;
+}
+
+
+/* Grandes routes */
+
+createRoad(0,0,18,1000);
+createRoad(0,0,1000,18);
+
+createRoad(90,0,14,1000);
+createRoad(-90,0,14,1000);
+
+createRoad(0,90,1000,14);
+createRoad(0,-90,1000,14);
+
+
+/* =========================================================
+   MARQUAGES
+========================================================= */
+
+const lineMaterial =
+    new THREE.MeshBasicMaterial({
+        color:0xffffff
+    });
+
+function roadLines(){
+
+    for(let z=-480;z<480;z+=20){
+
+        const line =
+            new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    .35,
+                    .03,
+                    9
+                ),
+                lineMaterial
+            );
+
+        line.position.set(
+            0,
+            .11,
+            z
+        );
+
+        scene.add(line);
+    }
+
+    for(let x=-480;x<480;x+=20){
+
+        const line =
+            new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    9,
+                    .03,
+                    .35
+                ),
+                lineMaterial
+            );
+
+        line.position.set(
+            x,
+            .11,
+            0
+        );
+
+        scene.add(line);
+    }
+}
+
+roadLines();
+
+
+/* =========================================================
+   BÂTIMENTS
+========================================================= */
+
+function building(x,z){
+
+    const height =
+        10 + Math.random()*40;
+
+    const width =
+        8 + Math.random()*15;
+
+    const depth =
+        8 + Math.random()*15;
+
+    const material =
+        new THREE.MeshStandardMaterial({
+            color:new THREE.Color().setHSL(
+                .58,
+                .08,
+                .18 + Math.random()*.15
+            ),
+            roughness:.85
+        });
+
+    const mesh =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                width,
+                height,
+                depth
+            ),
+            material
+        );
+
+    mesh.position.set(
+        x,
+        height/2,
+        z
+    );
+
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+
+    scene.add(mesh);
+
+
+    /* fenêtres */
+
+    const windowMaterial =
+        new THREE.MeshBasicMaterial({
+            color:0xa9d9ff
+        });
+
+    for(let y=5;y<height;y+=6){
+
+        const rows =
+            Math.floor(width/3);
+
+        for(let i=0;i<rows;i++){
+
+            const w =
+                new THREE.Mesh(
+                    new THREE.BoxGeometry(
+                        1.1,
+                        1.5,
+                        .06
+                    ),
+                    windowMaterial
+                );
+
+            w.position.set(
+                x - width/2 + 2 + i*3,
+                y,
+                z - depth/2 - .04
+            );
+
+            scene.add(w);
+        }
+    }
+}
+
+
+/* créer ville */
+
+for(let x=-450;x<=450;x+=30){
+
+    for(let z=-450;z<=450;z+=30){
+
+        const nearRoad =
+            Math.abs(x)<18 ||
+            Math.abs(z)<18 ||
+            Math.abs(Math.abs(x)-90)<12 ||
+            Math.abs(Math.abs(z)-90)<12;
+
+        if(!nearRoad){
+
+            building(
+                x + (Math.random()-.5)*8,
+                z + (Math.random()-.5)*8
+            );
+        }
+    }
+}
+
+
+/* =========================================================
+   ARBRES
+========================================================= */
+
+function tree(x,z){
+
+    const trunk =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                .35,
+                .5,
+                4,
+                8
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0x5b3a20
+            })
+        );
+
+    trunk.position.set(
+        x,
+        2,
+        z
+    );
+
+    trunk.castShadow = true;
+
+    scene.add(trunk);
+
+
+    const leaves =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                2.5,
+                10,
+                8
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0x246b38,
+                roughness:1
+            })
+        );
+
+    leaves.position.set(
+        x,
+        5,
+        z
+    );
+
+    leaves.castShadow = true;
+
+    scene.add(leaves);
+}
+
+
+for(let i=0;i<180;i++){
+
+    const x =
+        (Math.random()-.5)*800;
+
+    const z =
+        (Math.random()-.5)*800;
+
+    if(
+        Math.abs(x)>20 &&
+        Math.abs(z)>20
+    ){
+        tree(x,z);
+    }
+}
+
+
+/* =========================================================
+   VOITURE JOUEUR
+========================================================= */
+
+player =
+    new THREE.Group();
+
+player.position.set(
+    0,
+    .3,
+    40
+);
+
+scene.add(player);
+
+
+/* =========================================================
+   MODÈLE 3D
+========================================================= */
+
+const loader = new GLTFLoader();
+
+const dracoLoader =
+    new DRACOLoader();
+
+dracoLoader.setDecoderPath(
+    "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/libs/draco/"
+);
+
+loader.setDRACOLoader(dracoLoader);
+
+
+/*
+   Modèle Ferrari 458 de l'exemple officiel
+   Three.js
+*/
+
+const CAR_URL =
+"https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/models/gltf/ferrari.glb";
+
+
+loader.load(
+
+    CAR_URL,
+
+    function(gltf){
+
+        playerModel = gltf.scene;
+
+        playerModel.scale.setScalar(1.35);
+
+        playerModel.rotation.y =
+            Math.PI;
+
+        playerModel.position.y =
+            .15;
+
+
+        playerModel.traverse(
+            function(obj){
+
+                if(obj.isMesh){
+
+                    obj.castShadow = true;
+                    obj.receiveShadow = true;
+
+                    if(obj.material){
+
+                        obj.material.envMapIntensity =
+                            1.5;
+                    }
+                }
+            }
+        );
+
+
+        player.add(playerModel);
+
+
+        createCarEffects();
+
+        document.getElementById(
+            "loading"
+        ).style.opacity = "0";
+
+        setTimeout(()=>{
+            document.getElementById(
+                "loading"
+            ).style.display = "none";
+        },600);
+
+    },
+
+    function(xhr){
+
+        if(xhr.total){
+
+            const percent =
+                Math.round(
+                    xhr.loaded / xhr.total * 100
+                );
+
+            document.querySelector(
+                "#loading p"
+            ).textContent =
+                "Chargement de la voiture " +
+                percent + "%";
+        }
+    },
+
+    function(error){
+
+        console.error(
+            "Erreur chargement voiture:",
+            error
+        );
+
+        document.querySelector(
+            "#loading p"
+        ).textContent =
+            "Erreur de chargement du modèle";
+    }
+
+);
+
+
+/* =========================================================
+   EFFETS VOITURE
+========================================================= */
+
+function createCarEffects(){
+
+    /* -------------------------------
+       phares avant
+    -------------------------------- */
+
+    const lightMaterial =
+        new THREE.MeshBasicMaterial({
+            color:0xffffff
+        });
+
+    const headLightL =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                .7,.15,.04
+            ),
+            lightMaterial
+        );
+
+    const headLightR =
+        headLightL.clone();
+
+    headLightL.position.set(
+        -.85,.65,1.85
+    );
+
+    headLightR.position.set(
+        .85,.65,1.85
+    );
+
+    player.add(
+        headLightL,
+        headLightR
+    );
+
+
+    /* -------------------------------
+       lumières réelles
+    -------------------------------- */
+
+    const spotL =
+        new THREE.SpotLight(
+            0xffffff,
+            8,
+            50,
+            Math.PI/7,
+            .5,
+            1
+        );
+
+    const spotR =
+        spotL.clone();
+
+    spotL.position.set(
+        -.85,.7,1.8
+    );
+
+    spotR.position.set(
+        .85,.7,1.8
+    );
+
+    spotL.target.position.set(
+        -.85,.5,20
+    );
+
+    spotR.target.position.set(
+        .85,.5,20
+    );
+
+    player.add(
+        spotL,
+        spotR,
+        spotL.target,
+        spotR.target
+    );
+
+
+    /* -------------------------------
+       feux arrière
+    -------------------------------- */
+
+    const rearMaterial =
+        new THREE.MeshBasicMaterial({
+            color:0xff0808
+        });
+
+    const rearL =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                .55,.13,.05
+            ),
+            rearMaterial
+        );
+
+    const rearR =
+        rearL.clone();
+
+    rearL.position.set(
+        -.8,.7,-1.9
+    );
+
+    rearR.position.set(
+        .8,.7,-1.9
+    );
+
+    player.add(
+        rearL,
+        rearR
+    );
+
+
+    /* -------------------------------
+       flammes échappement
+    -------------------------------- */
+
+    const flameMaterial =
+        new THREE.MeshBasicMaterial({
+            color:0xff6a00,
+            transparent:true,
+            opacity:0
+        });
+
+    flameLeft =
+        new THREE.Mesh(
+            new THREE.ConeGeometry(
+                .16,
+                .8,
+                8
+            ),
+            flameMaterial.clone()
+        );
+
+    flameRight =
+        new THREE.Mesh(
+            new THREE.ConeGeometry(
+                .16,
+                .8,
+                8
+            ),
+            flameMaterial.clone()
+        );
+
+
+    flameLeft.rotation.x =
+        -Math.PI/2;
+
+    flameRight.rotation.x =
+        -Math.PI/2;
+
+
+    flameLeft.position.set(
+        -.42,
+        .25,
+        -2.2
+    );
+
+    flameRight.position.set(
+        .42,
+        .25,
+        -2.2
+    );
+
+
+    player.add(
+        flameLeft,
+        flameRight
+    );
+}
+
+
+/* =========================================================
+   TRAFIC
+========================================================= */
+
+function createTrafficCar(
+    x,
+    z,
+    color,
+    direction
+){
+
+    const car =
+        new THREE.Group();
+
+    const body =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                2.1,
+                .65,
+                4
+            ),
+            new THREE.MeshStandardMaterial({
+                color:color,
+                metalness:.5,
+                roughness:.4
+            })
+        );
+
+    body.position.y =
+        .7;
+
+    body.castShadow = true;
+
+    car.add(body);
+
+
+    const cabin =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                1.6,
+                .65,
+                1.9
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0x18202a,
+                metalness:.2,
+                roughness:.15
+            })
+        );
+
+    cabin.position.y =
+        1.25;
+
+    cabin.position.z =
+        -.2;
+
+    cabin.castShadow = true;
+
+    car.add(cabin);
+
+
+    car.position.set(
+        x,
+        0,
+        z
+    );
+
+    car.userData.direction =
+        direction;
+
+    car.userData.speed =
+        8 + Math.random()*10;
+
+    scene.add(car);
+
+    traffic.push(car);
+}
+
+
+/* trafic vertical */
+
+for(let i=0;i<12;i++){
+
+    createTrafficCar(
+        (Math.random()>.5?5:-5),
+        -400 + Math.random()*800,
+        new THREE.Color().setHSL(
+            Math.random(),
+            .7,
+            .45
+        ),
+        Math.random()>.5?1:-1
+    );
+}
+
+
+/* trafic horizontal */
+
+for(let i=0;i<12;i++){
+
+    const car =
+        new THREE.Group();
+
+    const body =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                4,
+                .65,
+                2.1
+            ),
+            new THREE.MeshStandardMaterial({
+                color:new THREE.Color().setHSL(
+                    Math.random(),
+                    .7,
+                    .45
+                ),
+                metalness:.4,
+                roughness:.45
+            })
+        );
+
+    body.position.y=.7;
+
+    body.castShadow=true;
+
+    car.add(body);
+
+    car.position.set(
+        -400+Math.random()*800,
+        0,
+        Math.random()>.5?5:-5
+    );
+
+    car.userData.direction =
+        Math.random()>.5?1:-1;
+
+    car.userData.speed =
+        8+Math.random()*10;
+
+    scene.add(car);
+
+    traffic.push(car);
+}
+
+
+/* =========================================================
+   CLAVIER
+========================================================= */
+
+window.addEventListener(
+    "keydown",
+    e=>{
+
+        if(
+            e.key==="w" ||
+            e.key==="ArrowUp"
+        ){
+            keys.forward=true;
+        }
+
+        if(
+            e.key==="s" ||
+            e.key==="ArrowDown"
+        ){
+            keys.backward=true;
+        }
+
+        if(
+            e.key==="a" ||
+            e.key==="ArrowLeft"
+        ){
+            keys.left=true;
+        }
+
+        if(
+            e.key==="d" ||
+            e.key==="ArrowRight"
+        ){
+            keys.right=true;
+        }
+
+        if(e.code==="Space"){
+            keys.brake=true;
+        }
+    }
+);
+
+
+window.addEventListener(
+    "keyup",
+    e=>{
+
+        if(
+            e.key==="w" ||
+            e.key==="ArrowUp"
+        ){
+            keys.forward=false;
+        }
+
+        if(
+            e.key==="s" ||
+            e.key==="ArrowDown"
+        ){
+            keys.backward=false;
+        }
+
+        if(
+            e.key==="a" ||
+            e.key==="ArrowLeft"
+        ){
+            keys.left=false;
+        }
+
+        if(
+            e.key==="d" ||
+            e.key==="ArrowRight"
+        ){
+            keys.right=false;
+        }
+
+        if(e.code==="Space"){
+            keys.brake=false;
+        }
+    }
+);
+
+
+/* =========================================================
+   TOUCH
+========================================================= */
+
+function touchControl(
+    id,
+    key
+){
+
+    const element =
+        document.getElementById(id);
+
+    element.addEventListener(
+        "pointerdown",
+        e=>{
+            e.preventDefault();
+            keys[key]=true;
+        }
+    );
+
+    element.addEventListener(
+        "pointerup",
+        e=>{
+            e.preventDefault();
+            keys[key]=false;
+        }
+    );
+
+    element.addEventListener(
+        "pointercancel",
+        ()=>{
+            keys[key]=false;
+        }
+    );
+
+    element.addEventListener(
+        "pointerleave",
+        ()=>{
+            keys[key]=false;
+        }
+    );
+}
+
+
+touchControl("left","left");
+touchControl("right","right");
+touchControl("forward","forward");
+touchControl("brake","brake");
+
+
+/* =========================================================
+   PHYSIQUE
+========================================================= */
+
+function updateCar(dt){
+
+    if(!player) return;
+
+
+    /* accélération */
+
+    if(keys.forward){
+
+        speed += 28 * dt;
+
+    }else if(keys.backward){
+
+        speed -= 18 * dt;
+
+    }else{
+
+        /* friction */
+
+        speed *= Math.pow(
+            .985,
+            dt*60
+        );
+    }
+
+
+    /* frein */
+
+    if(keys.brake){
+
+        speed *= Math.pow(
+            .90,
+            dt*60
+        );
+    }
+
+
+    /* limites */
+
+    speed =
+        THREE.MathUtils.clamp(
+            speed,
+            -15,
+            52
+        );
+
+
+    /* direction */
+
+    let steerTarget = 0;
+
+    if(keys.left)
+        steerTarget = 1;
+
+    if(keys.right)
+        steerTarget = -1;
+
+
+    steering =
+        THREE.MathUtils.lerp(
+            steering,
+            steerTarget,
+            Math.min(1,dt*8)
+        );
+
+
+    const steerPower =
+        Math.min(
+            Math.abs(speed)/20,
+            1
+        );
+
+
+    player.rotation.y +=
+        steering *
+        steerPower *
+        1.8 *
+        dt *
+        Math.sign(speed || 1);
+
+
+    /* mouvement */
+
+    const forward =
+        new THREE.Vector3(
+            0,
+            0,
+            1
+        );
+
+    forward.applyQuaternion(
+        player.quaternion
+    );
+
+    player.position.addScaledVector(
+        forward,
+        speed*dt
+    );
+
+
+    /* hauteur */
+
+    player.position.y =
+        .3;
+
+
+    /* flammes */
+
+    if(flameLeft && flameRight){
+
+        const flame =
+            keys.forward &&
+            speed > 15 &&
+            Math.random() < .18;
+
+        flameLeft.material.opacity =
+            flame ?
+            .8 + Math.random()*.2 :
+            0;
+
+        flameRight.material.opacity =
+            flame ?
+            .8 + Math.random()*.2 :
+            0;
+
+        const scale =
+            .7 + Math.random()*.8;
+
+        flameLeft.scale.set(
+            scale,
+            scale,
+            scale
+        );
+
+        flameRight.scale.set(
+            scale,
+            scale,
+            scale
+        );
+    }
+}
+
+
+/* =========================================================
+   TRAFIC UPDATE
+========================================================= */
+
+function updateTraffic(dt){
+
+    for(const car of traffic){
+
+        const direction =
+            car.userData.direction;
+
+        const s =
+            car.userData.speed *
+            direction *
+            dt;
+
+
+        if(
+            Math.abs(car.position.x) >
+            500
+        ){
+
+            car.position.x =
+                -car.position.x;
+        }
+
+        if(
+            Math.abs(car.position.z) >
+            500
+        ){
+
+            car.position.z =
+                -car.position.z;
+        }
+
+
+        /*
+          Déplacement selon l'orientation
+        */
+
+        if(
+            Math.abs(car.position.z) >
+            Math.abs(car.position.x)
+        ){
+
+            car.position.z += s;
+
+        }else{
+
+            car.position.x += s;
+        }
+    }
+}
+
+
+/* =========================================================
+   CAMÉRA
+========================================================= */
+
+function updateCamera(dt){
+
+    if(!player) return;
+
+
+    const target =
+        new THREE.Vector3();
+
+    target.set(
+        0,
+        4.2,
+        -9
+    );
+
+    target.applyQuaternion(
+        player.quaternion
+    );
+
+    target.add(
+        player.position
+    );
+
+
+    camera.position.lerp(
+        target,
+        1-Math.pow(.001,dt)
+    );
+
+
+    const lookAt =
+        new THREE.Vector3(
+            0,
+            1,
+            5
+        );
+
+    lookAt.applyQuaternion(
+        player.quaternion
+    );
+
+    lookAt.add(
+        player.position
+    );
+
+
+    camera.lookAt(
+        lookAt
+    );
+}
+
+
+/* =========================================================
+   HUD
+========================================================= */
+
+function updateHUD(){
+
+    const kmh =
+        Math.round(
+            Math.abs(speed)*3.6
+        );
+
+    document.getElementById(
+        "speed"
+    ).innerHTML =
+        kmh +
+        ' <small>KM/H</small>';
+}
+
+
+/* =========================================================
+   JOUR / NUIT
+========================================================= */
+
+function setNight(){
+
+    day = !day;
+
+
+    if(day){
+
+        scene.background.set(
+            0x87b8e8
+        );
+
+        scene.fog.color.set(
+            0x87b8e8
+        );
+
+        ambient.intensity=2;
+
+        sun.intensity=3;
+
+        document.getElementById(
+            "dayNight"
+        ).textContent =
+            "☀️ JOUR";
+
+    }else{
+
+        scene.background.set(
+            0x050817
+        );
+
+        scene.fog.color.set(
+            0x050817
+        );
+
+        ambient.intensity=.35;
+
+        sun.intensity=.45;
+
+        document.getElementById(
+            "dayNight"
+        ).textContent =
+            "🌙 NUIT";
+    }
+}
+
+
+document.getElementById(
+    "dayNight"
+).addEventListener(
+    "click",
+    setNight
+);
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+document.getElementById(
+    "reset"
+).addEventListener(
+    "click",
+    ()=>{
+
+        player.position.set(
+            0,
+            .3,
+            40
+        );
+
+        player.rotation.set(
+            0,
+            0,
+            0
+        );
+
+        speed=0;
+        steering=0;
+    }
+);
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+function showMessage(text){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+    message.textContent=text;
+    message.style.opacity=1;
+
+    setTimeout(
+        ()=>{
+            message.style.opacity=0;
+        },
+        1800
+    );
+}
+
+
+/* =========================================================
+   FPS
+========================================================= */
+
+function updateFPS(){
+
+    fpsFrames++;
+
+    const now =
+        performance.now();
+
+    if(
+        now-fpsTime > 1000
+    ){
+
+        const fps =
+            Math.round(
+                fpsFrames*1000/
+                (now-fpsTime)
+            );
+
+        document.getElementById(
+            "fps"
+        ).textContent =
+            "FPS: "+fps;
+
+        fpsFrames=0;
+        fpsTime=now;
+    }
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+function animate(){
+
+    requestAnimationFrame(
+        animate
+    );
+
+    const dt =
+        Math.min(
+            clock.getDelta(),
+            .05
+        );
+
+
+    updateCar(dt);
+
+    updateTraffic(dt);
+
+    updateCamera(dt);
+
+    updateHUD();
+
+    updateFPS();
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+}
+
+
+animate();
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+window.addEventListener(
+    "resize",
+    ()=>{
+
+        camera.aspect =
+            innerWidth/
+            innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+            innerWidth,
+            innerHeight
+        );
+
+        renderer.setPixelRatio(
+            Math.min(
+                window.devicePixelRatio,
+                1.5
+            )
+        );
+    }
+);
+
+
+/* =========================================================
+   DÉMARRAGE
+========================================================= */
+
+showMessage(
+    "Bienvenue dans ZENTRO DRIVE 🚗"
+);
+
+</script>
+
+</body>
+</html>
