@@ -1,1 +1,1116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
+<title>ZENTRO DRIVE — VOITURES</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  user-select:none;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial,Helvetica,sans-serif;
+  color:white;
+  background:#05070b;
+}
+
+body{
+  background:
+    radial-gradient(circle at 50% 45%,#263242 0%,#10151c 35%,#05070b 75%);
+}
+
+header{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:75px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:0 25px;
+
+  z-index:20;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0,0,0,.85),
+      transparent
+    );
+}
+
+.logo{
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:5px;
+}
+
+.logo span{
+  color:#55aaff;
+}
+
+.back{
+  color:white;
+  text-decoration:none;
+
+  padding:12px 18px;
+
+  border-radius:10px;
+
+  background:rgba(0,0,0,.65);
+
+  border:1px solid rgba(255,255,255,.2);
+
+  font-weight:bold;
+}
+
+.back:hover{
+  background:#55aaff;
+  color:#000;
+}
+
+#title{
+  position:absolute;
+
+  top:90px;
+  left:50%;
+
+  transform:translateX(-50%);
+
+  text-align:center;
+
+  z-index:10;
+}
+
+#title h1{
+  margin:0;
+
+  font-size:40px;
+
+  letter-spacing:8px;
+}
+
+#title p{
+  margin:8px;
+
+  color:#aab4c2;
+}
+
+
+/* =========================
+   VOITURE
+========================= */
+
+#car{
+  position:absolute;
+
+  left:50%;
+  top:50%;
+
+  width:520px;
+  height:260px;
+
+  transform:
+    translate(-50%,-45%);
+
+  transition:
+    transform .35s ease;
+}
+
+.carBody{
+  position:absolute;
+
+  left:70px;
+  top:90px;
+
+  width:380px;
+  height:85px;
+
+  background:#08090b;
+
+  border-radius:
+    45px 55px 25px 25px;
+
+  box-shadow:
+    0 20px 35px rgba(0,0,0,.55);
+
+  transition:
+    background .3s;
+}
+
+.roof{
+  position:absolute;
+
+  left:145px;
+  top:38px;
+
+  width:230px;
+  height:95px;
+
+  background:#08090b;
+
+  clip-path:
+    polygon(
+      18% 100%,
+      32% 0,
+      70% 0,
+      90% 100%
+    );
+
+  transition:
+    background .3s;
+}
+
+.window{
+  position:absolute;
+
+  left:165px;
+  top:48px;
+
+  width:190px;
+  height:55px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #16202b,
+      #05070a
+    );
+
+  clip-path:
+    polygon(
+      12% 100%,
+      22% 10%,
+      70% 10%,
+      90% 100%
+    );
+}
+
+.frontLight{
+  position:absolute;
+
+  top:113px;
+
+  width:55px;
+  height:18px;
+
+  background:#fff;
+
+  box-shadow:
+    0 0 18px #fff;
+
+  border-radius:8px;
+}
+
+.frontLight.left{
+  left:90px;
+}
+
+.frontLight.right{
+  left:375px;
+}
+
+.rearLight{
+  position:absolute;
+
+  top:145px;
+
+  width:50px;
+  height:16px;
+
+  background:#e00000;
+
+  box-shadow:
+    0 0 15px #f00;
+
+  border-radius:8px;
+}
+
+.wheel{
+  position:absolute;
+
+  width:70px;
+  height:70px;
+
+  border-radius:50%;
+
+  background:#030303;
+
+  border:
+    8px solid #111;
+
+  box-shadow:
+    inset 0 0 0 8px #333;
+}
+
+.wheel::after{
+  content:"";
+
+  position:absolute;
+
+  left:17px;
+  top:17px;
+
+  width:20px;
+  height:20px;
+
+  border-radius:50%;
+
+  background:#999;
+
+  box-shadow:
+    0 0 0 5px #555;
+}
+
+.wheel.one{
+  left:95px;
+  top:150px;
+}
+
+.wheel.two{
+  right:95px;
+  top:150px;
+}
+
+
+/* =========================
+   PANNEAU
+========================= */
+
+#panel{
+
+  position:absolute;
+
+  right:25px;
+  top:50%;
+
+  transform:
+    translateY(-50%);
+
+  width:280px;
+
+  padding:22px;
+
+  border-radius:18px;
+
+  background:
+    rgba(5,8,13,.88);
+
+  border:
+    1px solid
+    rgba(255,255,255,.12);
+
+  backdrop-filter:
+    blur(12px);
+
+  z-index:20;
+}
+
+#panel h2{
+  margin-top:0;
+
+  letter-spacing:2px;
+}
+
+.stat{
+  margin:17px 0;
+}
+
+.statName{
+  color:#8995a5;
+
+  font-size:11px;
+
+  text-transform:uppercase;
+
+  margin-bottom:6px;
+}
+
+.bar{
+  width:100%;
+  height:7px;
+
+  border-radius:10px;
+
+  background:#202631;
+
+  overflow:hidden;
+}
+
+.bar span{
+  display:block;
+
+  height:100%;
+
+  width:90%;
+
+  background:#55aaff;
+
+  border-radius:10px;
+
+  transition:
+    width .3s;
+}
+
+#carName{
+  font-size:23px;
+  font-weight:900;
+}
+
+#carDesc{
+  color:#9da7b4;
+  font-size:13px;
+  line-height:1.5;
+}
+
+
+/* =========================
+   COULEURS
+========================= */
+
+.colors{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.color{
+  width:31px;
+  height:31px;
+
+  border-radius:50%;
+
+  border:
+    2px solid
+    rgba(255,255,255,.4);
+
+  cursor:pointer;
+}
+
+.color:hover{
+  transform:scale(1.12);
+}
+
+.black{background:#08090b}
+.white{background:#eeeeee}
+.red{background:#a00000}
+.blue{background:#145fc9}
+.green{background:#185c39}
+.yellow{background:#d0b000}
+
+
+button{
+  width:100%;
+
+  margin-top:9px;
+
+  padding:13px;
+
+  border:0;
+
+  border-radius:10px;
+
+  background:#55aaff;
+
+  color:#020408;
+
+  font-weight:900;
+
+  cursor:pointer;
+}
+
+button:hover{
+  background:white;
+}
+
+.secondary{
+  background:#202731;
+  color:white;
+}
+
+.secondary:hover{
+  background:#394454;
+}
+
+
+/* =========================
+   SÉLECTION VOITURES
+========================= */
+
+#cars{
+  position:absolute;
+
+  left:25px;
+  top:50%;
+
+  transform:
+    translateY(-50%);
+
+  width:230px;
+
+  z-index:20;
+}
+
+.carButton{
+
+  width:100%;
+
+  padding:16px;
+
+  margin:7px 0;
+
+  border-radius:12px;
+
+  background:
+    rgba(0,0,0,.6);
+
+  border:
+    1px solid
+    rgba(255,255,255,.12);
+
+  cursor:pointer;
+
+  text-align:left;
+
+  transition:.2s;
+}
+
+.carButton:hover,
+.carButton.active{
+
+  border-color:#55aaff;
+
+  background:
+    rgba(30,80,130,.35);
+
+}
+
+.carButton strong{
+  display:block;
+  font-size:15px;
+}
+
+.carButton small{
+  color:#8e99a8;
+}
+
+
+/* =========================
+   SOL
+========================= */
+
+#floor{
+  position:absolute;
+
+  left:50%;
+  top:70%;
+
+  transform:
+    translateX(-50%);
+
+  width:800px;
+  height:250px;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(0,0,0,.75),
+      transparent 70%
+    );
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:800px){
+
+  #cars{
+    left:10px;
+    top:auto;
+    bottom:15px;
+    transform:none;
+    width:170px;
+  }
+
+  .carButton{
+    padding:10px;
+    margin:4px 0;
+  }
+
+  #panel{
+    right:10px;
+    top:120px;
+    transform:none;
+    width:210px;
+  }
+
+  #car{
+    transform:
+      translate(-50%,-55%)
+      scale(.72);
+  }
+
+  #title h1{
+    font-size:25px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+
+<header>
+
+  <div class="logo">
+    ZENTRO <span>DRIVE</span>
+  </div>
+
+  <a
+    class="back"
+    href="index.html">
+    ← RETOUR AU JEU
+  </a>
+
+</header>
+
+
+<div id="title">
+
+  <h1>VOITURES</h1>
+
+  <p>
+    CHOISIS TON VÉHICULE
+  </p>
+
+</div>
+
+
+<!-- =========================
+     LISTE VOITURES
+========================= -->
+
+<div id="cars">
+
+  <div
+    class="carButton active"
+    data-car="golf">
+
+    <strong>GOLF R</strong>
+
+    <small>
+      Zentro Edition
+    </small>
+
+  </div>
+
+
+  <div
+    class="carButton"
+    data-car="sport">
+
+    <strong>SPORT GT</strong>
+
+    <small>
+      Performance
+    </small>
+
+  </div>
+
+
+  <div
+    class="carButton"
+    data-car="city">
+
+    <strong>CITY RS</strong>
+
+    <small>
+      Urban
+    </small>
+
+  </div>
+
+
+  <div
+    class="carButton"
+    data-car="hyper">
+
+    <strong>HYPER X</strong>
+
+    <small>
+      Extreme
+    </small>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     VOITURE
+========================= -->
+
+<div id="floor"></div>
+
+<div id="car">
+
+  <div
+    class="carBody"
+    id="body">
+  </div>
+
+  <div
+    class="roof"
+    id="roof">
+  </div>
+
+  <div class="window"></div>
+
+  <div
+    class="frontLight left">
+  </div>
+
+  <div
+    class="frontLight right">
+  </div>
+
+  <div
+    class="rearLight"
+    style="left:75px">
+  </div>
+
+  <div
+    class="rearLight"
+    style="right:75px">
+  </div>
+
+  <div class="wheel one"></div>
+
+  <div class="wheel two"></div>
+
+</div>
+
+
+<!-- =========================
+     INFORMATIONS
+========================= -->
+
+<div id="panel">
+
+  <div
+    id="carName">
+    GOLF R
+  </div>
+
+  <p id="carDesc">
+    Une compacte sportive pensée
+    pour la ville et les accélérations.
+  </p>
+
+
+  <div class="stat">
+
+    <div class="statName">
+      Vitesse
+    </div>
+
+    <div class="bar">
+      <span
+        id="speedBar"
+        style="width:88%">
+      </span>
+    </div>
+
+  </div>
+
+
+  <div class="stat">
+
+    <div class="statName">
+      Accélération
+    </div>
+
+    <div class="bar">
+      <span
+        id="accelBar"
+        style="width:92%">
+      </span>
+    </div>
+
+  </div>
+
+
+  <div class="stat">
+
+    <div class="statName">
+      Tenue de route
+    </div>
+
+    <div class="bar">
+      <span
+        id="gripBar"
+        style="width:86%">
+      </span>
+    </div>
+
+  </div>
+
+
+  <div class="stat">
+
+    <div class="statName">
+      Puissance
+    </div>
+
+    <div class="bar">
+      <span
+        id="powerBar"
+        style="width:90%">
+      </span>
+    </div>
+
+  </div>
+
+
+  <div class="colors">
+
+    <div
+      class="color black"
+      data-color="#08090b">
+    </div>
+
+    <div
+      class="color white"
+      data-color="#eeeeee">
+    </div>
+
+    <div
+      class="color red"
+      data-color="#a00000">
+    </div>
+
+    <div
+      class="color blue"
+      data-color="#145fc9">
+    </div>
+
+    <div
+      class="color green"
+      data-color="#185c39">
+    </div>
+
+    <div
+      class="color yellow"
+      data-color="#d0b000">
+    </div>
+
+  </div>
+
+
+  <button id="select">
+    ✓ SÉLECTIONNER
+  </button>
+
+  <button
+    class="secondary"
+    id="play">
+    ▶ JOUER
+  </button>
+
+</div>
+
+
+<script>
+
+/* =========================
+   DONNÉES DES VOITURES
+========================= */
+
+const cars = {
+
+  golf:{
+    name:"GOLF R",
+    desc:
+      "Une compacte sportive pensée pour la ville et les accélérations.",
+    speed:88,
+    accel:92,
+    grip:86,
+    power:90,
+    color:"#08090b"
+  },
+
+  sport:{
+    name:"SPORT GT",
+    desc:
+      "Un coupé sportif rapide avec une excellente vitesse de pointe.",
+    speed:96,
+    accel:90,
+    grip:82,
+    power:96,
+    color:"#a00000"
+  },
+
+  city:{
+    name:"CITY RS",
+    desc:
+      "Une petite sportive agile et parfaite pour les rues de Zentro.",
+    speed:76,
+    accel:84,
+    grip:94,
+    power:78,
+    color:"#145fc9"
+  },
+
+  hyper:{
+    name:"HYPER X",
+    desc:
+      "La voiture la plus performante du garage Zentro.",
+    speed:100,
+    accel:100,
+    grip:88,
+    power:100,
+    color:"#eeeeee"
+  }
+
+};
+
+
+let selected =
+  "golf";
+
+
+const body =
+  document.getElementById("body");
+
+const roof =
+  document.getElementById("roof");
+
+const car =
+  document.getElementById("car");
+
+const carName =
+  document.getElementById("carName");
+
+const carDesc =
+  document.getElementById("carDesc");
+
+const speedBar =
+  document.getElementById("speedBar");
+
+const accelBar =
+  document.getElementById("accelBar");
+
+const gripBar =
+  document.getElementById("gripBar");
+
+const powerBar =
+  document.getElementById("powerBar");
+
+
+/* =========================
+   AFFICHAGE
+========================= */
+
+function showCar(id){
+
+  selected = id;
+
+  const data =
+    cars[id];
+
+  carName.textContent =
+    data.name;
+
+  carDesc.textContent =
+    data.desc;
+
+  speedBar.style.width =
+    data.speed+"%";
+
+  accelBar.style.width =
+    data.accel+"%";
+
+  gripBar.style.width =
+    data.grip+"%";
+
+  powerBar.style.width =
+    data.power+"%";
+
+  body.style.background =
+    data.color;
+
+  roof.style.background =
+    data.color;
+
+
+  document
+  .querySelectorAll(".carButton")
+  .forEach(btn => {
+
+    btn.classList.toggle(
+      "active",
+      btn.dataset.car === id
+    );
+
+  });
+
+}
+
+
+/* =========================
+   CHOIX VOITURE
+========================= */
+
+document
+.querySelectorAll(".carButton")
+.forEach(button => {
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      showCar(
+        button.dataset.car
+      );
+
+    }
+  );
+
+});
+
+
+/* =========================
+   COULEUR
+========================= */
+
+document
+.querySelectorAll(".color")
+.forEach(button => {
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      body.style.background =
+        button.dataset.color;
+
+      roof.style.background =
+        button.dataset.color;
+
+    }
+  );
+
+});
+
+
+/* =========================
+   SÉLECTION
+========================= */
+
+document
+.getElementById("select")
+.addEventListener(
+  "click",
+  () => {
+
+    localStorage.setItem(
+      "zentroCar",
+      selected
+    );
+
+    alert(
+      cars[selected].name +
+      " sélectionnée ! 🚗"
+    );
+
+  }
+);
+
+
+/* =========================
+   JOUER
+========================= */
+
+document
+.getElementById("play")
+.addEventListener(
+  "click",
+  () => {
+
+    localStorage.setItem(
+      "zentroCar",
+      selected
+    );
+
+    window.location.href =
+      "index.html";
+
+  }
+);
+
+
+/* =========================
+   ROTATION SHOWROOM
+========================= */
+
+let rotation = 0;
+
+function animate(){
+
+  rotation += .003;
+
+  car.style.transform =
+    `
+    translate(-50%,-45%)
+    rotateY(${Math.sin(rotation)*4}deg)
+    `;
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+animate();
+
+
+/* =========================
+   CHARGEMENT
+========================= */
+
+const saved =
+  localStorage.getItem(
+    "zentroCar"
+  );
+
+if(
+  saved &&
+  cars[saved]
+){
+
+  showCar(saved);
+
+}else{
+
+  showCar("golf");
+
+}
+
+</script>
+
+</body>
+</html>
