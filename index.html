@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ZENTRO DRIVE — Ferrari 458</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#07090d;
+    font-family:Arial,sans-serif;
+}
+
+canvas{display:block}
+
+#loading{
+    position:fixed;
+    inset:0;
+    z-index:20;
+    display:grid;
+    place-items:center;
+    background:#07090d;
+    color:white;
+    font-size:25px;
+    font-weight:900;
+    letter-spacing:2px;
+}
+
+#loading span{
+    display:block;
+    text-align:center;
+    font-size:12px;
+    letter-spacing:0;
+    opacity:.65;
+    margin-top:8px;
+}
+
+#hud{
+    position:fixed;
+    left:14px;
+    top:14px;
+    z-index:5;
+    color:white;
+    background:#0009;
+    padding:12px 15px;
+    border-radius:14px;
+    backdrop-filter:blur(8px);
+    pointer-events:none;
+}
+
+#title{
+    font-size:13px;
+    font-weight:900;
+    letter-spacing:2px;
+}
+
+#speed{
+    font-size:28px;
+    font-weight:900;
+    margin-top:4px;
+}
+
+#info{
+    font-size:11px;
+    opacity:.7;
+    margin-top:3px;
+}
+
+#reset{
+    position:fixed;
+    right:14px;
+    top:14px;
+    z-index:6;
+    border:0;
+    border-radius:12px;
+    padding:10px 13px;
+    background:#0009;
+    color:white;
+    font-weight:800;
+}
+
+#touch{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:18px;
+    z-index:6;
+    display:flex;
+    justify-content:space-between;
+    padding:0 18px;
+    pointer-events:none;
+}
+
+.pad{
+    display:flex;
+    gap:9px;
+    pointer-events:auto;
+}
+
+.btn{
+    width:62px;
+    height:62px;
+    border:1px solid #ffffff33;
+    border-radius:18px;
+    background:#080a0dcc;
+    color:white;
+    font-size:24px;
+    font-weight:900;
+    touch-action:none;
+}
+
+@media(min-width:800px){
+    #touch{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<div id="loading">
+    ZENTRO DRIVE
+    <span>Chargement de la Ferrari 458...</span>
+</div>
+
+<div id="hud">
+    <div id="title">ZENTRO DRIVE • FERRARI 458</div>
+    <div id="speed">0 km/h</div>
+    <div id="info">WASD / flèches • ESPACE = frein</div>
+</div>
+
+<button id="reset">↻ Recentrer</button>
+
+<div id="touch">
+    <div class="pad">
+        <button class="btn" data-k="left">◀</button>
+        <button class="btn" data-k="right">▶</button>
+    </div>
+
+    <div class="pad">
+        <button class="btn" data-k="back">▼</button>
+        <button class="btn" data-k="forward">▲</button>
+    </div>
+</div>
+
+
+<script type="module">
+
+import * as THREE from
+"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+
+import {GLTFLoader} from
+"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js";
+
+import {DRACOLoader} from
+"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/DRACOLoader.js";
+
+
+// ======================================================
+// SCÈNE
+// ======================================================
+
+const scene = new THREE.Scene();
+
+scene.background = new THREE.Color(0x8ca7bd);
+
+scene.fog = new THREE.Fog(
+    0x8ca7bd,
+    75,
+    420
+);
+
+
+// ======================================================
+// CAMÉRA
+// ======================================================
+
+const camera = new THREE.PerspectiveCamera(
+    65,
+    innerWidth / innerHeight,
+    0.1,
+    700
+);
+
+camera.position.set(0,5,12);
+
+
+// ======================================================
+// RENDU
+// ======================================================
+
+const renderer = new THREE.WebGLRenderer({
+    antialias:true,
+    powerPreference:"high-performance"
+});
+
+renderer.setPixelRatio(
+    Math.min(devicePixelRatio,1.5)
+);
+
+renderer.setSize(
+    innerWidth,
+    innerHeight
+);
+
+renderer.shadowMap.enabled = true;
+
+renderer.shadowMap.type =
+    THREE.PCFSoftShadowMap;
+
+renderer.outputColorSpace =
+    THREE.SRGBColorSpace;
+
+renderer.toneMapping =
+    THREE.ACESFilmicToneMapping;
+
+renderer.toneMappingExposure = 1;
+
+document.body.appendChild(
+    renderer.domElement
+);
+
+
+// ======================================================
+// LUMIÈRES
+// ======================================================
+
+scene.add(
+    new THREE.HemisphereLight(
+        0xddeeff,
+        0x334455,
+        2
+    )
+);
+
+const sun =
+    new THREE.DirectionalLight(
+        0xffffff,
+        3
+    );
+
+sun.position.set(
+    -70,
+    100,
+    40
+);
+
+sun.castShadow = true;
+
+sun.shadow.mapSize.set(
+    1024,
+    1024
+);
+
+scene.add(sun);
+
+
+// ======================================================
+// MATÉRIAUX
+// ======================================================
+
+const groundMat =
+    new THREE.MeshStandardMaterial({
+        color:0x58605b,
+        roughness:1
+    });
+
+const roadMat =
+    new THREE.MeshStandardMaterial({
+        color:0x25292d,
+        roughness:.92
+    });
+
+const lineMat =
+    new THREE.MeshBasicMaterial({
+        color:0xf2f2e8
+    });
+
+const sidewalkMat =
+    new THREE.MeshStandardMaterial({
+        color:0x8b8e8d,
+        roughness:.9
+    });
+
+
+// ======================================================
+// FONCTION OBJET
+// ======================================================
+
+function addMesh(
+    geometry,
+    material,
+    x,
+    y,
+    z,
+    parent=scene
+){
+
+    const object =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+    object.position.set(
+        x,
+        y,
+        z
+    );
+
+    object.castShadow = true;
+    object.receiveShadow = true;
+
+    parent.add(object);
+
+    return object;
+}
+
+
+// ======================================================
+// SOL
+// ======================================================
+
+const ground =
+    addMesh(
+        new THREE.PlaneGeometry(
+            700,
+            700
+        ),
+        groundMat,
+        0,
+        0,
+        0
+    );
+
+ground.rotation.x =
+    -Math.PI / 2;
+
+
+// ======================================================
+// ROUTES
+// ======================================================
+
+addMesh(
+    new THREE.BoxGeometry(
+        18,
+        .04,
+        700
+    ),
+    roadMat,
+    0,
+    .02,
+    0
+);
+
+addMesh(
+    new THREE.BoxGeometry(
+        700,
+        .04,
+        18
+    ),
+    roadMat,
+    0,
+    .02,
+    0
+);
+
+
+// ======================================================
+// LIGNES ROUTIÈRES
+// ======================================================
+
+for(
+    let z=-330;
+    z<330;
+    z+=12
+){
+
+    addMesh(
+        new THREE.BoxGeometry(
+            .18,
+            .025,
+            5.5
+        ),
+        lineMat,
+        0,
+        .055,
+        z
+    );
+}
+
+
+for(
+    let x=-330;
+    x<330;
+    x+=12
+){
+
+    addMesh(
+        new THREE.BoxGeometry(
+            5.5,
+            .025,
+            .18
+        ),
+        lineMat,
+        x,
+        .055,
+        0
+    );
+}
+
+
+// ======================================================
+// TROTTOIRS
+// ======================================================
+
+addMesh(
+    new THREE.BoxGeometry(
+        5,
+        .12,
+        700
+    ),
+    sidewalkMat,
+    -11,
+    .08,
+    0
+);
+
+addMesh(
+    new THREE.BoxGeometry(
+        5,
+        .12,
+        700
+    ),
+    sidewalkMat,
+    11,
+    .08,
+    0
+);
+
+addMesh(
+    new THREE.BoxGeometry(
+        700,
+        .12,
+        5
+    ),
+    sidewalkMat,
+    0,
+    .08,
+    -11
+);
+
+addMesh(
+    new THREE.BoxGeometry(
+        700,
+        .12,
+        5
+    ),
+    sidewalkMat,
+    0,
+    .08,
+    11
+);
+
+
+// ======================================================
+// BÂTIMENTS
+// ======================================================
+
+const buildingMats = [
+
+    new THREE.MeshStandardMaterial({
+        color:0x9da5ad,
+        roughness:.8
+    }),
+
+    new THREE.MeshStandardMaterial({
+        color:0x707983,
+        roughness:.8
+    }),
+
+    new THREE.MeshStandardMaterial({
+        color:0xb4a995,
+        roughness:.8
+    }),
+
+    new THREE.MeshStandardMaterial({
+        color:0x59646e,
+        roughness:.8
+    })
+
+];
+
+
+for(
+    let i=0;
+    i<130;
+    i++
+){
+
+    const side =
+        Math.random()<.5
+        ? -1
+        : 1;
+
+    const z =
+        (Math.random()-.5)*620;
+
+    const w =
+        5+Math.random()*8;
+
+    const d =
+        6+Math.random()*10;
+
+    const h =
+        5+Math.random()*28;
+
+    const x =
+        side*(18+Math.random()*22);
+
+
+    addMesh(
+        new THREE.BoxGeometry(
+            w,
+            h,
+            d
+        ),
+        buildingMats[
+            i%4
+        ],
+        x,
+        h/2,
+        z
+    );
+}
+
+
+// ======================================================
+// ARBRES
+// ======================================================
+
+const trunkMat =
+    new THREE.MeshStandardMaterial({
+        color:0x5a3924
+    });
+
+const leafMat =
+    new THREE.MeshStandardMaterial({
+        color:0x24633a
+    });
+
+
+for(
+    let i=0;
+    i<80;
+    i++
+){
+
+    const x =
+        (Math.random()<.5?-1:1)
+        *(14+Math.random()*8);
+
+    const z =
+        (Math.random()-.5)*620;
+
+
+    addMesh(
+        new THREE.CylinderGeometry(
+            .18,
+            .22,
+            2.4,
+            8
+        ),
+        trunkMat,
+        x,
+        1.2,
+        z
+    );
+
+
+    addMesh(
+        new THREE.SphereGeometry(
+            1.5+Math.random(),
+            12,
+            10
+        ),
+        leafMat,
+        x,
+        3+Math.random(),
+        z
+    );
+}
+
+
+// ======================================================
+// FERRARI 458
+// ======================================================
+
+let car = null;
+
+let wheels = [];
+
+let carReady = false;
+
+
+const loader =
+    new GLTFLoader();
+
+
+const draco =
+    new DRACOLoader();
+
+draco.setDecoderPath(
+    "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/libs/draco/"
+);
+
+loader.setDRACOLoader(
+    draco
+);
+
+
+// Modèle Ferrari de l'exemple Three.js
+const FERRARI_URL =
+"https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/models/gltf/ferrari.glb";
+
+
+loader.load(
+
+    FERRARI_URL,
+
+    function(gltf){
+
+        car =
+            gltf.scene;
+
+
+        // ==========================================
+        // MATÉRIAUX
+        // ==========================================
+
+        const bodyMat =
+            new THREE.MeshPhysicalMaterial({
+
+                color:0x08090b,
+
+                metalness:1,
+
+                roughness:.28,
+
+                clearcoat:1,
+
+                clearcoatRoughness:.03
+
+            });
+
+
+        const detailMat =
+            new THREE.MeshStandardMaterial({
+
+                color:0x17191d,
+
+                metalness:1,
+
+                roughness:.28
+
+            });
+
+
+        const glassMat =
+            new THREE.MeshPhysicalMaterial({
+
+                color:0x202832,
+
+                metalness:.15,
+
+                roughness:.03,
+
+                transmission:.65,
+
+                transparent:true,
+
+                opacity:.88
+
+            });
+
+
+        // ==========================================
+        // PARTIES DE LA FERRARI
+        // ==========================================
+
+        const body =
+            car.getObjectByName(
+                "body"
+            );
+
+        const glass =
+            car.getObjectByName(
+                "glass"
+            );
+
+
+        if(body){
+
+            body.material =
+                bodyMat;
+
+        }
+
+
+        if(glass){
+
+            glass.material =
+                glassMat;
+
+        }
+
+
+        [
+            "rim_fl",
+            "rim_fr",
+            "rim_rr",
+            "rim_rl",
+            "trim"
+
+        ].forEach(
+
+            function(name){
+
+                const object =
+                    car.getObjectByName(
+                        name
+                    );
+
+                if(object){
+
+                    object.material =
+                        detailMat;
+
+                }
+
+            }
+
+        );
+
+
+        // ==========================================
+        // ROUES
+        // ==========================================
+
+        wheels = [
+
+            car.getObjectByName(
+                "wheel_fl"
+            ),
+
+            car.getObjectByName(
+                "wheel_fr"
+            ),
+
+            car.getObjectByName(
+                "wheel_rl"
+            ),
+
+            car.getObjectByName(
+                "wheel_rr"
+            )
+
+        ].filter(Boolean);
+
+
+        // ==========================================
+        // TAILLE
+        // ==========================================
+
+        car.scale.set(
+            1.35,
+            1.35,
+            1.35
+        );
+
+
+        car.position.set(
+            0,
+            .25,
+            18
+        );
+
+
+        car.rotation.y =
+            Math.PI;
+
+
+        // ==========================================
+        // OMBRES
+        // ==========================================
+
+        car.traverse(
+
+            function(object){
+
+                if(
+                    object.isMesh
+                ){
+
+                    object.castShadow =
+                        true;
+
+                    object.receiveShadow =
+                        true;
+
+                }
+
+            }
+
+        );
+
+
+        scene.add(car);
+
+        carReady = true;
+
+
+        document.getElementById(
+            "loading"
+        ).innerHTML =
+        "ZENTRO DRIVE<span>Ferrari 458 chargée !</span>";
+
+
+        setTimeout(
+
+            function(){
+
+                document.getElementById(
+                    "loading"
+                ).style.display =
+                    "none";
+
+            },
+
+            600
+
+        );
+
+    },
+
+
+    function(xhr){
+
+        if(xhr.total){
+
+            const percent =
+                Math.round(
+                    xhr.loaded /
+                    xhr.total *
+                    100
+                );
+
+
+            document.querySelector(
+                "#loading span"
+            ).textContent =
+                "Chargement... "
+                + percent
+                + "%";
+
+        }
+
+    },
+
+
+    function(error){
+
+        console.error(
+            "Erreur Ferrari :",
+            error
+        );
+
+
+        document.querySelector(
+            "#loading span"
+        ).textContent =
+            "Erreur de chargement du modèle";
+
+    }
+
+);
+
+
+// ======================================================
+// TRAFIC
+// ======================================================
+
+const traffic = [];
+
+const trafficColors = [
+
+    0xffffff,
+    0x1e4e9a,
+    0x8c1717,
+    0x777777,
+    0xd8d1bd
+
+];
+
+
+function createTraffic(){
+
+    const group =
+        new THREE.Group();
+
+
+    const material =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                trafficColors[
+                    Math.floor(
+                        Math.random() *
+                        trafficColors.length
+                    )
+                ],
+
+            metalness:.55,
+
+            roughness:.35
+
+        });
+
+
+    const black =
+        new THREE.MeshStandardMaterial({
+
+            color:0x090909,
+
+            roughness:.65
+
+        });
+
+
+    addMesh(
+        new THREE.BoxGeometry(
+            1.55,
+            .55,
+            3.1
+        ),
+        material,
+        0,
+        .52,
+        0,
+        group
+    );
+
+
+    addMesh(
+        new THREE.BoxGeometry(
+            1.30,
+            .48,
+            1.5
+        ),
+        material,
+        0,
+        .91,
+        .1,
+        group
+    );
+
+
+    for(
+        const x of [-.73,.73]
+    ){
+
+        for(
+            const z of [-1.05,1.05]
+        ){
+
+            const wheel =
+                addMesh(
+                    new THREE.CylinderGeometry(
+                        .27,
+                        .27,
+                        .18,
+                        16
+                    ),
+                    black,
+                    x,
+                    .34,
+                    z,
+                    group
+                );
+
+            wheel.rotation.z =
+                Math.PI/2;
+
+        }
+
+    }
+
+
+    return group;
+}
+
+
+for(
+    let i=0;
+    i<18;
+    i++
+){
+
+    const trafficCar =
+        createTraffic();
+
+
+    trafficCar.position.set(
+
+        Math.random()<.5
+        ? -4.2
+        : 4.2,
+
+        .02,
+
+        -260+
+        Math.random()*520
+
+    );
+
+
+    trafficCar.userData.speed =
+        12+Math.random()*18;
+
+
+    scene.add(
+        trafficCar
+    );
+
+
+    traffic.push(
+        trafficCar
+    );
+
+}
+
+
+// ======================================================
+// CONTRÔLES
+// ======================================================
+
+const keys = {
+
+    forward:false,
+    back:false,
+    left:false,
+    right:false,
+    brake:false
+
+};
+
+
+const keyMap = {
+
+    ArrowUp:"forward",
+    w:"forward",
+    W:"forward",
+
+    ArrowDown:"back",
+    s:"back",
+    S:"back",
+
+    ArrowLeft:"left",
+    a:"left",
+    A:"left",
+
+    ArrowRight:"right",
+    d:"right",
+    D:"right",
+
+    " ":"brake"
+
+};
+
+
+addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            keyMap[event.key]
+        ){
+
+            keys[
+                keyMap[event.key]
+            ] = true;
+
+            event.preventDefault();
+
+        }
+
+    }
+);
+
+
+addEventListener(
+    "keyup",
+    function(event){
+
+        if(
+            keyMap[event.key]
+        ){
+
+            keys[
+                keyMap[event.key]
+            ] = false;
+
+            event.preventDefault();
+
+        }
+
+    }
+);
+
+
+// ======================================================
+// COMMANDES TACTILES
+// ======================================================
+
+document
+.querySelectorAll(".btn")
+.forEach(
+
+    function(button){
+
+        const key =
+            button.dataset.k;
+
+
+        const down =
+            function(event){
+
+                event.preventDefault();
+
+                keys[key] = true;
+
+            };
+
+
+        const up =
+            function(event){
+
+                event.preventDefault();
+
+                keys[key] = false;
+
+            };
+
+
+        button.addEventListener(
+            "pointerdown",
+            down
+        );
+
+        button.addEventListener(
+            "pointerup",
+            up
+        );
+
+        button.addEventListener(
+            "pointercancel",
+            up
+        );
+
+        button.addEventListener(
+            "pointerleave",
+            up
+        );
+
+    }
+
+);
+
+
+// ======================================================
+// PHYSIQUE
+// ======================================================
+
+let velocity = 0;
+
+let steering = 0;
+
+const clock =
+    new THREE.Clock();
+
+
+function updateCar(dt){
+
+    if(!carReady)
+        return;
+
+
+    // ACCÉLÉRATION
+
+    if(
+        keys.forward
+    ){
+
+        velocity +=
+            22*dt;
+
+    }
+
+    else if(
+        keys.back
+    ){
+
+        velocity -=
+            16*dt;
+
+    }
+
+    else{
+
+        velocity -=
+            Math.sign(
+                velocity
+            )
+            *
+            Math.min(
+                Math.abs(velocity),
+                6*dt
+            );
+
+    }
+
+
+    // FREIN
+
+    if(
+        keys.brake
+    ){
+
+        velocity -=
+            Math.sign(
+                velocity
+            )
+            *
+            Math.min(
+                Math.abs(velocity),
+                38*dt
+            );
+
+    }
+
+
+    // LIMITE
+
+    velocity =
+        THREE.MathUtils.clamp(
+            velocity,
+            -15,
+            52
+        );
+
+
+    // DIRECTION
+
+    const target =
+        (keys.left?-1:0)
+        +
+        (keys.right?1:0);
+
+
+    steering =
+        THREE.MathUtils.lerp(
+            steering,
+            target,
+            Math.min(
+                1,
+                dt*7
+            )
+        );
+
+
+    car.rotation.y -=
+        steering *
+        dt *
+        (
+            .8 +
+            .6 *
+            Math.min(
+                Math.abs(velocity)/18,
+                1
+            )
+        );
+
+
+    // AVANCEMENT
+
+    const direction =
+        new THREE.Vector3(
+            0,
+            0,
+            -1
+        )
+        .applyQuaternion(
+            car.quaternion
+        );
+
+
+    car.position.addScaledVector(
+        direction,
+        velocity*dt
+    );
+
+
+    // LIMITES
+
+    car.position.x =
+        THREE.MathUtils.clamp(
+            car.position.x,
+            -8.2,
+            8.2
+        );
+
+
+    car.position.z =
+        THREE.MathUtils.clamp(
+            car.position.z,
+            -330,
+            330
+        );
+
+
+    // ROTATION DES ROUES
+
+    for(
+        const wheel of wheels
+    ){
+
+        wheel.rotation.x -=
+            velocity *
+            dt *
+            2.4;
+
+    }
+
+}
+
+
+// ======================================================
+// TRAFIC
+// ======================================================
+
+function updateTraffic(dt){
+
+    for(
+        const car of traffic
+    ){
+
+        car.position.z +=
+            car.userData.speed *
+            dt;
+
+
+        if(
+            car.position.z >
+            330
+        ){
+
+            car.position.z =
+                -330;
+
+        }
+
+    }
+
+}
+
+
+// ======================================================
+// CAMÉRA
+// ======================================================
+
+function updateCamera(dt){
+
+    if(!carReady)
+        return;
+
+
+    const direction =
+        new THREE.Vector3(
+            0,
+            0,
+            -1
+        )
+        .applyQuaternion(
+            car.quaternion
+        );
+
+
+    const desired =
+        car.position
+        .clone()
+        .addScaledVector(
+            direction,
+            -9
+        )
+        .add(
+            new THREE.Vector3(
+                0,
+                4.2,
+                0
+            )
+        );
+
+
+    camera.position.lerp(
+        desired,
+        1-Math.pow(
+            .001,
+            dt
+        )
+    );
+
+
+    camera.lookAt(
+        car.position.x,
+        car.position.y+1,
+        car.position.z
+    );
+
+}
+
+
+// ======================================================
+// RESET
+// ======================================================
+
+document.getElementById(
+    "reset"
+).onclick = function(){
+
+    if(!carReady)
+        return;
+
+
+    car.position.set(
+        0,
+        .25,
+        18
+    );
+
+
+    car.rotation.set(
+        0,
+        Math.PI,
+        0
+    );
+
+
+    velocity = 0;
+
+    steering = 0;
+
+};
+
+
+// ======================================================
+// REDIMENSIONNEMENT
+// ======================================================
+
+addEventListener(
+    "resize",
+    function(){
+
+        camera.aspect =
+            innerWidth /
+            innerHeight;
+
+        camera.updateProjectionMatrix();
+
+
+        renderer.setPixelRatio(
+            Math.min(
+                devicePixelRatio,
+                1.5
+            )
+        );
+
+
+        renderer.setSize(
+            innerWidth,
+            innerHeight
+        );
+
+    }
+);
+
+
+// ======================================================
+// BOUCLE DU JEU
+// ======================================================
+
+function animate(){
+
+    requestAnimationFrame(
+        animate
+    );
+
+
+    const dt =
+        Math.min(
+            clock.getDelta(),
+            .033
+        );
+
+
+    updateCar(dt);
+
+    updateTraffic(dt);
+
+    updateCamera(dt);
+
+
+    document.getElementById(
+        "speed"
+    ).textContent =
+        Math.round(
+            Math.abs(velocity)*3.6
+        )
+        +
+        " km/h";
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+
+}
+
+
+animate();
+
+</script>
+
+</body>
+</html>
