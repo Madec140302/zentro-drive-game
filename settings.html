@@ -1,1 +1,1454 @@
+<!DOCTYPE html>
+<html lang="fr">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1.0"
+>
+
+<title>ZENTRO DRIVE — SETTINGS</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  user-select:none;
+}
+
+html,
+body{
+
+  margin:0;
+
+  width:100%;
+  height:100%;
+
+  overflow:hidden;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  color:white;
+
+  background:#070a10;
+
+}
+
+
+/* =========================
+   FOND
+========================= */
+
+body{
+
+  background:
+
+    radial-gradient(
+      circle at 50% 30%,
+      #263448 0%,
+      #111925 35%,
+      #06080c 80%
+    );
+
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+
+  position:absolute;
+
+  top:0;
+  left:0;
+
+  width:100%;
+  height:75px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  padding:
+    0 25px;
+
+  z-index:20;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0,0,0,.8),
+      transparent
+    );
+
+}
+
+
+.logo{
+
+  font-size:25px;
+
+  font-weight:900;
+
+  letter-spacing:5px;
+
+}
+
+
+.logo span{
+
+  color:#55aaff;
+
+}
+
+
+.back{
+
+  color:white;
+
+  text-decoration:none;
+
+  padding:
+    12px 18px;
+
+  border-radius:10px;
+
+  background:
+    rgba(0,0,0,.65);
+
+  border:
+    1px solid
+    rgba(255,255,255,.2);
+
+  font-weight:bold;
+
+}
+
+
+.back:hover{
+
+  background:#55aaff;
+
+  color:#000;
+
+}
+
+
+/* =========================
+   TITRE
+========================= */
+
+#title{
+
+  position:absolute;
+
+  top:95px;
+
+  left:50%;
+
+  transform:
+    translateX(-50%);
+
+  text-align:center;
+
+}
+
+
+#title h1{
+
+  margin:0;
+
+  font-size:40px;
+
+  letter-spacing:8px;
+
+}
+
+
+#title p{
+
+  margin:8px;
+
+  color:#9ca8b7;
+
+}
+
+
+/* =========================
+   PANNEAU
+========================= */
+
+#settings{
+
+  position:absolute;
+
+  left:50%;
+  top:53%;
+
+  transform:
+    translate(-50%,-50%);
+
+  width:620px;
+
+  max-height:70vh;
+
+  overflow:auto;
+
+  padding:25px;
+
+  border-radius:20px;
+
+  background:
+    rgba(5,8,13,.88);
+
+  border:
+    1px solid
+    rgba(255,255,255,.12);
+
+  backdrop-filter:
+    blur(15px);
+
+  box-shadow:
+    0 25px 80px
+    rgba(0,0,0,.45);
+
+}
+
+
+/* =========================
+   SECTION
+========================= */
+
+.section{
+
+  padding-bottom:22px;
+
+  margin-bottom:22px;
+
+  border-bottom:
+    1px solid
+    rgba(255,255,255,.08);
+
+}
+
+
+.section:last-child{
+
+  border-bottom:0;
+
+  margin-bottom:0;
+
+}
+
+
+.section h2{
+
+  margin:
+    0 0 17px;
+
+  font-size:16px;
+
+  letter-spacing:2px;
+
+}
+
+
+/* =========================
+   LIGNE
+========================= */
+
+.setting{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:20px;
+
+  min-height:55px;
+
+}
+
+
+.settingText{
+
+  flex:1;
+
+}
+
+
+.settingTitle{
+
+  font-weight:bold;
+
+  margin-bottom:5px;
+
+}
+
+
+.settingDescription{
+
+  color:#8995a5;
+
+  font-size:12px;
+
+}
+
+
+/* =========================
+   SELECT
+========================= */
+
+select{
+
+  min-width:160px;
+
+  padding:11px;
+
+  border-radius:9px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.18);
+
+  background:#151c26;
+
+  color:white;
+
+  outline:none;
+
+}
+
+
+/* =========================
+   SLIDER
+========================= */
+
+.sliderBox{
+
+  width:190px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+}
+
+
+input[type="range"]{
+
+  width:145px;
+
+  accent-color:#55aaff;
+
+}
+
+
+.value{
+
+  width:38px;
+
+  text-align:right;
+
+  color:#55aaff;
+
+  font-weight:bold;
+
+}
+
+
+/* =========================
+   SWITCH
+========================= */
+
+.switch{
+
+  position:relative;
+
+  width:52px;
+  height:28px;
+
+}
+
+
+.switch input{
+
+  display:none;
+
+}
+
+
+.slider{
+
+  position:absolute;
+
+  inset:0;
+
+  border-radius:30px;
+
+  background:#252d38;
+
+  cursor:pointer;
+
+  transition:.25s;
+
+}
+
+
+.slider::before{
+
+  content:"";
+
+  position:absolute;
+
+  width:20px;
+  height:20px;
+
+  left:4px;
+  top:4px;
+
+  border-radius:50%;
+
+  background:white;
+
+  transition:.25s;
+
+}
+
+
+.switch input:checked + .slider{
+
+  background:#55aaff;
+
+}
+
+
+.switch input:checked + .slider::before{
+
+  transform:
+    translateX(24px);
+
+}
+
+
+/* =========================
+   BOUTONS
+========================= */
+
+.buttons{
+
+  display:flex;
+
+  gap:10px;
+
+  margin-top:20px;
+
+}
+
+
+button{
+
+  flex:1;
+
+  padding:14px;
+
+  border:0;
+
+  border-radius:10px;
+
+  background:#55aaff;
+
+  color:#020408;
+
+  font-weight:900;
+
+  cursor:pointer;
+
+}
+
+
+button:hover{
+
+  background:white;
+
+}
+
+
+.reset{
+
+  background:#242c37;
+
+  color:white;
+
+}
+
+
+.reset:hover{
+
+  background:#394554;
+
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+#saved{
+
+  position:fixed;
+
+  bottom:25px;
+
+  left:50%;
+
+  transform:
+    translateX(-50%)
+    translateY(80px);
+
+  padding:
+    12px 20px;
+
+  border-radius:10px;
+
+  background:#55aaff;
+
+  color:#020408;
+
+  font-weight:bold;
+
+  transition:.3s;
+
+  z-index:50;
+
+}
+
+
+#saved.show{
+
+  transform:
+    translateX(-50%)
+    translateY(0);
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+  #title{
+
+    top:82px;
+
+  }
+
+
+  #title h1{
+
+    font-size:27px;
+
+  }
+
+
+  #settings{
+
+    width:
+      calc(100% - 25px);
+
+    top:55%;
+
+    padding:18px;
+
+  }
+
+
+  .setting{
+
+    min-height:70px;
+
+  }
+
+
+  .settingDescription{
+
+    display:none;
+
+  }
+
+
+  select{
+
+    min-width:125px;
+
+  }
+
+
+  .sliderBox{
+
+    width:145px;
+
+  }
+
+
+  input[type="range"]{
+
+    width:105px;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+  <div class="logo">
+
+    ZENTRO
+    <span>DRIVE</span>
+
+  </div>
+
+
+  <a
+    href="index.html"
+    class="back">
+
+    ← RETOUR AU JEU
+
+  </a>
+
+</header>
+
+
+<!-- =========================
+     TITRE
+========================= -->
+
+<div id="title">
+
+  <h1>SETTINGS</h1>
+
+  <p>
+    PERSONNALISE TON EXPÉRIENCE
+  </p>
+
+</div>
+
+
+<!-- =========================
+     PARAMÈTRES
+========================= -->
+
+<div id="settings">
+
+
+  <!-- AUDIO -->
+
+  <div class="section">
+
+    <h2>🔊 AUDIO</h2>
+
+
+    <div class="setting">
+
+      <div class="settingText">
+
+        <div class="settingTitle">
+          Volume
+        </div>
+
+        <div class="settingDescription">
+          Règle le volume général du jeu.
+        </div>
+
+      </div>
+
+
+      <div class="sliderBox">
+
+        <input
+          id="volume"
+          type="range"
+          min="0"
+          max="100"
+          value="70"
+        >
+
+        <div
+          class="value"
+          id="volumeValue">
+
+          70%
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- GRAPHISMES -->
+
+  <div class="section">
+
+    <h2>🖥️ GRAPHISMES</h2>
+
+
+    <div class="setting">
+
+      <div class="settingText">
+
+        <div class="settingTitle">
+          Qualité graphique
+        </div>
+
+        <div class="settingDescription">
+          Choisis entre performances et qualité.
+        </div>
+
+      </div>
+
+
+      <select id="graphics">
+
+        <option value="low">
+          Faible — FPS
+        </option>
+
+        <option value="medium" selected>
+          Moyenne
+        </option>
+
+        <option value="high">
+          Haute
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="setting">
+
+      <div class="settingText">
+
+        <div class="settingTitle">
+          Ombres
+        </div>
+
+        <div class="settingDescription">
+          Active les ombres dynamiques.
+        </div>
+
+      </div>
+
+
+      <label class="switch">
+
+        <input
+          id="shadows"
+          type="checkbox"
+          checked
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+
+    <div class="setting">
+
+      <div class="settingText">
+
+        <div class="settingTitle">
+          Effets lumineux
+        </div>
+
+        <div class="settingDescription">
+          Phares et effets lumineux.
+        </div>
+
+      </div>
+
+
+      <label class="switch">
+
+        <input
+          id="effects"
+          type="checkbox"
+          checked
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+  </div>
+
+
+  <!-- COMMANDES -->
+
+  <div class="section">
+
+    <h2>🎮 COMMANDES</h2>
+
+
+    <div class="setting">
+
+      <div class="settingText">
+
+        <div class="settingTitle">
+          Sensibilité
+        </div>
+
+        <div class="settingDescription">
+          Sensibilité de la direction.
+        </div>
+
+      </div>
+
+
+      <div class="sliderBox">
+
+        <input
+          id="sensitivity"
+          type="range"
+          min="1"
+          max="100"
+          value="50"
+        >
+
+        <div
+          class="value"
+          id="sensitivityValue">
+
+          50%
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="setting">
+
+      <div class="settingText">
+
+        <div class="settingTitle">
+          Vibrations
+        </div>
+
+        <div class="settingDescription">
+          Retour haptique sur mobile.
+        </div>
+
+      </div>
+
+
+      <label class="switch">
+
+        <input
+          id="vibration"
+          type="checkbox"
+          checked
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+  </div>
+
+
+  <!-- INTERFACE -->
+
+  <div class="section">
+
+    <h2>📱 INTERFACE</h2>
+
+
+    <div class="setting">
+
+      <div class="settingText">
+
+        <div class="settingTitle">
+          Contrôles tactiles
+        </div>
+
+        <div class="settingDescription">
+          Affiche les boutons sur téléphone.
+        </div>
+
+      </div>
+
+
+      <label class="switch">
+
+        <input
+          id="touch"
+          type="checkbox"
+          checked
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+
+    <div class="setting">
+
+      <div class="settingText">
+
+        <div class="settingTitle">
+          Compteur FPS
+        </div>
+
+        <div class="settingDescription">
+          Affiche les images par seconde.
+        </div>
+
+      </div>
+
+
+      <label class="switch">
+
+        <input
+          id="fps"
+          type="checkbox"
+          checked
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+
+    <div class="setting">
+
+      <div class="settingText">
+
+        <div class="settingTitle">
+          Mode plein écran
+        </div>
+
+        <div class="settingDescription">
+          Utilise toute la fenêtre du navigateur.
+        </div>
+
+      </div>
+
+
+      <button
+        id="fullscreen"
+        style="max-width:160px">
+
+        PLEIN ÉCRAN
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- BOUTONS -->
+
+  <div class="buttons">
+
+    <button
+      id="save">
+
+      💾 SAUVEGARDER
+
+    </button>
+
+
+    <button
+      class="reset"
+      id="reset">
+
+      ↺ RÉINITIALISER
+
+    </button>
+
+  </div>
+
+
+</div>
+
+
+<!-- MESSAGE -->
+
+<div id="saved">
+
+  ✓ Paramètres sauvegardés
+
+</div>
+
+
+<script>
+
+
+/* =========================
+   ÉLÉMENTS
+========================= */
+
+const volume =
+  document.getElementById(
+    "volume"
+  );
+
+const volumeValue =
+  document.getElementById(
+    "volumeValue"
+  );
+
+
+const sensitivity =
+  document.getElementById(
+    "sensitivity"
+  );
+
+const sensitivityValue =
+  document.getElementById(
+    "sensitivityValue"
+  );
+
+
+const graphics =
+  document.getElementById(
+    "graphics"
+  );
+
+
+const shadows =
+  document.getElementById(
+    "shadows"
+  );
+
+
+const effects =
+  document.getElementById(
+    "effects"
+  );
+
+
+const vibration =
+  document.getElementById(
+    "vibration"
+  );
+
+
+const touch =
+  document.getElementById(
+    "touch"
+  );
+
+
+const fps =
+  document.getElementById(
+    "fps"
+  );
+
+
+const saved =
+  document.getElementById(
+    "saved"
+  );
+
+
+/* =========================
+   VALEURS
+========================= */
+
+volume.addEventListener(
+  "input",
+  () => {
+
+    volumeValue.textContent =
+      volume.value + "%";
+
+  }
+);
+
+
+sensitivity.addEventListener(
+  "input",
+  () => {
+
+    sensitivityValue.textContent =
+      sensitivity.value + "%";
+
+  }
+);
+
+
+/* =========================
+   SAUVEGARDE
+========================= */
+
+function saveSettings(){
+
+  const settings = {
+
+    volume:
+      volume.value,
+
+    graphics:
+      graphics.value,
+
+    shadows:
+      shadows.checked,
+
+    effects:
+      effects.checked,
+
+    sensitivity:
+      sensitivity.value,
+
+    vibration:
+      vibration.checked,
+
+    touch:
+      touch.checked,
+
+    fps:
+      fps.checked
+
+  };
+
+
+  localStorage.setItem(
+
+    "zentroSettings",
+
+    JSON.stringify(
+      settings
+    )
+
+  );
+
+
+  saved.classList.add(
+    "show"
+  );
+
+
+  setTimeout(
+    () => {
+
+      saved.classList.remove(
+        "show"
+      );
+
+    },
+    1800
+  );
+
+}
+
+
+/* =========================
+   CHARGEMENT
+========================= */
+
+function loadSettings(){
+
+  const data =
+    localStorage.getItem(
+      "zentroSettings"
+    );
+
+
+  if(!data){
+
+    volumeValue.textContent =
+      volume.value + "%";
+
+    sensitivityValue.textContent =
+      sensitivity.value + "%";
+
+    return;
+
+  }
+
+
+  try{
+
+    const settings =
+      JSON.parse(data);
+
+
+    if(
+      settings.volume !== undefined
+    ){
+
+      volume.value =
+        settings.volume;
+
+    }
+
+
+    if(
+      settings.graphics !== undefined
+    ){
+
+      graphics.value =
+        settings.graphics;
+
+    }
+
+
+    if(
+      settings.shadows !== undefined
+    ){
+
+      shadows.checked =
+        settings.shadows;
+
+    }
+
+
+    if(
+      settings.effects !== undefined
+    ){
+
+      effects.checked =
+        settings.effects;
+
+    }
+
+
+    if(
+      settings.sensitivity !== undefined
+    ){
+
+      sensitivity.value =
+        settings.sensitivity;
+
+    }
+
+
+    if(
+      settings.vibration !== undefined
+    ){
+
+      vibration.checked =
+        settings.vibration;
+
+    }
+
+
+    if(
+      settings.touch !== undefined
+    ){
+
+      touch.checked =
+        settings.touch;
+
+    }
+
+
+    if(
+      settings.fps !== undefined
+    ){
+
+      fps.checked =
+        settings.fps;
+
+    }
+
+
+    volumeValue.textContent =
+      volume.value + "%";
+
+
+    sensitivityValue.textContent =
+      sensitivity.value + "%";
+
+
+  }catch(error){
+
+    console.log(
+      "Erreur de chargement des paramètres"
+    );
+
+  }
+
+}
+
+
+/* =========================
+   BOUTON SAUVEGARDER
+========================= */
+
+document
+.getElementById("save")
+.addEventListener(
+  "click",
+  saveSettings
+);
+
+
+/* =========================
+   RÉINITIALISATION
+========================= */
+
+document
+.getElementById("reset")
+.addEventListener(
+  "click",
+  () => {
+
+    volume.value = 70;
+
+    graphics.value =
+      "medium";
+
+    shadows.checked =
+      true;
+
+    effects.checked =
+      true;
+
+    sensitivity.value =
+      50;
+
+    vibration.checked =
+      true;
+
+    touch.checked =
+      true;
+
+    fps.checked =
+      true;
+
+
+    volumeValue.textContent =
+      "70%";
+
+    sensitivityValue.textContent =
+      "50%";
+
+
+    localStorage.removeItem(
+      "zentroSettings"
+    );
+
+
+    saved.textContent =
+      "✓ Paramètres réinitialisés";
+
+
+    saved.classList.add(
+      "show"
+    );
+
+
+    setTimeout(
+      () => {
+
+        saved.classList.remove(
+          "show"
+        );
+
+        saved.textContent =
+          "✓ Paramètres sauvegardés";
+
+      },
+      1800
+    );
+
+  }
+);
+
+
+/* =========================
+   PLEIN ÉCRAN
+========================= */
+
+document
+.getElementById("fullscreen")
+.addEventListener(
+  "click",
+  async () => {
+
+    try{
+
+      if(
+        !document.fullscreenElement
+      ){
+
+        await document.documentElement
+          .requestFullscreen();
+
+      }else{
+
+        await document.exitFullscreen();
+
+      }
+
+    }catch(error){
+
+      console.log(
+        "Plein écran non disponible"
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================
+   CHARGEMENT INITIAL
+========================= */
+
+loadSettings();
+
+</script>
+
+</body>
+
+</html>
