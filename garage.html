@@ -1,1 +1,879 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ZENTRO DRIVE — GARAGE</title>
 
+<style>
+*{
+  box-sizing:border-box;
+  user-select:none;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#05070b;
+  font-family:Arial,Helvetica,sans-serif;
+  color:white;
+}
+
+#garage{
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 50% 35%,#263140 0%,#10151d 35%,#05070b 75%);
+}
+
+header{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:75px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 25px;
+  z-index:10;
+  background:linear-gradient(
+    to bottom,
+    rgba(0,0,0,.75),
+    rgba(0,0,0,0)
+  );
+}
+
+.logo{
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:5px;
+}
+
+.logo span{
+  color:#55aaff;
+}
+
+.back{
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(0,0,0,.45);
+  color:white;
+  padding:12px 18px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.back:hover{
+  background:#55aaff;
+  color:black;
+}
+
+#title{
+  position:absolute;
+  top:95px;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  z-index:5;
+}
+
+#title h1{
+  margin:0;
+  font-size:42px;
+  letter-spacing:8px;
+}
+
+#title p{
+  margin:8px 0;
+  color:#9da8b8;
+}
+
+#panel{
+  position:absolute;
+  right:25px;
+  top:50%;
+  transform:translateY(-50%);
+  width:260px;
+  padding:20px;
+  border-radius:18px;
+  background:rgba(5,8,13,.82);
+  border:1px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(12px);
+  z-index:10;
+}
+
+#panel h2{
+  margin-top:0;
+  letter-spacing:2px;
+}
+
+.option{
+  margin:16px 0;
+}
+
+.option-title{
+  font-size:12px;
+  color:#8995a5;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+.colors{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+}
+
+.color{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,.4);
+  cursor:pointer;
+}
+
+.color:hover{
+  transform:scale(1.1);
+}
+
+.black{background:#08090b}
+.white{background:#eeeeee}
+.red{background:#a40000}
+.blue{background:#1261c9}
+.green{background:#145c35}
+.yellow{background:#d5b300}
+
+button{
+  width:100%;
+  margin-top:10px;
+  padding:14px;
+  border:0;
+  border-radius:10px;
+  background:#55aaff;
+  color:#020408;
+  font-weight:900;
+  cursor:pointer;
+  font-size:15px;
+}
+
+button:hover{
+  background:white;
+}
+
+#info{
+  position:absolute;
+  bottom:20px;
+  left:25px;
+  color:#8d98a8;
+  font-size:13px;
+  z-index:5;
+}
+
+canvas{
+  display:block;
+}
+</style>
+
+<!-- Import map officiel Three.js -->
+<script type="importmap">
+{
+  "imports":{
+    "three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
+  }
+}
+</script>
+
+</head>
+
+<body>
+
+<div id="garage">
+
+<header>
+  <div class="logo">ZENTRO <span>DRIVE</span></div>
+
+  <a class="back" href="index.html">
+    ← RETOUR AU JEU
+  </a>
+</header>
+
+<div id="title">
+  <h1>GARAGE</h1>
+  <p>PERSONNALISE TA VOITURE</p>
+</div>
+
+<div id="panel">
+
+  <h2>MA VOITURE</h2>
+
+  <div class="option">
+    <div class="option-title">Couleur</div>
+
+    <div class="colors">
+      <div class="color black" data-color="#08090b"></div>
+      <div class="color white" data-color="#eeeeee"></div>
+      <div class="color red" data-color="#a40000"></div>
+      <div class="color blue" data-color="#1261c9"></div>
+      <div class="color green" data-color="#145c35"></div>
+      <div class="color yellow" data-color="#d5b300"></div>
+    </div>
+  </div>
+
+  <div class="option">
+    <div class="option-title">Modèle</div>
+    <strong>Golf R — Zentro Edition</strong>
+  </div>
+
+  <div class="option">
+    <div class="option-title">Moteur</div>
+    <strong>Turbo Performance</strong>
+  </div>
+
+  <div class="option">
+    <div class="option-title">Puissance</div>
+    <strong>320 HP</strong>
+  </div>
+
+  <button id="play">
+    ▶ JOUER AVEC CETTE VOITURE
+  </button>
+
+</div>
+
+<div id="info">
+  🖱️ Clique et déplace la souris pour admirer la voiture
+</div>
+
+</div>
+
+<script type="module">
+
+import * as THREE from "three";
+
+/* =========================
+   SCÈNE
+========================= */
+
+const scene = new THREE.Scene();
+
+scene.background = new THREE.Color(0x05070b);
+
+const camera = new THREE.PerspectiveCamera(
+  45,
+  innerWidth / innerHeight,
+  0.1,
+  100
+);
+
+camera.position.set(5,3,7);
+
+
+/* =========================
+   RENDERER
+========================= */
+
+const renderer = new THREE.WebGLRenderer({
+  antialias:true,
+  powerPreference:"high-performance"
+});
+
+renderer.setPixelRatio(
+  Math.min(devicePixelRatio,1.5)
+);
+
+renderer.setSize(
+  innerWidth,
+  innerHeight
+);
+
+renderer.outputColorSpace =
+  THREE.SRGBColorSpace;
+
+document.getElementById("garage")
+  .appendChild(renderer.domElement);
+
+
+/* =========================
+   LUMIÈRES
+========================= */
+
+const ambient = new THREE.HemisphereLight(
+  0xffffff,
+  0x222233,
+  2
+);
+
+scene.add(ambient);
+
+const keyLight = new THREE.DirectionalLight(
+  0xffffff,
+  3
+);
+
+keyLight.position.set(
+  5,
+ 8,
+6
+);
+
+scene.add(keyLight);
+
+const blueLight = new THREE.PointLight(
+  0x3388ff,
+  18,
+  15
+);
+
+blueLight.position.set(
+  -4,
+ 2,
+2
+);
+
+scene.add(blueLight);
+
+const redLight = new THREE.PointLight(
+  0xff2200,
+  12,
+  12
+);
+
+redLight.position.set(
+  4,
+1,
+-4
+);
+
+scene.add(redLight);
+
+
+/* =========================
+   SOL
+========================= */
+
+const floor = new THREE.Mesh(
+
+  new THREE.PlaneGeometry(
+    30,
+    30
+  ),
+
+  new THREE.MeshStandardMaterial({
+    color:0x11151b,
+    roughness:.35,
+    metalness:.65
+  })
+
+);
+
+floor.rotation.x =
+  -Math.PI / 2;
+
+scene.add(floor);
+
+
+/* =========================
+   MATÉRIAUX
+========================= */
+
+let carMaterial =
+  new THREE.MeshPhysicalMaterial({
+
+    color:0x08090b,
+
+    metalness:.9,
+
+    roughness:.25,
+
+    clearcoat:1,
+
+    clearcoatRoughness:.05
+
+  });
+
+const glassMaterial =
+  new THREE.MeshPhysicalMaterial({
+
+    color:0x05070b,
+
+    metalness:.1,
+
+    roughness:.05,
+
+    transmission:.05
+
+  });
+
+const tireMaterial =
+  new THREE.MeshStandardMaterial({
+
+    color:0x050505,
+
+    roughness:.9
+
+  });
+
+const rimMaterial =
+  new THREE.MeshStandardMaterial({
+
+    color:0x777b82,
+
+    metalness:1,
+
+    roughness:.2
+
+  });
+
+const lightMaterial =
+  new THREE.MeshStandardMaterial({
+
+    color:0xffffff,
+
+    emissive:0xffffff,
+
+    emissiveIntensity:4
+
+  });
+
+const rearLightMaterial =
+  new THREE.MeshStandardMaterial({
+
+    color:0xff0000,
+
+    emissive:0xff0000,
+
+    emissiveIntensity:5
+
+  });
+
+
+/* =========================
+   VOITURE
+========================= */
+
+const car =
+  new THREE.Group();
+
+scene.add(car);
+
+
+/* carrosserie */
+
+const body =
+  new THREE.Mesh(
+
+    new THREE.BoxGeometry(
+      3.5,
+      .7,
+      6.8
+    ),
+
+    carMaterial
+
+  );
+
+body.position.y =
+  1.15;
+
+car.add(body);
+
+
+/* capot */
+
+const hood =
+  new THREE.Mesh(
+
+    new THREE.BoxGeometry(
+      3.25,
+      .3,
+      1.8
+    ),
+
+    carMaterial
+
+  );
+
+hood.position.set(
+  0,
+  1.52,
+  2.0
+);
+
+car.add(hood);
+
+
+/* toit */
+
+const roof =
+  new THREE.Mesh(
+
+    new THREE.BoxGeometry(
+      2.8,
+      .55,
+      2.8
+    ),
+
+    carMaterial
+
+  );
+
+roof.position.set(
+  0,
+  1.75,
+  -.4
+);
+
+roof.rotation.x =
+  -.02;
+
+car.add(roof);
+
+
+/* vitres */
+
+const windshield =
+  new THREE.Mesh(
+
+    new THREE.BoxGeometry(
+      2.65,
+      .42,
+      .12
+    ),
+
+    glassMaterial
+
+  );
+
+windshield.position.set(
+  0,
+  1.8,
+  1.0
+);
+
+windshield.rotation.x =
+  -.55;
+
+car.add(windshield);
+
+
+/* lunette arrière */
+
+const rearGlass =
+  windshield.clone();
+
+rearGlass.position.z =
+  -1.75;
+
+rearGlass.rotation.x =
+  .55;
+
+car.add(rearGlass);
+
+
+/* =========================
+   ROUES
+========================= */
+
+const wheelPositions = [
+
+  [-1.72,.72,2.05],
+  [ 1.72,.72,2.05],
+  [-1.72,.72,-2.05],
+  [ 1.72,.72,-2.05]
+
+];
+
+for(const p of wheelPositions){
+
+  const wheel =
+    new THREE.Mesh(
+
+      new THREE.CylinderGeometry(
+        .67,
+        .67,
+        .45,
+        24
+      ),
+
+      tireMaterial
+
+    );
+
+  wheel.rotation.z =
+    Math.PI/2;
+
+  wheel.position.set(
+    p[0],
+    p[1],
+    p[2]
+  );
+
+  car.add(wheel);
+
+
+  const rim =
+    new THREE.Mesh(
+
+      new THREE.CylinderGeometry(
+        .38,
+        .38,
+        .47,
+        20
+      ),
+
+      rimMaterial
+
+    );
+
+  rim.rotation.z =
+    Math.PI/2;
+
+  rim.position.copy(
+    wheel.position
+  );
+
+  car.add(rim);
+}
+
+
+/* =========================
+   PHARES AVANT
+========================= */
+
+for(const x of [-1.05,1.05]){
+
+  const light =
+    new THREE.Mesh(
+
+      new THREE.BoxGeometry(
+        .65,
+        .18,
+        .08
+      ),
+
+      lightMaterial
+
+    );
+
+  light.position.set(
+    x,
+    1.38,
+    3.43
+  );
+
+  car.add(light);
+
+}
+
+
+/* =========================
+   FEUX ARRIÈRE
+========================= */
+
+for(const x of [-1.05,1.05]){
+
+  const light =
+    new THREE.Mesh(
+
+      new THREE.BoxGeometry(
+        .65,
+        .18,
+        .08
+      ),
+
+      rearLightMaterial
+
+    );
+
+  light.position.set(
+    x,
+    1.38,
+    -3.43
+  );
+
+  car.add(light);
+
+}
+
+
+/* =========================
+   DOUBLE ÉCHAPPEMENT
+========================= */
+
+for(const x of [-.85,.85]){
+
+  const exhaust =
+    new THREE.Mesh(
+
+      new THREE.CylinderGeometry(
+        .16,
+        .16,
+        .35,
+        16
+      ),
+
+      new THREE.MeshStandardMaterial({
+        color:0x777777,
+        metalness:1,
+        roughness:.25
+      })
+
+    );
+
+  exhaust.rotation.x =
+    Math.PI/2;
+
+  exhaust.position.set(
+    x,
+    .95,
+    -3.5
+  );
+
+  car.add(exhaust);
+
+}
+
+
+/* =========================
+   PLATEFORME
+========================= */
+
+const platform =
+  new THREE.Mesh(
+
+    new THREE.CylinderGeometry(
+      5.5,
+      5.5,
+      .25,
+      64
+    ),
+
+    new THREE.MeshStandardMaterial({
+      color:0x181d25,
+      metalness:.8,
+      roughness:.25
+    })
+
+  );
+
+platform.position.y =
+  .1;
+
+scene.add(platform);
+
+
+/* =========================
+   ROTATION
+========================= */
+
+let targetRotation = 0;
+
+addEventListener(
+  "mousemove",
+  e => {
+
+    const x =
+      e.clientX / innerWidth;
+
+    targetRotation =
+      (x-.5)*1.4;
+
+  }
+);
+
+
+/* =========================
+   COULEURS
+========================= */
+
+document
+.querySelectorAll(".color")
+.forEach(button => {
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      const color =
+        button.dataset.color;
+
+      carMaterial.color.set(
+        color
+      );
+
+    }
+  );
+
+});
+
+
+/* =========================
+   JOUER
+========================= */
+
+document
+.getElementById("play")
+.addEventListener(
+  "click",
+  () => {
+
+    window.location.href =
+      "index.html";
+
+  }
+);
+
+
+/* =========================
+   ANIMATION
+========================= */
+
+function animate(){
+
+  requestAnimationFrame(
+    animate
+  );
+
+  car.rotation.y +=
+    (targetRotation -
+     car.rotation.y) * .06;
+
+  renderer.render(
+    scene,
+    camera
+  );
+
+}
+
+animate();
+
+
+/* =========================
+   RESIZE
+========================= */
+
+addEventListener(
+  "resize",
+  () => {
+
+    camera.aspect =
+      innerWidth /
+      innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+      innerWidth,
+      innerHeight
+    );
+
+  }
+);
+
+</script>
+
+</body>
+</html>
