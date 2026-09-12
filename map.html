@@ -1,0 +1,1312 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ZENTRO — MAP</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#05070b;
+  color:white;
+}
+
+body{
+  background:
+    radial-gradient(circle at 50% 30%,#162235,#070a10 55%,#020306);
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+  position:fixed;
+  z-index:50;
+  top:0;
+  left:0;
+  right:0;
+  height:76px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:0 28px;
+
+  background:rgba(4,7,12,.88);
+  backdrop-filter:blur(18px);
+
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.logo{
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:5px;
+}
+
+.logo span{
+  color:#4da3ff;
+}
+
+nav{
+  display:flex;
+  gap:7px;
+}
+
+nav a{
+  color:#8994a6;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:bold;
+  padding:11px 14px;
+  border-radius:10px;
+  transition:.2s;
+}
+
+nav a:hover,
+nav a.active{
+  color:white;
+  background:rgba(255,255,255,.08);
+}
+
+/* =========================
+   MAP CONTAINER
+========================= */
+
+.map-wrapper{
+  position:absolute;
+  top:76px;
+  left:0;
+  right:0;
+  bottom:0;
+
+  overflow:hidden;
+
+  cursor:grab;
+
+  background:#101822;
+}
+
+.map-wrapper.dragging{
+  cursor:grabbing;
+}
+
+/* =========================
+   MAP
+========================= */
+
+.map{
+  position:absolute;
+
+  width:1800px;
+  height:1200px;
+
+  left:50%;
+  top:50%;
+
+  transform:
+    translate(-50%,-50%)
+    scale(1);
+
+  transform-origin:center;
+
+  transition:transform .08s linear;
+
+  background:
+    radial-gradient(circle at 30% 35%,#263b2f 0,#17251e 24%,transparent 25%),
+    radial-gradient(circle at 75% 70%,#23382c 0,#17251e 20%,transparent 21%),
+    #18261f;
+
+  box-shadow:
+    0 0 100px rgba(0,0,0,.7);
+}
+
+/* =========================
+   ROUTES
+========================= */
+
+.road{
+  position:absolute;
+  background:#252c34;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.04);
+}
+
+.road.horizontal{
+  height:95px;
+}
+
+.road.vertical{
+  width:95px;
+}
+
+/* axes */
+
+.r1{
+  left:0;
+  top:300px;
+  width:1800px;
+}
+
+.r2{
+  left:0;
+  top:700px;
+  width:1800px;
+}
+
+.r3{
+  left:560px;
+  top:0;
+  height:1200px;
+}
+
+.r4{
+  left:1200px;
+  top:0;
+  height:1200px;
+}
+
+/* secondary roads */
+
+.secondary-road{
+  position:absolute;
+  height:42px;
+  background:#303841;
+}
+
+.s1{
+  width:900px;
+  left:0;
+  top:510px;
+  transform:rotate(-20deg);
+}
+
+.s2{
+  width:850px;
+  left:850px;
+  top:480px;
+  transform:rotate(18deg);
+}
+
+.s3{
+  width:750px;
+  left:120px;
+  top:940px;
+  transform:rotate(12deg);
+}
+
+/* =========================
+   ROAD LINES
+========================= */
+
+.line{
+  position:absolute;
+  background:repeating-linear-gradient(
+    90deg,
+    #d8d8c8 0 28px,
+    transparent 28px 52px
+  );
+  opacity:.45;
+}
+
+.line.horizontal{
+  height:3px;
+  width:100%;
+}
+
+.line.vertical{
+  width:3px;
+  height:100%;
+  background:repeating-linear-gradient(
+    0deg,
+    #d8d8c8 0 28px,
+    transparent 28px 52px
+  );
+}
+
+.l1{
+  top:346px;
+  left:0;
+}
+
+.l2{
+  top:746px;
+  left:0;
+}
+
+.l3{
+  top:0;
+  left:606px;
+}
+
+.l4{
+  top:0;
+  left:1246px;
+}
+
+/* =========================
+   BUILDINGS
+========================= */
+
+.building{
+  position:absolute;
+
+  border-radius:9px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #39434d,
+      #202832
+    );
+
+  border:1px solid rgba(255,255,255,.08);
+
+  box-shadow:
+    0 12px 20px rgba(0,0,0,.28);
+
+  overflow:hidden;
+}
+
+.building::after{
+  content:"";
+
+  position:absolute;
+  inset:8px;
+
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(125,185,230,.22) 0 5px,
+      transparent 5px 15px
+    );
+
+  opacity:.45;
+}
+
+/* quartier nord-ouest */
+
+.b1{
+  left:100px;
+  top:90px;
+  width:170px;
+  height:135px;
+}
+
+.b2{
+  left:310px;
+  top:90px;
+  width:190px;
+  height:155px;
+}
+
+.b3{
+  left:100px;
+  top:400px;
+  width:180px;
+  height:110px;
+}
+
+.b4{
+  left:320px;
+  top:400px;
+  width:170px;
+  height:130px;
+}
+
+/* quartier centre */
+
+.b5{
+  left:670px;
+  top:80px;
+  width:190px;
+  height:160px;
+}
+
+.b6{
+  left:900px;
+  top:80px;
+  width:220px;
+  height:145px;
+}
+
+.b7{
+  left:670px;
+  top:405px;
+  width:160px;
+  height:130px;
+}
+
+.b8{
+  left:890px;
+  top:400px;
+  width:200px;
+  height:145px;
+}
+
+/* quartier est */
+
+.b9{
+  left:1310px;
+  top:100px;
+  width:180px;
+  height:140px;
+}
+
+.b10{
+  left:1530px;
+  top:100px;
+  width:180px;
+  height:170px;
+}
+
+.b11{
+  left:1320px;
+  top:420px;
+  width:160px;
+  height:120px;
+}
+
+.b12{
+  left:1530px;
+  top:430px;
+  width:180px;
+  height:140px;
+}
+
+/* quartier sud */
+
+.b13{
+  left:100px;
+  top:820px;
+  width:180px;
+  height:130px;
+}
+
+.b14{
+  left:330px;
+  top:830px;
+  width:180px;
+  height:120px;
+}
+
+.b15{
+  left:680px;
+  top:820px;
+  width:190px;
+  height:130px;
+}
+
+.b16{
+  left:910px;
+  top:820px;
+  width:210px;
+  height:145px;
+}
+
+.b17{
+  left:1320px;
+  top:820px;
+  width:180px;
+  height:130px;
+}
+
+.b18{
+  left:1540px;
+  top:820px;
+  width:160px;
+  height:120px;
+}
+
+/* =========================
+   PARKS
+========================= */
+
+.park{
+  position:absolute;
+
+  border-radius:25px;
+
+  background:
+    radial-gradient(circle,#2e6040 0 8%,transparent 9%),
+    radial-gradient(circle at 70% 30%,#3c714a 0 7%,transparent 8%),
+    radial-gradient(circle at 30% 70%,#3a7048 0 7%,transparent 8%),
+    #234a31;
+
+  border:2px solid rgba(100,190,110,.2);
+
+  box-shadow:
+    inset 0 0 30px rgba(0,0,0,.25);
+}
+
+.park1{
+  left:100px;
+  top:600px;
+  width:350px;
+  height:120px;
+}
+
+.park2{
+  left:1320px;
+  top:600px;
+  width:350px;
+  height:120px;
+}
+
+/* =========================
+   TREES
+========================= */
+
+.tree{
+  position:absolute;
+
+  width:28px;
+  height:28px;
+
+  border-radius:50%;
+
+  background:#38754b;
+
+  box-shadow:
+    0 7px 0 #193d28,
+    0 8px 14px rgba(0,0,0,.3);
+}
+
+/* =========================
+   LAKE
+========================= */
+
+.lake{
+  position:absolute;
+
+  left:650px;
+  top:1010px;
+
+  width:500px;
+  height:130px;
+
+  border-radius:50%;
+
+  background:
+    linear-gradient(
+      160deg,
+      #1d5570,
+      #12354a
+    );
+
+  border:2px solid rgba(100,200,255,.15);
+
+  box-shadow:
+    inset 0 0 30px rgba(0,0,0,.3);
+}
+
+/* =========================
+   SPECIAL LOCATIONS
+========================= */
+
+.location{
+  position:absolute;
+
+  z-index:5;
+
+  min-width:120px;
+
+  padding:10px 13px;
+
+  text-align:center;
+
+  border-radius:12px;
+
+  background:rgba(5,8,13,.88);
+
+  border:1px solid rgba(255,255,255,.1);
+
+  box-shadow:0 8px 20px rgba(0,0,0,.3);
+
+  font-size:12px;
+  font-weight:bold;
+
+  pointer-events:none;
+}
+
+.location small{
+  display:block;
+
+  margin-top:4px;
+
+  color:#748094;
+
+  font-size:10px;
+}
+
+.gas{
+  left:1180px;
+  top:300px;
+}
+
+.circuit{
+  left:720px;
+  top:560px;
+}
+
+.residence{
+  left:70px;
+  top:1010px;
+}
+
+.center{
+  left:750px;
+  top:260px;
+}
+
+/* =========================
+   PLAYER
+========================= */
+
+.player{
+  position:absolute;
+
+  z-index:15;
+
+  left:850px;
+  top:640px;
+
+  width:34px;
+  height:50px;
+
+  border-radius:9px 9px 7px 7px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #111,
+      #4fa8ff,
+      #111
+    );
+
+  border:2px solid white;
+
+  box-shadow:
+    0 0 20px rgba(70,160,255,.9);
+
+  transform:rotate(0deg);
+
+  transition:.15s;
+}
+
+.player::before{
+  content:"";
+
+  position:absolute;
+
+  top:7px;
+  left:6px;
+
+  width:18px;
+  height:13px;
+
+  border-radius:5px;
+
+  background:#9dd8ff;
+}
+
+.player::after{
+  content:"";
+
+  position:absolute;
+
+  bottom:-15px;
+  left:50%;
+
+  width:10px;
+  height:10px;
+
+  transform:translateX(-50%);
+
+  border-radius:50%;
+
+  background:#4da3ff;
+
+  box-shadow:0 0 20px #4da3ff;
+}
+
+/* =========================
+   MAP UI
+========================= */
+
+.map-title{
+  position:fixed;
+
+  z-index:30;
+
+  top:100px;
+  left:28px;
+
+  padding:18px 20px;
+
+  border-radius:15px;
+
+  background:rgba(4,7,12,.82);
+
+  backdrop-filter:blur(15px);
+
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.map-title h1{
+  font-size:27px;
+}
+
+.map-title p{
+  color:#7d899b;
+  font-size:12px;
+  margin-top:5px;
+}
+
+/* =========================
+   CONTROLS
+========================= */
+
+.controls{
+  position:fixed;
+
+  z-index:30;
+
+  right:25px;
+  bottom:25px;
+
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.control{
+  width:45px;
+  height:45px;
+
+  border:1px solid rgba(255,255,255,.1);
+
+  border-radius:12px;
+
+  background:rgba(5,8,13,.9);
+
+  color:white;
+
+  font-size:19px;
+
+  cursor:pointer;
+
+  transition:.2s;
+}
+
+.control:hover{
+  background:#1b6fc5;
+}
+
+/* =========================
+   LEGEND
+========================= */
+
+.legend{
+  position:fixed;
+
+  z-index:30;
+
+  left:28px;
+  bottom:25px;
+
+  width:240px;
+
+  padding:17px;
+
+  border-radius:15px;
+
+  background:rgba(4,7,12,.88);
+
+  backdrop-filter:blur(15px);
+
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.legend-title{
+  color:#8d99aa;
+
+  font-size:11px;
+
+  text-transform:uppercase;
+
+  letter-spacing:2px;
+
+  margin-bottom:12px;
+}
+
+.legend-row{
+  display:flex;
+
+  align-items:center;
+
+  gap:9px;
+
+  margin:8px 0;
+
+  font-size:12px;
+
+  color:#b3bdca;
+}
+
+.dot{
+  width:12px;
+  height:12px;
+
+  border-radius:50%;
+}
+
+.dot.blue{
+  background:#4da3ff;
+  box-shadow:0 0 10px #4da3ff;
+}
+
+.dot.green{
+  background:#397a4e;
+}
+
+.dot.gray{
+  background:#303841;
+}
+
+.dot.yellow{
+  background:#e3b62d;
+}
+
+/* =========================
+   COORDINATES
+========================= */
+
+.coords{
+  position:fixed;
+
+  z-index:30;
+
+  right:25px;
+  top:100px;
+
+  padding:11px 14px;
+
+  border-radius:10px;
+
+  background:rgba(4,7,12,.8);
+
+  color:#8290a3;
+
+  font-size:11px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+  header{
+    height:auto;
+    min-height:70px;
+
+    padding:11px 14px;
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:8px;
+  }
+
+  nav{
+    width:100%;
+
+    overflow-x:auto;
+  }
+
+  nav a{
+    white-space:nowrap;
+    font-size:11px;
+    padding:9px 11px;
+  }
+
+  .map-wrapper{
+    top:115px;
+  }
+
+  .map-title{
+    top:130px;
+    left:15px;
+  }
+
+  .map-title h1{
+    font-size:21px;
+  }
+
+  .legend{
+    left:15px;
+    bottom:15px;
+    width:190px;
+  }
+
+  .coords{
+    right:15px;
+    top:130px;
+  }
+
+  .controls{
+    right:15px;
+    bottom:15px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="logo">
+    ZENTRO<span>•</span>
+  </div>
+
+  <nav>
+    <a href="index.html">ACCUEIL</a>
+    <a href="jeu.html">JOUER</a>
+    <a href="garage.html">GARAGE</a>
+    <a class="active" href="map.html">MAP</a>
+    <a href="voiture.html">VOITURES</a>
+    <a href="setting.html">SETTINGS</a>
+  </nav>
+
+</header>
+
+<div class="map-title">
+  <h1>🗺️ Zentro City</h1>
+  <p>Explore la ville et choisis ta destination</p>
+</div>
+
+<div class="coords" id="coords">
+  X: 850 &nbsp; Y: 640
+</div>
+
+<div class="map-wrapper" id="mapWrapper">
+
+  <div class="map" id="map">
+
+    <!-- ROUTES -->
+
+    <div class="road horizontal r1"></div>
+    <div class="road horizontal r2"></div>
+
+    <div class="road vertical r3"></div>
+    <div class="road vertical r4"></div>
+
+    <div class="secondary-road s1"></div>
+    <div class="secondary-road s2"></div>
+    <div class="secondary-road s3"></div>
+
+    <!-- LIGNES -->
+
+    <div class="line horizontal l1"></div>
+    <div class="line horizontal l2"></div>
+
+    <div class="line vertical l3"></div>
+    <div class="line vertical l4"></div>
+
+    <!-- BUILDINGS -->
+
+    <div class="building b1"></div>
+    <div class="building b2"></div>
+    <div class="building b3"></div>
+    <div class="building b4"></div>
+
+    <div class="building b5"></div>
+    <div class="building b6"></div>
+    <div class="building b7"></div>
+    <div class="building b8"></div>
+
+    <div class="building b9"></div>
+    <div class="building b10"></div>
+    <div class="building b11"></div>
+    <div class="building b12"></div>
+
+    <div class="building b13"></div>
+    <div class="building b14"></div>
+    <div class="building b15"></div>
+    <div class="building b16"></div>
+    <div class="building b17"></div>
+    <div class="building b18"></div>
+
+    <!-- PARCS -->
+
+    <div class="park park1"></div>
+    <div class="park park2"></div>
+
+    <!-- LAC -->
+
+    <div class="lake"></div>
+
+    <!-- ARBRES -->
+
+    <div class="tree" style="left:130px;top:620px"></div>
+    <div class="tree" style="left:180px;top:650px"></div>
+    <div class="tree" style="left:240px;top:625px"></div>
+    <div class="tree" style="left:310px;top:660px"></div>
+    <div class="tree" style="left:370px;top:630px"></div>
+
+    <div class="tree" style="left:1350px;top:620px"></div>
+    <div class="tree" style="left:1410px;top:660px"></div>
+    <div class="tree" style="left:1480px;top:625px"></div>
+    <div class="tree" style="left:1550px;top:655px"></div>
+    <div class="tree" style="left:1620px;top:620px"></div>
+
+    <!-- LIEUX -->
+
+    <div class="location gas">
+      ⛽ STATION
+      <small>ZEN FUEL</small>
+    </div>
+
+    <div class="location circuit">
+      🏁 CIRCUIT
+      <small>RACING CENTER</small>
+    </div>
+
+    <div class="location residence">
+      🏠 RÉSIDENCES
+      <small>ZEN HOME</small>
+    </div>
+
+    <div class="location center">
+      🏙️ CENTRE-VILLE
+      <small>ZENTRO PLAZA</small>
+    </div>
+
+    <!-- JOUEUR -->
+
+    <div class="player" id="player"></div>
+
+  </div>
+
+</div>
+
+<!-- CONTROLES -->
+
+<div class="controls">
+
+  <button class="control" id="zoomIn">+</button>
+
+  <button class="control" id="zoomOut">−</button>
+
+  <button class="control" id="reset">
+    ⌖
+  </button>
+
+</div>
+
+<!-- LÉGENDE -->
+
+<div class="legend">
+
+  <div class="legend-title">
+    Légende
+  </div>
+
+  <div class="legend-row">
+    <div class="dot blue"></div>
+    Ta voiture
+  </div>
+
+  <div class="legend-row">
+    <div class="dot gray"></div>
+    Routes
+  </div>
+
+  <div class="legend-row">
+    <div class="dot green"></div>
+    Parcs
+  </div>
+
+  <div class="legend-row">
+    <div class="dot yellow"></div>
+    Points d'intérêt
+  </div>
+
+</div>
+
+<script>
+
+/* =========================
+   VARIABLES
+========================= */
+
+const wrapper =
+  document.getElementById("mapWrapper");
+
+const map =
+  document.getElementById("map");
+
+const player =
+  document.getElementById("player");
+
+const coords =
+  document.getElementById("coords");
+
+let scale = 1;
+
+let x = 0;
+let y = 0;
+
+let dragging = false;
+
+let startX = 0;
+let startY = 0;
+
+let mapStartX = 0;
+let mapStartY = 0;
+
+/* =========================
+   TRANSFORM
+========================= */
+
+function updateMap(){
+
+  map.style.transform =
+    `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`;
+
+}
+
+/* =========================
+   ZOOM
+========================= */
+
+document.getElementById("zoomIn")
+.addEventListener("click",()=>{
+
+  scale += .15;
+
+  if(scale > 2.2)
+    scale = 2.2;
+
+  updateMap();
+
+});
+
+document.getElementById("zoomOut")
+.addEventListener("click",()=>{
+
+  scale -= .15;
+
+  if(scale < .55)
+    scale = .55;
+
+  updateMap();
+
+});
+
+/* =========================
+   RESET
+========================= */
+
+document.getElementById("reset")
+.addEventListener("click",()=>{
+
+  scale = 1;
+
+  x = 0;
+  y = 0;
+
+  updateMap();
+
+});
+
+/* =========================
+   SOURIS
+========================= */
+
+wrapper.addEventListener("mousedown",e=>{
+
+  dragging = true;
+
+  wrapper.classList.add("dragging");
+
+  startX = e.clientX;
+  startY = e.clientY;
+
+  mapStartX = x;
+  mapStartY = y;
+
+});
+
+window.addEventListener("mousemove",e=>{
+
+  if(!dragging)
+    return;
+
+  x = mapStartX + e.clientX - startX;
+  y = mapStartY + e.clientY - startY;
+
+  updateMap();
+
+});
+
+window.addEventListener("mouseup",()=>{
+
+  dragging = false;
+
+  wrapper.classList.remove("dragging");
+
+});
+
+/* =========================
+   TOUCH
+========================= */
+
+wrapper.addEventListener("touchstart",e=>{
+
+  if(e.touches.length !== 1)
+    return;
+
+  dragging = true;
+
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+
+  mapStartX = x;
+  mapStartY = y;
+
+},{passive:true});
+
+wrapper.addEventListener("touchmove",e=>{
+
+  if(!dragging || e.touches.length !== 1)
+    return;
+
+  x = mapStartX +
+      e.touches[0].clientX -
+      startX;
+
+  y = mapStartY +
+      e.touches[0].clientY -
+      startY;
+
+  updateMap();
+
+},{passive:true});
+
+wrapper.addEventListener("touchend",()=>{
+
+  dragging = false;
+
+});
+
+/* =========================
+   CLIQUE SUR LA CARTE
+========================= */
+
+wrapper.addEventListener("click",e=>{
+
+  if(Math.abs(e.clientX-startX)>5)
+    return;
+
+  const rect =
+    map.getBoundingClientRect();
+
+  const px =
+    (e.clientX - rect.left) / scale;
+
+  const py =
+    (e.clientY - rect.top) / scale;
+
+  player.style.left =
+    (px - 17) + "px";
+
+  player.style.top =
+    (py - 25) + "px";
+
+  coords.textContent =
+    "X: " +
+    Math.round(px) +
+    "   Y: " +
+    Math.round(py);
+
+});
+
+/* =========================
+   CLAVIER
+========================= */
+
+window.addEventListener("keydown",e=>{
+
+  const step = 25;
+
+  if(e.key === "ArrowUp" || e.key === "w")
+    y += step;
+
+  if(e.key === "ArrowDown" || e.key === "s")
+    y -= step;
+
+  if(e.key === "ArrowLeft" || e.key === "a")
+    x += step;
+
+  if(e.key === "ArrowRight" || e.key === "d")
+    x -= step;
+
+  if(e.key === "+")
+    scale = Math.min(2.2,scale+.1);
+
+  if(e.key === "-")
+    scale = Math.max(.55,scale-.1);
+
+  updateMap();
+
+});
+
+/* =========================
+   MOLETTE
+========================= */
+
+wrapper.addEventListener("wheel",e=>{
+
+  e.preventDefault();
+
+  if(e.deltaY < 0)
+    scale += .08;
+  else
+    scale -= .08;
+
+  scale =
+    Math.max(.55,Math.min(2.2,scale));
+
+  updateMap();
+
+},{passive:false});
+
+/* =========================
+   INITIALISATION
+========================= */
+
+updateMap();
+
+</script>
+
+</body>
+</html>
+```
