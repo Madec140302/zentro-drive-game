@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZENTRO — Garage</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#050609,#111827);
+color:white;
+min-height:100vh;
+}
+nav{
+height:65px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 25px;
+background:rgba(5,5,8,.92);
+border-bottom:1px solid #252a35;
+position:sticky;
+top:0;
+z-index:10;
+}
+.logo{
+font-size:25px;
+font-weight:900;
+letter-spacing:4px;
+}
+nav a{
+color:white;
+text-decoration:none;
+margin-left:15px;
+font-size:13px;
+}
+nav a:hover{color:#4da3ff}
+
+main{
+max-width:1000px;
+margin:auto;
+padding:45px 20px;
+}
+
+h1{
+font-size:42px;
+margin-bottom:8px;
+}
+.subtitle{
+color:#8993a3;
+margin-bottom:35px;
+}
+
+.garage{
+display:grid;
+grid-template-columns:1.3fr 1fr;
+gap:25px;
+}
+
+.car{
+height:420px;
+border-radius:25px;
+background:linear-gradient(145deg,#171b24,#08090d);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:120px;
+box-shadow:0 25px 70px rgba(0,0,0,.5);
+}
+
+.panel{
+background:rgba(255,255,255,.05);
+border:1px solid rgba(255,255,255,.1);
+border-radius:20px;
+padding:25px;
+}
+
+h2{margin-top:0}
+
+.colors{
+display:flex;
+gap:10px;
+margin:20px 0;
+}
+
+.color{
+width:42px;
+height:42px;
+border-radius:50%;
+border:2px solid white;
+cursor:pointer;
+}
+
+.black{background:#050505}
+.blue{background:#174cff}
+.red{background:#d21e2b}
+.white{background:white}
+.green{background:#16834a}
+
+button{
+width:100%;
+padding:15px;
+border:0;
+border-radius:12px;
+background:#168cff;
+color:white;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+}
+
+button:hover{background:#0876df}
+
+@media(max-width:700px){
+.garage{grid-template-columns:1fr}
+.car{height:280px}
+h1{font-size:32px}
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<div class="logo">ZENTRO</div>
+
+<div>
+<a href="index.html">🏠 ACCUEIL</a>
+<a href="map.html">🗺️ MAP</a>
+<a href="voiture.html">🏎️ VOITURES</a>
+<a href="setting.html">⚙️ SETTINGS</a>
+</div>
+</nav>
+
+<main>
+
+<h1>🚗 GARAGE</h1>
+<div class="subtitle">Personnalise ta voiture</div>
+
+<div class="garage">
+
+<div class="car" id="car">
+🚗
+</div>
+
+<div class="panel">
+
+<h2>Golf R</h2>
+
+<p>Configuration actuelle</p>
+
+<div class="colors">
+
+<div class="color black onclick"
+onclick="changeColor('#050505')"></div>
+
+<div class="color blue"
+onclick="changeColor('#174cff')"></div>
+
+<div class="color red"
+onclick="changeColor('#d21e2b')"></div>
+
+<div class="color white"
+onclick="changeColor('#ffffff')"></div>
+
+<div class="color green"
+onclick="changeColor('#16834a')"></div>
+
+</div>
+
+<p>⚙️ Puissance : 320 ch</p>
+<p>⚡ Accélération : 0–100 km/h</p>
+<p>🏁 Transmission : AWD</p>
+
+<button onclick="saveGarage()">💾 SAUVEGARDER</button>
+
+<button onclick="location.href='jeu.html'">
+🎮 JOUER
+</button>
+
+</div>
+
+</div>
+
+</main>
+
+<script>
+
+function changeColor(color){
+
+document.getElementById("car").style.color=color;
+
+localStorage.setItem("zentroColor",color);
+
+}
+
+function saveGarage(){
+
+alert("Configuration sauvegardée ! 🚗");
+
+}
+
+const saved=localStorage.getItem("zentroColor");
+
+if(saved){
+document.getElementById("car").style.color=saved;
+}
+
+</script>
+
+</body>
+</html>
