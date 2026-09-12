@@ -1,0 +1,944 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZENTRO — Garage</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#05070b;
+  color:white;
+}
+
+body{
+  background:
+    radial-gradient(circle at 50% 25%,#17243a 0%,#080b12 45%,#020306 100%);
+}
+
+/* ===== FOND ===== */
+
+.background{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+}
+
+.light{
+  position:absolute;
+  width:600px;
+  height:600px;
+  border-radius:50%;
+  filter:blur(100px);
+  opacity:.18;
+  background:#278cff;
+}
+
+.light.one{
+  top:-250px;
+  left:-150px;
+}
+
+.light.two{
+  right:-250px;
+  bottom:-300px;
+  background:#8b35ff;
+}
+
+/* ===== HEADER ===== */
+
+header{
+  position:fixed;
+  z-index:20;
+  top:0;
+  left:0;
+  right:0;
+  height:78px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 28px;
+  background:rgba(4,7,12,.82);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.logo{
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:5px;
+}
+
+.logo span{
+  color:#4da3ff;
+}
+
+nav{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+nav a{
+  color:#aaa;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:bold;
+  padding:11px 14px;
+  border-radius:10px;
+  transition:.2s;
+}
+
+nav a:hover,
+nav a.active{
+  color:white;
+  background:rgba(255,255,255,.08);
+}
+
+/* ===== MAIN ===== */
+
+main{
+  position:absolute;
+  inset:78px 0 0;
+  display:grid;
+  grid-template-columns:340px 1fr 300px;
+  min-height:0;
+}
+
+/* ===== LEFT PANEL ===== */
+
+.left{
+  padding:28px;
+  border-right:1px solid rgba(255,255,255,.07);
+  background:rgba(3,5,9,.45);
+  overflow:auto;
+}
+
+.section-title{
+  font-size:12px;
+  color:#718097;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  margin-bottom:14px;
+}
+
+h1{
+  font-size:36px;
+  margin-bottom:8px;
+}
+
+.subtitle{
+  color:#8793a7;
+  line-height:1.5;
+  margin-bottom:28px;
+}
+
+.car-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.car-card{
+  padding:17px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:15px;
+  background:rgba(255,255,255,.035);
+  cursor:pointer;
+  transition:.22s;
+}
+
+.car-card:hover{
+  transform:translateX(4px);
+  background:rgba(255,255,255,.07);
+}
+
+.car-card.selected{
+  border-color:#4da3ff;
+  background:rgba(77,163,255,.12);
+  box-shadow:0 0 25px rgba(77,163,255,.1);
+}
+
+.car-name{
+  font-size:17px;
+  font-weight:bold;
+}
+
+.car-type{
+  margin-top:5px;
+  color:#758196;
+  font-size:12px;
+}
+
+/* ===== SHOWROOM ===== */
+
+.showroom{
+  position:relative;
+  min-width:0;
+  min-height:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.floor{
+  position:absolute;
+  width:85%;
+  height:55%;
+  bottom:5%;
+  border-radius:50%;
+  background:
+    radial-gradient(ellipse,#202a38 0%,#101722 45%,transparent 72%);
+  transform:perspective(500px) rotateX(65deg);
+}
+
+.floor-line{
+  position:absolute;
+  bottom:17%;
+  width:65%;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#49627e,transparent);
+  box-shadow:0 0 25px rgba(80,150,255,.4);
+}
+
+/* ===== VOITURE ===== */
+
+.car{
+  position:relative;
+  width:500px;
+  height:270px;
+  transform:perspective(900px) rotateX(4deg) rotateY(-8deg);
+  transition:transform .5s ease;
+  filter:drop-shadow(0 35px 25px rgba(0,0,0,.7));
+}
+
+.car:hover{
+  transform:perspective(900px) rotateX(3deg) rotateY(-12deg) scale(1.03);
+}
+
+.body{
+  position:absolute;
+  left:50px;
+  top:105px;
+  width:400px;
+  height:95px;
+  border-radius:45px 35px 28px 28px;
+  background:
+    linear-gradient(110deg,#080b10,#252c37 45%,#05070a 75%);
+  box-shadow:
+    inset 0 8px 12px rgba(255,255,255,.12),
+    inset 0 -10px 20px rgba(0,0,0,.8),
+    0 15px 25px rgba(0,0,0,.5);
+  border:1px solid rgba(255,255,255,.13);
+}
+
+.roof{
+  position:absolute;
+  left:140px;
+  top:55px;
+  width:235px;
+  height:105px;
+  border-radius:110px 125px 20px 20px;
+  background:linear-gradient(125deg,#090d13,#252f3d,#080a0d);
+  clip-path:polygon(17% 100%,28% 10%,66% 0%,95% 100%);
+}
+
+.window{
+  position:absolute;
+  top:68px;
+  width:85px;
+  height:55px;
+  background:
+    linear-gradient(130deg,#26394c,#071018 65%);
+  border:1px solid rgba(120,180,230,.25);
+}
+
+.window.front{
+  left:235px;
+  clip-path:polygon(8% 100%,22% 0%,100% 0%,100% 100%);
+}
+
+.window.back{
+  left:145px;
+  clip-path:polygon(0 100%,15% 0,90% 0,100% 100%);
+}
+
+.hood{
+  position:absolute;
+  left:42px;
+  top:95px;
+  width:145px;
+  height:72px;
+  border-radius:50% 10% 10% 30%;
+  background:linear-gradient(160deg,#2d3745,#080b0f);
+}
+
+.front{
+  position:absolute;
+  left:28px;
+  top:137px;
+  width:70px;
+  height:43px;
+  border-radius:25px 8px 8px 20px;
+  background:#090d12;
+}
+
+.grille{
+  position:absolute;
+  left:43px;
+  top:151px;
+  width:45px;
+  height:20px;
+  border-radius:5px;
+  background:#020304;
+  border:1px solid #222b35;
+}
+
+.headlight{
+  position:absolute;
+  left:47px;
+  top:127px;
+  width:53px;
+  height:18px;
+  border-radius:50%;
+  background:linear-gradient(90deg,#ffffff,#86c7ff);
+  box-shadow:0 0 20px #72c3ff;
+  transform:rotate(-5deg);
+}
+
+.headlight.right{
+  left:420px;
+}
+
+.side-mirror{
+  position:absolute;
+  width:20px;
+  height:12px;
+  border-radius:50%;
+  background:#0a0d12;
+  top:110px;
+}
+
+.side-mirror.left{
+  left:126px;
+}
+
+.side-mirror.right{
+  right:102px;
+}
+
+.wheel{
+  position:absolute;
+  width:75px;
+  height:75px;
+  border-radius:50%;
+  background:#050608;
+  border:9px solid #101318;
+  box-shadow:
+    inset 0 0 0 4px #252c35,
+    0 10px 15px rgba(0,0,0,.7);
+}
+
+.wheel:after{
+  content:"";
+  position:absolute;
+  width:32px;
+  height:32px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:
+    radial-gradient(circle,#8995a5 0 15%,#202832 16% 35%,#657080 36% 42%,#0b0d11 43%);
+}
+
+.wheel.fl{
+  left:78px;
+  top:157px;
+}
+
+.wheel.fr{
+  right:75px;
+  top:157px;
+}
+
+/* ===== RIGHT PANEL ===== */
+
+.right{
+  padding:28px;
+  background:rgba(3,5,9,.5);
+  border-left:1px solid rgba(255,255,255,.07);
+  overflow:auto;
+}
+
+.stat{
+  margin-bottom:22px;
+}
+
+.stat-head{
+  display:flex;
+  justify-content:space-between;
+  color:#aab5c6;
+  font-size:13px;
+  margin-bottom:8px;
+}
+
+.bar{
+  width:100%;
+  height:7px;
+  border-radius:10px;
+  overflow:hidden;
+  background:#161c25;
+}
+
+.bar div{
+  height:100%;
+  width:0;
+  border-radius:10px;
+  background:linear-gradient(90deg,#2689ff,#73c7ff);
+  transition:width .4s;
+}
+
+.colors{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
+
+.color{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  border:2px solid transparent;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.color:hover{
+  transform:scale(1.1);
+}
+
+.color.active{
+  border-color:white;
+  box-shadow:0 0 0 3px rgba(255,255,255,.12);
+}
+
+.black{background:#07080a}
+.white{background:#eee}
+.blue{background:#246dca}
+.red{background:#c62828}
+.green{background:#1e754e}
+.yellow{background:#d4a72c}
+.purple{background:#703ac2}
+
+.action{
+  width:100%;
+  margin-top:25px;
+  padding:16px;
+  border:0;
+  border-radius:13px;
+  color:white;
+  background:linear-gradient(135deg,#1674e8,#42a9ff);
+  font-weight:900;
+  cursor:pointer;
+  font-size:15px;
+  transition:.2s;
+}
+
+.action:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 30px rgba(30,130,255,.25);
+}
+
+.secondary{
+  display:block;
+  text-align:center;
+  margin-top:10px;
+  padding:13px;
+  border-radius:13px;
+  color:#9ba8ba;
+  text-decoration:none;
+  background:rgba(255,255,255,.05);
+}
+
+.info{
+  margin-top:25px;
+  padding:15px;
+  border-radius:13px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.06);
+}
+
+.info-row{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  color:#8995a7;
+  font-size:13px;
+}
+
+.info-row:last-child{
+  border-bottom:0;
+}
+
+.info-row strong{
+  color:white;
+}
+
+/* ===== TOAST ===== */
+
+.toast{
+  position:fixed;
+  z-index:50;
+  left:50%;
+  bottom:30px;
+  transform:translate(-50%,20px);
+  padding:13px 20px;
+  border-radius:12px;
+  background:rgba(8,11,17,.94);
+  border:1px solid rgba(255,255,255,.1);
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+/* ===== MOBILE ===== */
+
+@media(max-width:1050px){
+  main{
+    grid-template-columns:280px 1fr;
+  }
+
+  .right{
+    display:none;
+  }
+
+  .car{
+    transform:scale(.85) perspective(900px) rotateX(4deg) rotateY(-8deg);
+  }
+}
+
+@media(max-width:720px){
+  html,body{
+    overflow:auto;
+  }
+
+  header{
+    height:auto;
+    min-height:70px;
+    padding:12px 15px;
+    align-items:flex-start;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  nav{
+    width:100%;
+    overflow-x:auto;
+    padding-bottom:3px;
+  }
+
+  nav a{
+    white-space:nowrap;
+  }
+
+  main{
+    position:relative;
+    inset:auto;
+    margin-top:125px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .left{
+    order:2;
+    border:0;
+  }
+
+  .showroom{
+    order:1;
+    height:360px;
+    min-height:360px;
+  }
+
+  .car{
+    transform:scale(.62) perspective(900px) rotateX(4deg) rotateY(-8deg);
+  }
+
+  .car:hover{
+    transform:scale(.64) perspective(900px) rotateX(3deg) rotateY(-10deg);
+  }
+
+  .floor{
+    width:120%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="background">
+  <div class="light one"></div>
+  <div class="light two"></div>
+</div>
+
+<header>
+  <div class="logo">ZENTRO<span>•</span></div>
+
+  <nav>
+    <a href="index.html">ACCUEIL</a>
+    <a href="jeu.html">JOUER</a>
+    <a class="active" href="garage.html">GARAGE</a>
+    <a href="map.html">MAP</a>
+    <a href="voiture.html">VOITURES</a>
+    <a href="setting.html">SETTINGS</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- GAUCHE -->
+  <section class="left">
+
+    <div class="section-title">Zentro Garage</div>
+
+    <h1>Garage</h1>
+
+    <p class="subtitle">
+      Prépare ta voiture avant de partir explorer la ville.
+      Choisis ton modèle et personnalise son apparence.
+    </p>
+
+    <div class="section-title">Mes voitures</div>
+
+    <div class="car-list">
+
+      <div class="car-card selected" data-name="Golf R"
+           data-power="94" data-speed="88" data-control="91">
+        <div class="car-name">Golf R</div>
+        <div class="car-type">SPORT • AWD</div>
+      </div>
+
+      <div class="car-card" data-name="Sport GT"
+           data-power="88" data-speed="92" data-control="82">
+        <div class="car-name">Sport GT</div>
+        <div class="car-type">SPORT • RWD</div>
+      </div>
+
+      <div class="car-card" data-name="City RS"
+           data-power="72" data-speed="74" data-control="96">
+        <div class="car-name">City RS</div>
+        <div class="car-type">CITY • AWD</div>
+      </div>
+
+      <div class="car-card" data-name="Hyper X"
+           data-power="100" data-speed="100" data-control="78">
+        <div class="car-name">Hyper X</div>
+        <div class="car-type">HYPER • AWD</div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- SHOWROOM -->
+  <section class="showroom">
+
+    <div class="floor"></div>
+    <div class="floor-line"></div>
+
+    <div class="car" id="car">
+
+      <div class="roof"></div>
+
+      <div class="window back"></div>
+      <div class="window front"></div>
+
+      <div class="body"></div>
+      <div class="hood"></div>
+      <div class="front"></div>
+
+      <div class="grille"></div>
+
+      <div class="headlight"></div>
+      <div class="headlight right"></div>
+
+      <div class="side-mirror left"></div>
+      <div class="side-mirror right"></div>
+
+      <div class="wheel fl"></div>
+      <div class="wheel fr"></div>
+
+    </div>
+
+  </section>
+
+  <!-- DROITE -->
+  <aside class="right">
+
+    <div class="section-title">Véhicule sélectionné</div>
+
+    <h2 id="selectedName">Golf R</h2>
+
+    <div class="stat">
+      <div class="stat-head">
+        <span>Puissance</span>
+        <strong id="powerText">94%</strong>
+      </div>
+      <div class="bar">
+        <div id="powerBar" style="width:94%"></div>
+      </div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-head">
+        <span>Vitesse</span>
+        <strong id="speedText">88%</strong>
+      </div>
+      <div class="bar">
+        <div id="speedBar" style="width:88%"></div>
+      </div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-head">
+        <span>Contrôle</span>
+        <strong id="controlText">91%</strong>
+      </div>
+      <div class="bar">
+        <div id="controlBar" style="width:91%"></div>
+      </div>
+    </div>
+
+    <div class="section-title">Couleur</div>
+
+    <div class="colors">
+
+      <button class="color black active"
+              data-color="#08090b"></button>
+
+      <button class="color white"
+              data-color="#eeeeee"></button>
+
+      <button class="color blue"
+              data-color="#246dca"></button>
+
+      <button class="color red"
+              data-color="#c62828"></button>
+
+      <button class="color green"
+              data-color="#1e754e"></button>
+
+      <button class="color yellow"
+              data-color="#d4a72c"></button>
+
+      <button class="color purple"
+              data-color="#703ac2"></button>
+
+    </div>
+
+    <div class="info">
+
+      <div class="info-row">
+        <span>Transmission</span>
+        <strong>AWD</strong>
+      </div>
+
+      <div class="info-row">
+        <span>Moteur</span>
+        <strong>Turbo</strong>
+      </div>
+
+      <div class="info-row">
+        <span>Freins</span>
+        <strong>Sport</strong>
+      </div>
+
+      <div class="info-row">
+        <span>Éclairage</span>
+        <strong>LED</strong>
+      </div>
+
+    </div>
+
+    <button class="action" id="playButton">
+      🚗 JOUER AVEC CETTE VOITURE
+    </button>
+
+    <a class="secondary" href="voiture.html">
+      🏎️ Voir toutes les voitures
+    </a>
+
+  </aside>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+/* =========================
+   SÉLECTION DES VOITURES
+========================= */
+
+const cards = document.querySelectorAll(".car-card");
+
+const selectedName = document.getElementById("selectedName");
+
+const powerBar = document.getElementById("powerBar");
+const speedBar = document.getElementById("speedBar");
+const controlBar = document.getElementById("controlBar");
+
+const powerText = document.getElementById("powerText");
+const speedText = document.getElementById("speedText");
+const controlText = document.getElementById("controlText");
+
+let selectedCar = "Golf R";
+
+cards.forEach(card => {
+
+  card.addEventListener("click", () => {
+
+    cards.forEach(c => c.classList.remove("selected"));
+
+    card.classList.add("selected");
+
+    selectedCar = card.dataset.name;
+
+    const power = card.dataset.power;
+    const speed = card.dataset.speed;
+    const control = card.dataset.control;
+
+    selectedName.textContent = selectedCar;
+
+    powerBar.style.width = power + "%";
+    speedBar.style.width = speed + "%";
+    controlBar.style.width = control + "%";
+
+    powerText.textContent = power + "%";
+    speedText.textContent = speed + "%";
+    controlText.textContent = control + "%";
+
+    localStorage.setItem("zentroCar",selectedCar);
+
+    showToast(selectedCar + " sélectionnée 🚗");
+
+  });
+
+});
+
+/* =========================
+   COULEURS
+========================= */
+
+const colors = document.querySelectorAll(".color");
+
+const body = document.querySelector(".body");
+const roof = document.querySelector(".roof");
+const hood = document.querySelector(".hood");
+
+colors.forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    colors.forEach(c => c.classList.remove("active"));
+
+    button.classList.add("active");
+
+    const color = button.dataset.color;
+
+    body.style.background =
+      "linear-gradient(110deg," +
+      color +
+      ",#252c37 45%,#05070a 75%)";
+
+    roof.style.background =
+      "linear-gradient(125deg," +
+      color +
+      ",#252f3d,#080a0d)";
+
+    hood.style.background =
+      "linear-gradient(160deg,#2d3745," +
+      color + ")";
+
+    localStorage.setItem("zentroColor",color);
+
+    showToast("Couleur modifiée 🎨");
+
+  });
+
+});
+
+/* =========================
+   CHARGEMENT DES DONNÉES
+========================= */
+
+const savedCar = localStorage.getItem("zentroCar");
+
+if(savedCar){
+
+  cards.forEach(card => {
+
+    if(card.dataset.name === savedCar){
+
+      card.click();
+
+    }
+
+  });
+
+}
+
+const savedColor = localStorage.getItem("zentroColor");
+
+if(savedColor){
+
+  colors.forEach(button => {
+
+    if(button.dataset.color === savedColor){
+
+      button.click();
+
+    }
+
+  });
+
+}
+
+/* =========================
+   BOUTON JOUER
+========================= */
+
+document.getElementById("playButton")
+.addEventListener("click", () => {
+
+  localStorage.setItem("zentroCar",selectedCar);
+
+  window.location.href = "jeu.html";
+
+});
+
+/* =========================
+ 
+```
