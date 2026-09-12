@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
+<title>ZENTRO DRIVE</title>
+
+<style>
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+    font-family:Arial,sans-serif;
+}
+
+canvas{
+    display:block;
+    width:100%;
+    height:100%;
+}
+
+#loading{
+    position:fixed;
+    inset:0;
+    z-index:20;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:#050505;
+    color:white;
+}
+
+#loading h1{
+    font-size:42px;
+    letter-spacing:7px;
+    margin:0 0 10px;
+}
+
+#loading p{
+    opacity:.7;
+}
+
+#hud{
+    position:fixed;
+    top:15px;
+    left:15px;
+    z-index:10;
+    color:white;
+    background:rgba(0,0,0,.45);
+    padding:10px 14px;
+    border-radius:12px;
+}
+
+#speed{
+    font-size:28px;
+    font-weight:bold;
+}
+
+#fps{
+    font-size:12px;
+    opacity:.7;
+}
+
+#reset{
+    position:fixed;
+    top:15px;
+    right:15px;
+    z-index:10;
+    border:0;
+    padding:10px 14px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+#touch{
+    position:fixed;
+    bottom:15px;
+    left:0;
+    right:0;
+    z-index:10;
+    display:flex;
+    justify-content:space-between;
+    padding:0 18px;
+    pointer-events:none;
+}
+
+.touchGroup{
+    display:flex;
+    gap:10px;
+    pointer-events:auto;
+}
+
+.touch{
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    background:rgba(0,0,0,.45);
+    border:1px solid rgba(255,255,255,.3);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+    user-select:none;
+    touch-action:none;
+}
+
+@media(min-width:900px){
+    #touch{
+        opacity:.25;
+    }
+}
+</style>
+
+<script type="importmap">
+{
+    "imports":{
+        "three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+        "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+    }
+}
+</script>
+
+</head>
+
+<body>
+
+<div id="loading">
+    <h1>ZENTRO</h1>
+    <p id="loadingText">Chargement de la Ferrari...</p>
+</div>
+
+<div id="hud">
+    <div id="speed">0 km/h</div>
+    <div id="fps">FPS: --</div>
+</div>
+
+<button id="reset">↻ RESET</button>
+
+<div id="touch">
+
+    <div class="touchGroup">
+        <div class="touch" id="left">◀</div>
+        <div class="touch" id="right">▶</div>
+    </div>
+
+    <div class="touchGroup">
+        <div class="touch" id="brake">●</div>
+        <div class="touch" id="forward">▲</div>
+    </div>
+
+</div>
+
+
+<script type="module">
+
+import * as THREE from "three";
+import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
+
+
+/* =====================================================
+   SCÈNE
+===================================================== */
+
+const scene = new THREE.Scene();
+
+scene.background =
+    new THREE.Color(0x9fc9e8);
+
+scene.fog =
+    new THREE.Fog(
+        0x9fc9e8,
+        80,
+        350
+    );
+
+
+/* =====================================================
+   CAMERA
+===================================================== */
+
+const camera =
+    new THREE.PerspectiveCamera(
+        65,
+        innerWidth / innerHeight,
+        .1,
+        500
+    );
+
+camera.position.set(
+    0,
+    4,
+    10
+);
+
+
+/* =====================================================
+   RENDERER PERFORMANCE
+===================================================== */
+
+const renderer =
+    new THREE.WebGLRenderer({
+
+        antialias:false,
+
+        powerPreference:
+            "high-performance",
+
+        stencil:false,
+
+        depth:true
+
+    });
+
+
+/*
+   On limite volontairement le pixel ratio.
+   C'est beaucoup moins lourd sur les écrans
+   haute résolution.
+*/
+
+renderer.setPixelRatio(
+    Math.min(
+        window.devicePixelRatio,
+        1
+    )
+);
+
+renderer.setSize(
+    innerWidth,
+    innerHeight
+);
+
+renderer.outputColorSpace =
+    THREE.SRGBColorSpace;
+
+
+/*
+   IMPORTANT :
+   pas de shadowMap.
+   Les ombres dynamiques coûtaient
+   énormément de FPS.
+*/
+
+renderer.shadowMap.enabled = false;
+
+document.body.appendChild(
+    renderer.domElement
+);
+
+
+/* =====================================================
+   LUMIÈRE
+===================================================== */
+
+scene.add(
+    new THREE.HemisphereLight(
+        0xffffff,
+        0x556677,
+        2.2
+    )
+);
+
+const sun =
+    new THREE.DirectionalLight(
+        0xffffff,
+        2
+    );
+
+sun.position.set(
+    100,
+    150,
+    100
+);
+
+scene.add(sun);
+
+
+/* =====================================================
+   SOL
+===================================================== */
+
+const ground =
+    new THREE.Mesh(
+
+        new THREE.PlaneGeometry(
+            800,
+            800
+        ),
+
+        new THREE.MeshLambertMaterial({
+            color:0x425142
+        })
+
+    );
+
+ground.rotation.x =
+    -Math.PI/2;
+
+scene.add(ground);
+
+
+/* =====================================================
+   ROUTES
+===================================================== */
+
+const roadMaterial =
+    new THREE.MeshLambertMaterial({
+        color:0x25282b
+    });
+
+
+function road(
+    x,
+    z,
+    w,
+    d
+){
+
+    const r =
+        new THREE.Mesh(
+            new THREE.PlaneGeometry(
+                w,
+                d
+            ),
+            roadMaterial
+        );
+
+    r.rotation.x =
+        -Math.PI/2;
+
+    r.position.set(
+        x,
+        .015,
+        z
+    );
+
+    scene.add(r);
+}
+
+
+/* grande route centrale */
+
+road(
+    0,
+    0,
+    28,
+    800
+);
+
+road(
+    0,
+    0,
+    800,
+    28
+);
+
+road(
+    160,
+    0,
+    24,
+    800
+);
+
+road(
+    -160,
+    0,
+    24,
+    800
+);
+
+road(
+    0,
+    160,
+    800,
+    24
+);
+
+road(
+    0,
+    -160,
+    800,
+    24
+);
+
+
+/* =====================================================
+   LIGNES ROUTE
+===================================================== */
+
+const lineMaterial =
+    new THREE.MeshBasicMaterial({
+        color:0xffffff
+    });
+
+
+function line(
+    x,
+    z,
+    w,
+    d
+){
+
+    const m =
+        new THREE.Mesh(
+            new THREE.PlaneGeometry(
+                w,
+                d
+            ),
+            lineMaterial
+        );
+
+    m.rotation.x =
+        -Math.PI/2;
+
+    m.position.set(
+        x,
+        .025,
+        z
+    );
+
+    scene.add(m);
+
+}
+
+
+for(
+    let z=-380;
+    z<380;
+    z+=20
+){
+
+    line(
+        0,
+        z,
+        .35,
+        8
+    );
+
+    line(
+        160,
+        z,
+        .35,
+        8
+    );
+
+    line(
+        -160,
+        z,
+        .35,
+        8
+    );
+
+}
+
+
+for(
+    let x=-380;
+    x<380;
+    x+=20
+){
+
+    line(
+        x,
+        0,
+        8,
+        .35
+    );
+
+    line(
+        x,
+        160,
+        8,
+        .35
+    );
+
+    line(
+        x,
+        -160,
+        8,
+        .35
+    );
+
+}
+
+
+/* =====================================================
+   BÂTIMENTS OPTIMISÉS
+===================================================== */
+
+const buildingMaterials = [
+
+    new THREE.MeshLambertMaterial({
+        color:0x687078
+    }),
+
+    new THREE.MeshLambertMaterial({
+        color:0x77706a
+    }),
+
+    new THREE.MeshLambertMaterial({
+        color:0x596269
+    }),
+
+    new THREE.MeshLambertMaterial({
+        color:0x747b82
+    })
+
+];
+
+
+function building(
+    x,
+    z
+){
+
+    const w =
+        18 +
+        Math.random()*10;
+
+    const d =
+        18 +
+        Math.random()*10;
+
+    const h =
+        12 +
+        Math.random()*28;
+
+
+    const b =
+        new THREE.Mesh(
+
+            new THREE.BoxGeometry(
+                w,
+                h,
+                d
+            ),
+
+            buildingMaterials[
+                Math.floor(
+                    Math.random() *
+                    buildingMaterials.length
+                )
+            ]
+
+        );
+
+
+    b.position.set(
+        x,
+        h/2,
+        z
+    );
+
+    scene.add(b);
+
+}
+
+
+/*
+   Seulement quelques bâtiments.
+   Beaucoup plus rapide que des centaines
+   de bâtiments + fenêtres.
+*/
+
+for(
+    let x=-350;
+    x<=350;
+    x+=55
+){
+
+    for(
+        let z=-350;
+        z<=350;
+        z+=55
+    ){
+
+        if(
+            Math.abs(x%160)<30 ||
+            Math.abs(z%160)<30
+        ){
+
+            continue;
+
+        }
+
+        building(
+            x,
+            z
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ARBRES
+===================================================== */
+
+const trunkMaterial =
+    new THREE.MeshLambertMaterial({
+        color:0x5a3824
+    });
+
+const leafMaterial =
+    new THREE.MeshLambertMaterial({
+        color:0x24743b
+    });
+
+
+function tree(x,z){
+
+    const trunk =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                .3,
+                .4,
+                2.5,
+                6
+            ),
+            trunkMaterial
+        );
+
+    trunk.position.set(
+        x,
+        1.25,
+        z
+    );
+
+    scene.add(trunk);
+
+
+    const leaves =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                1.8,
+                8,
+                6
+            ),
+            leafMaterial
+        );
+
+    leaves.position.set(
+        x,
+        3.2,
+        z
+    );
+
+    scene.add(leaves);
+
+}
+
+
+/* seulement 45 arbres */
+
+for(
+    let i=0;
+    i<45;
+    i++
+){
+
+    const x =
+        (Math.random()-.5)*700;
+
+    const z =
+        (Math.random()-.5)*700;
+
+    if(
+        Math.abs(x)<25 &&
+        Math.abs(z)<25
+    )
+        continue;
+
+    tree(
+        x,
+        z
+    );
+
+}
+
+
+/* =====================================================
+   VOITURE
+===================================================== */
+
+let car = null;
+
+let carReady = false;
+
+
+/*
+   IMPORTANT :
+   Pas de voiture de secours.
+
+   Si la Ferrari ne charge pas,
+   on affiche une erreur au lieu de
+   remettre l'ancienne voiture.
+*/
+
+
+/* =====================================================
+   FERRARI GLB
+===================================================== */
+
+const loader =
+    new GLTFLoader();
+
+
+const FERRARI_URL =
+"https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/models/gltf/ferrari.glb";
+
+
+loader.load(
+
+    FERRARI_URL,
+
+    function(gltf){
+
+        car =
+            gltf.scene;
+
+
+        /*
+           Taille du modèle officiel.
+        */
+
+        car.scale.set(
+            1.35,
+            1.35,
+            1.35
+        );
+
+
+        car.position.set(
+            0,
+            .15,
+            18
+        );
+
+
+        car.rotation.y =
+            Math.PI;
+
+
+        /*
+           Pas d'ombres = beaucoup plus rapide.
+        */
+
+        car.traverse(
+            object => {
+
+                if(
+                    object.isMesh
+                ){
+
+                    object.castShadow =
+                        false;
+
+                    object.receiveShadow =
+                        false;
+
+
+                    /*
+                       améliore les matériaux
+                       noirs de la voiture
+                    */
+
+                    if(
+                        object.material
+                    ){
+
+                        object.material.needsUpdate =
+                            true;
+
+                    }
+
+                }
+
+            }
+        );
+
+
+        /*
+           carrosserie noire
+        */
+
+        car.traverse(
+            object => {
+
+                if(
+                    !object.isMesh ||
+                    !object.material
+                )
+                    return;
+
+
+                const name =
+                    object.name
+                        .toLowerCase();
+
+
+                if(
+                    name.includes("body")
+                ){
+
+                    object.material =
+                        new THREE.MeshStandardMaterial({
+
+                            color:0x050505,
+
+                            metalness:.95,
+
+                            roughness:.25
+
+                        });
+
+                }
+
+            }
+        );
+
+
+        scene.add(
+            car
+        );
+
+
+        carReady =
+            true;
+
+
+        document.getElementById(
+            "loadingText"
+        ).textContent =
+            "Ferrari chargée ✓";
+
+
+        setTimeout(
+            () => {
+
+                document.getElementById(
+                    "loading"
+                ).style.display =
+                    "none";
+
+            },
+            500
+        );
+
+    },
+
+
+    function(xhr){
+
+        if(
+            xhr.total
+        ){
+
+            const percent =
+                Math.round(
+                    xhr.loaded /
+                    xhr.total *
+                    100
+                );
+
+            document.getElementById(
+                "loadingText"
+            ).textContent =
+                "Ferrari : " +
+                percent +
+                "%";
+
+        }
+
+    },
+
+
+    function(error){
+
+        console.error(
+            "ERREUR FERRARI :",
+            error
+        );
+
+
+        document.getElementById(
+            "loadingText"
+        ).innerHTML =
+            "Erreur de chargement de la Ferrari.<br>" +
+            "<small>Ouvre F12 → Console pour voir l'erreur.</small>";
+
+    }
+
+);
+
+
+/* =====================================================
+   CONTRÔLES
+===================================================== */
+
+const keys = {
+
+    forward:false,
+    back:false,
+    left:false,
+    right:false,
+    brake:false
+
+};
+
+
+function keyboard(
+    key,
+    value
+){
+
+    if(
+        key==="ArrowUp" ||
+        key==="w" ||
+        key==="W"
+    )
+        keys.forward=value;
+
+
+    if(
+        key==="ArrowDown" ||
+        key==="s" ||
+        key==="S"
+    )
+        keys.back=value;
+
+
+    if(
+        key==="ArrowLeft" ||
+        key==="a" ||
+        key==="A"
+    )
+        keys.left=value;
+
+
+    if(
+        key==="ArrowRight" ||
+        key==="d" ||
+        key==="D"
+    )
+        keys.right=value;
+
+
+    if(
+        key===" "
+    )
+        keys.brake=value;
+
+}
+
+
+addEventListener(
+    "keydown",
+    e=>keyboard(
+        e.key,
+        true
+    )
+);
+
+
+addEventListener(
+    "keyup",
+    e=>keyboard(
+        e.key,
+        false
+    )
+);
+
+
+/* =====================================================
+   TOUCH
+===================================================== */
+
+function touch(
+    id,
+    key
+){
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    element.addEventListener(
+        "pointerdown",
+        e=>{
+            e.preventDefault();
+            keys[key]=true;
+        }
+    );
+
+
+    const release =
+        e=>{
+            e.preventDefault();
+            keys[key]=false;
+        };
+
+
+    element.addEventListener(
+        "pointerup",
+        release
+    );
+
+    element.addEventListener(
+        "pointercancel",
+        release
+    );
+
+    element.addEventListener(
+        "pointerleave",
+        release
+    );
+
+}
+
+
+touch(
+    "left",
+    "left"
+);
+
+touch(
+    "right",
+    "right"
+);
+
+touch(
+    "forward",
+    "forward"
+);
+
+touch(
+    "brake",
+    "brake"
+);
+
+
+/* =====================================================
+   PHYSIQUE
+===================================================== */
+
+let velocity = 0;
+
+let steering = 0;
+
+const clock =
+    new THREE.Clock();
+
+
+function reset(){
+
+    if(!car)
+        return;
+
+
+    car.position.set(
+        0,
+        .15,
+        18
+    );
+
+    car.rotation.y =
+        Math.PI;
+
+    velocity=0;
+
+    steering=0;
+
+}
+
+
+document.getElementById(
+    "reset"
+).onclick =
+    reset;
+
+
+/* =====================================================
+   FPS
+===================================================== */
+
+let fpsFrames=0;
+
+let fpsTime=0;
+
+let currentFPS=60;
+
+
+/* =====================================================
+   ANIMATION
+===================================================== */
+
+function animate(){
+
+    requestAnimationFrame(
+        animate
+    );
+
+
+    const dt =
+        Math.min(
+            clock.getDelta(),
+            .033
+        );
+
+
+    /* FPS */
+
+    fpsFrames++;
+
+    fpsTime += dt;
+
+    if(
+        fpsTime >= 1
+    ){
+
+        currentFPS =
+            Math.round(
+                fpsFrames /
+                fpsTime
+            );
+
+        document.getElementById(
+            "fps"
+        ).textContent =
+            "FPS: " +
+            currentFPS;
+
+        fpsFrames=0;
+
+        fpsTime=0;
+
+    }
+
+
+    /*
+       On ne fait rouler la voiture
+       que lorsqu'elle est réellement chargée.
+    */
+
+    if(car && carReady){
+
+        /* accélération */
+
+        if(
+            keys.forward
+        ){
+
+            velocity +=
+                24 *
+                dt;
+
+        }
+
+
+        if(
+            keys.back
+        ){
+
+            velocity -=
+                15 *
+                dt;
+
+        }
+
+
+        /* frein */
+
+        if(
+            keys.brake
+        ){
+
+            velocity *=
+                Math.pow(
+                    .015,
+                    dt
+                );
+
+        }
+
+
+        /* friction */
+
+        if(
+            !keys.forward &&
+            !keys.back
+        ){
+
+            velocity *=
+                Math.pow(
+                    .3,
+                    dt
+                );
+
+        }
+
+
+        velocity =
+            THREE.MathUtils.clamp(
+                velocity,
+                -12,
+                55
+            );
+
+
+        /* direction */
+
+        const targetSteering =
+            (
+                keys.left
+                ? 1
+                : 0
+            )
+            -
+            (
+                keys.right
+                ? 1
+                : 0
+            );
+
+
+        steering =
+            THREE.MathUtils.lerp(
+                steering,
+                targetSteering,
+                .12
+            );
+
+
+        car.rotation.y +=
+            steering *
+            velocity *
+            .0012;
+
+
+        const direction =
+            new THREE.Vector3(
+                0,
+                0,
+                -1
+            );
+
+
+        direction.applyQuaternion(
+            car.quaternion
+        );
+
+
+        car.position.addScaledVector(
+            direction,
+            velocity *
+            dt
+        );
+
+
+        /* HUD */
+
+        document.getElementById(
+            "speed"
+        ).textContent =
+            Math.round(
+                Math.abs(velocity)*3.6
+            ) +
+            " km/h";
+
+
+        /* caméra */
+
+        const cameraOffset =
+            new THREE.Vector3(
+                0,
+                3.5,
+                9
+            );
+
+
+        cameraOffset.applyQuaternion(
+            car.quaternion
+        );
+
+
+        const wantedCamera =
+            car.position
+                .clone()
+                .add(
+                    cameraOffset
+                );
+
+
+        camera.position.lerp(
+            wantedCamera,
+            .08
+        );
+
+
+        const target =
+            car.position
+                .clone();
+
+
+        target.y += 1;
+
+
+        camera.lookAt(
+            target
+        );
+
+    }
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+
+}
+
+
+animate();
+
+
+/* =====================================================
+   RESIZE
+===================================================== */
+
+addEventListener(
+    "resize",
+    ()=>{
+
+        camera.aspect =
+            innerWidth /
+            innerHeight;
+
+        camera.updateProjectionMatrix();
+
+
+        /*
+           Résolution limitée à 1x.
+           Cela évite de faire travailler
+           inutilement le GPU.
+        */
+
+        renderer.setPixelRatio(
+            Math.min(
+                window.devicePixelRatio,
+                1
+            )
+        );
+
+        renderer.setSize(
+            innerWidth,
+            innerHeight
+        );
+
+    }
+);
+
+</script>
+
+</body>
+</html>
