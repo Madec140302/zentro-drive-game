@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1.0"
+>
+
+<title>ZENTRO — Settings</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+
+    margin:0;
+
+    min-height:100vh;
+
+    font-family:Arial,sans-serif;
+
+    color:white;
+
+    background:
+    radial-gradient(
+        circle at top,
+        #172033,
+        #050609 65%
+    );
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+nav{
+
+    height:65px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 25px;
+
+    background:
+    rgba(5,6,9,.94);
+
+    border-bottom:
+    1px solid rgba(255,255,255,.1);
+
+    position:sticky;
+
+    top:0;
+
+    z-index:20;
+}
+
+.logo{
+
+    font-size:25px;
+
+    font-weight:900;
+
+    letter-spacing:4px;
+}
+
+nav a{
+
+    color:white;
+
+    text-decoration:none;
+
+    margin-left:14px;
+
+    font-size:12px;
+
+    font-weight:bold;
+}
+
+nav a:hover{
+
+    color:#168cff;
+}
+
+
+/* =========================
+   PAGE
+========================= */
+
+main{
+
+    max-width:850px;
+
+    margin:auto;
+
+    padding:45px 20px;
+}
+
+h1{
+
+    font-size:42px;
+
+    margin:0 0 8px;
+}
+
+.subtitle{
+
+    color:#8d96a5;
+
+    margin-bottom:30px;
+}
+
+
+/* =========================
+   PANEL
+========================= */
+
+.panel{
+
+    background:
+    rgba(255,255,255,.045);
+
+    border:
+    1px solid rgba(255,255,255,.1);
+
+    border-radius:20px;
+
+    padding:10px 25px;
+
+    backdrop-filter:blur(15px);
+}
+
+
+/* =========================
+   SETTING
+========================= */
+
+.setting{
+
+    min-height:80px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+    border-bottom:
+    1px solid rgba(255,255,255,.08);
+}
+
+.setting:last-child{
+
+    border-bottom:0;
+}
+
+.setting strong{
+
+    font-size:15px;
+}
+
+.setting small{
+
+    display:block;
+
+    margin-top:5px;
+
+    color:#7e8795;
+
+    font-size:12px;
+}
+
+
+/* =========================
+   INPUTS
+========================= */
+
+select{
+
+    background:#11151d;
+
+    color:white;
+
+    border:
+    1px solid #394250;
+
+    padding:10px 14px;
+
+    border-radius:9px;
+}
+
+input[type="range"]{
+
+    width:190px;
+}
+
+input[type="checkbox"]{
+
+    width:20px;
+
+    height:20px;
+
+    accent-color:#168cff;
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+.buttons{
+
+    margin-top:20px;
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+}
+
+button{
+
+    border:0;
+
+    border-radius:10px;
+
+    padding:13px 20px;
+
+    color:white;
+
+    background:#168cff;
+
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+button:hover{
+
+    background:#0876df;
+}
+
+.reset{
+
+    background:#333b48;
+}
+
+.reset:hover{
+
+    background:#454f5e;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+    nav{
+
+        padding:0 12px;
+    }
+
+    nav a{
+
+        font-size:9px;
+
+        margin-left:5px;
+    }
+
+    .logo{
+
+        font-size:18px;
+    }
+
+    h1{
+
+        font-size:32px;
+    }
+
+    .setting{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        justify-content:center;
+
+        padding:17px 0;
+    }
+
+    input[type="range"]{
+
+        width:100%;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<nav>
+
+<div class="logo">
+ZENTRO
+</div>
+
+<div>
+
+<a href="index.html">
+🏠 ACCUEIL
+</a>
+
+<a href="jeu.html">
+🎮 JOUER
+</a>
+
+<a href="garage.html">
+🚗 GARAGE
+</a>
+
+<a href="map.html">
+🗺️ MAP
+</a>
+
+<a href="voiture.html">
+🏎️ VOITURES
+</a>
+
+</div>
+
+</nav>
+
+
+<main>
+
+<h1>
+⚙️ SETTINGS
+</h1>
+
+<div class="subtitle">
+Configure ton expérience Zentro
+</div>
+
+
+<div class="panel">
+
+
+<div class="setting">
+
+<div>
+
+<strong>
+🔊 Volume
+</strong>
+
+<small>
+Volume général du jeu
+</small>
+
+</div>
+
+<input
+type="range"
+id="volume"
+min="0"
+max="100"
+value="70"
+>
+
+</div>
+
+
+<div class="setting">
+
+<div>
+
+<strong>
+🎮 Qualité graphique
+</strong>
+
+<small>
+Réduit la qualité pour améliorer les FPS
+</small>
+
+</div>
+
+<select id="quality">
+
+<option value="low">
+Basse — FPS
+</option>
+
+<option
+value="medium"
+selected
+>
+Moyenne
+</option>
+
+<option value="high">
+Haute — Qualité
+</option>
+
+</select>
+
+</div>
+
+
+<div class="setting">
+
+<div>
+
+<strong>
+🌑 Ombres
+</strong>
+
+<small>
+Activer les ombres
+</small>
+
+</div>
+
+<input
+type="checkbox"
+id="shadows"
+checked
+>
+
+</div>
+
+
+<div class="setting">
+
+<div>
+
+<strong>
+✨ Effets
+</strong>
+
+<small>
+Effets visuels du jeu
+</small>
+
+</div>
+
+<input
+type="checkbox"
+id="effects"
+checked
+>
+
+</div>
+
+
+<div class="setting">
+
+<div>
+
+<strong>
+📱 Commandes tactiles
+</strong>
+
+<small>
+Afficher les commandes sur téléphone
+</small>
+
+</div>
+
+<input
+type="checkbox"
+id="touch"
+checked
+>
+
+</div>
+
+
+<div class="setting">
+
+<div>
+
+<strong>
+📳 Vibration
+</strong>
+
+<small>
+Vibration sur appareil compatible
+</small>
+
+</div>
+
+<input
+type="checkbox"
+id="vibration"
+checked
+>
+
+</div>
+
+
+</div>
+
+
+<div class="buttons">
+
+<button onclick="saveSettings()">
+💾 SAUVEGARDER
+</button>
+
+<button
+class="reset"
+onclick="resetSettings()"
+>
+↩️ RÉINITIALISER
+</button>
+
+<button
+class="reset"
+onclick="location.href='index.html'"
+>
+🏠 MENU
+</button>
+
+</div>
+
+
+</main>
+
+
+<script>
+
+/* =========================
+   SAUVEGARDER
+========================= */
+
+function saveSettings(){
+
+    const settings={
+
+        volume:
+        document.getElementById(
+            "volume"
+        ).value,
+
+        quality:
+        document.getElementById(
+            "quality"
+        ).value,
+
+        shadows:
+        document.getElementById(
+            "shadows"
+        ).checked,
+
+        effects:
+        document.getElementById(
+            "effects"
+        ).checked,
+
+        touch:
+        document.getElementById(
+            "touch"
+        ).checked,
+
+        vibration:
+        document.getElementById(
+            "vibration"
+        ).checked
+
+    };
+
+
+    localStorage.setItem(
+
+        "zentroSettings",
+
+        JSON.stringify(settings)
+
+    );
+
+
+    alert(
+        "Paramètres sauvegardés ! ⚙️"
+    );
+
+}
+
+
+/* =========================
+   CHARGER
+========================= */
+
+function loadSettings(){
+
+    const saved =
+    localStorage.getItem(
+        "zentroSettings"
+    );
+
+
+    if(!saved)
+        return;
+
+
+    const settings =
+    JSON.parse(saved);
+
+
+    document.getElementById(
+        "volume"
+    ).value =
+    settings.volume;
+
+
+    document.getElementById(
+        "quality"
+    ).value =
+    settings.quality;
+
+
+    document.getElementById(
+        "shadows"
+    ).checked =
+    settings.shadows;
+
+
+    document.getElementById(
+        "effects"
+    ).checked =
+    settings.effects;
+
+
+    document.getElementById(
+        "touch"
+    ).checked =
+    settings.touch;
+
+
+    document.getElementById(
+        "vibration"
+    ).checked =
+    settings.vibration;
+
+}
+
+
+/* =========================
+   RESET
+========================= */
+
+function resetSettings(){
+
+    localStorage.removeItem(
+        "zentroSettings"
+    );
+
+    location.reload();
+
+}
+
+
+loadSettings();
+
+</script>
+
+</body>
+</html>
