@@ -2,7 +2,7 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.m
 
 // =====================================================
 // ZENTRO V.1
-// PERSONNAGE JOUABLE — ZQSD / WASD / FLÈCHES
+// PERSONNAGE + ANIMATION DE MARCHE
 // =====================================================
 
 const scene = new THREE.Scene();
@@ -260,7 +260,6 @@ const legMaterial =
         color: 0x222222
     });
 
-
 const leftLeg = new THREE.Mesh(
     new THREE.BoxGeometry(
         0.28,
@@ -305,7 +304,6 @@ const armMaterial =
     new THREE.MeshStandardMaterial({
         color: 0x1565ff
     });
-
 
 const leftArm = new THREE.Mesh(
     new THREE.BoxGeometry(
@@ -362,15 +360,12 @@ scene.add(player);
 
 const keys = {};
 
-
-// Touche enfoncée
 window.addEventListener("keydown", (event) => {
 
     const key = event.key.toLowerCase();
 
     keys[key] = true;
 
-    // Empêche la page de défiler avec les flèches
     if (
         key === "z" ||
         key === "q" ||
@@ -388,13 +383,9 @@ window.addEventListener("keydown", (event) => {
     }
 });
 
-
-// Touche relâchée
 window.addEventListener("keyup", (event) => {
 
-    const key = event.key.toLowerCase();
-
-    keys[key] = false;
+    keys[event.key.toLowerCase()] = false;
 });
 
 
@@ -408,6 +399,8 @@ const turnSpeed = 2.8;
 
 const clock = new THREE.Clock();
 
+let walkTime = 0;
+
 
 // =====================================================
 // CAMÉRA
@@ -418,6 +411,97 @@ const cameraPosition =
 
 const cameraTarget =
     new THREE.Vector3();
+
+
+// =====================================================
+// ANIMATION DU PERSONNAGE
+// =====================================================
+
+function animateCharacter(
+    moving,
+    delta
+) {
+
+    if (moving) {
+
+        // Vitesse de l'animation
+        walkTime += delta * 10;
+
+        const swing =
+            Math.sin(walkTime) * 0.65;
+
+        // Jambes
+        leftLeg.rotation.x =
+            swing;
+
+        rightLeg.rotation.x =
+            -swing;
+
+        // Bras opposés aux jambes
+        leftArm.rotation.x =
+            -swing * 0.7;
+
+        rightArm.rotation.x =
+            swing * 0.7;
+
+        // Petit mouvement du corps
+        body.position.y =
+            1 + Math.abs(
+                Math.sin(walkTime * 2)
+            ) * 0.025;
+
+        // Petit mouvement de la tête
+        head.position.y =
+            1.95 + Math.abs(
+                Math.sin(walkTime * 2)
+            ) * 0.015;
+
+    } else {
+
+        // Retour progressif à la position normale
+        leftLeg.rotation.x =
+            THREE.MathUtils.lerp(
+                leftLeg.rotation.x,
+                0,
+                0.15
+            );
+
+        rightLeg.rotation.x =
+            THREE.MathUtils.lerp(
+                rightLeg.rotation.x,
+                0,
+                0.15
+            );
+
+        leftArm.rotation.x =
+            THREE.MathUtils.lerp(
+                leftArm.rotation.x,
+                0,
+                0.15
+            );
+
+        rightArm.rotation.x =
+            THREE.MathUtils.lerp(
+                rightArm.rotation.x,
+                0,
+                0.15
+            );
+
+        body.position.y =
+            THREE.MathUtils.lerp(
+                body.position.y,
+                1,
+                0.15
+            );
+
+        head.position.y =
+            THREE.MathUtils.lerp(
+                head.position.y,
+                1.95,
+                0.15
+            );
+    }
+}
 
 
 // =====================================================
@@ -433,8 +517,7 @@ function animate() {
 
 
     // =================================================
-    // TOURNER À GAUCHE
-    // Q / A / FLÈCHE GAUCHE
+    // TOURNER
     // =================================================
 
     if (
@@ -446,12 +529,6 @@ function animate() {
         player.rotation.y -=
             turnSpeed * delta;
     }
-
-
-    // =================================================
-    // TOURNER À DROITE
-    // D / FLÈCHE DROITE
-    // =================================================
 
     if (
         keys["d"] ||
@@ -465,8 +542,9 @@ function animate() {
 
     // =================================================
     // AVANCER
-    // Z / W / FLÈCHE HAUT
     // =================================================
+
+    let moving = false;
 
     if (
         keys["z"] ||
@@ -477,12 +555,13 @@ function animate() {
         player.translateZ(
             moveSpeed * delta
         );
+
+        moving = true;
     }
 
 
     // =================================================
     // RECULER
-    // S / FLÈCHE BAS
     // =================================================
 
     if (
@@ -493,11 +572,23 @@ function animate() {
         player.translateZ(
             -moveSpeed * delta
         );
+
+        moving = true;
     }
 
 
     // =================================================
-    // CAMÉRA TROISIÈME PERSONNE
+    // ANIMATION
+    // =================================================
+
+    animateCharacter(
+        moving,
+        delta
+    );
+
+
+    // =================================================
+    // CAMÉRA
     // =================================================
 
     const cameraOffset =
@@ -507,17 +598,13 @@ function animate() {
             -6
         );
 
-
-    // La caméra tourne avec le personnage
     cameraOffset.applyQuaternion(
         player.quaternion
     );
 
-
     cameraPosition
         .copy(player.position)
         .add(cameraOffset);
-
 
     camera.position.lerp(
         cameraPosition,
@@ -525,16 +612,11 @@ function animate() {
     );
 
 
-    // =================================================
-    // CIBLE DE LA CAMÉRA
-    // =================================================
-
     cameraTarget.set(
         player.position.x,
         player.position.y + 1.2,
         player.position.z
     );
-
 
     camera.lookAt(
         cameraTarget
