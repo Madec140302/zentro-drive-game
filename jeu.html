@@ -16,8 +16,7 @@
     padding:0;
 }
 
-html,
-body{
+html,body{
     width:100%;
     height:100%;
     overflow:hidden;
@@ -432,10 +431,6 @@ canvas{
 
 }
 
-/* =========================
-   MOBILE RESPONSIVE
-========================= */
-
 @media(max-width:700px){
 
     #top{
@@ -501,9 +496,7 @@ canvas{
 
 <div id="game"></div>
 
-<!-- =========================
-     HUD
-========================= -->
+<!-- HUD -->
 
 <div id="hud">
 
@@ -528,8 +521,11 @@ canvas{
                 </div>
 
                 <div class="statValue">
+
                     <span id="speed">0</span>
+
                     <small>km/h</small>
+
                 </div>
 
             </div>
@@ -618,11 +614,13 @@ canvas{
     </div>
 
     <div id="minimap">
+
         <canvas
             id="map"
             width="330"
             height="330"
         ></canvas>
+
     </div>
 
     <div id="help">
@@ -641,9 +639,7 @@ canvas{
 
 </div>
 
-<!-- =========================
-     MOBILE
-========================= -->
+<!-- MOBILE -->
 
 <div id="mobile">
 
@@ -685,9 +681,7 @@ canvas{
 
 </div>
 
-<!-- =========================
-     PAUSE
-========================= -->
+<!-- PAUSE -->
 
 <div id="pauseScreen">
 
@@ -723,9 +717,7 @@ canvas{
 
 </div>
 
-<!-- =========================
-     LOADING
-========================= -->
+<!-- LOADING -->
 
 <div id="loading">
 
@@ -743,9 +735,7 @@ canvas{
 
 </div>
 
-<!-- =========================
-     THREE
-========================= -->
+<!-- THREE.JS -->
 
 <script type="importmap">
 {
@@ -762,12 +752,11 @@ import * as THREE from "three";
 
 /* =========================================================
    ZENTRO DRIVE
-   VERSION ORIENTATION CORRIGÉE
 ========================================================= */
 
-/* =========================================================
+/* =========================
    LOCAL STORAGE
-========================================================= */
+========================= */
 
 const selectedCar =
     localStorage.getItem("zentroCar")
@@ -793,90 +782,54 @@ const nightMode =
     localStorage.getItem("zentroNight")
     === "true";
 
-/* =========================================================
+/* =========================
    VEHICLES
-========================================================= */
+========================= */
 
 const VEHICLES = {
 
     street:{
-
         name:"Zentro Street",
-
         maxSpeed:.65,
-
         acceleration:.55,
-
         brake:.90,
-
         reverse:.30,
-
         turn:1.55,
-
         width:1.15,
-
         length:2.10
-
     },
 
     formula:{
-
         name:"Zentro Formula",
-
         maxSpeed:.95,
-
         acceleration:.82,
-
         brake:1.10,
-
         reverse:.22,
-
         turn:1.75,
-
         width:1.15,
-
         length:2.00
-
     },
 
     van:{
-
         name:"Zentro Van",
-
         maxSpeed:.48,
-
         acceleration:.38,
-
         brake:.72,
-
         reverse:.24,
-
         turn:1.10,
-
         width:1.25,
-
         length:2.25
-
     },
 
     truck:{
-
         name:"Zentro Truck",
-
         maxSpeed:.34,
-
         acceleration:.24,
-
         brake:.58,
-
         reverse:.18,
-
         turn:.78,
-
         width:1.45,
-
         length:2.70
-
     }
 
 };
@@ -885,52 +838,34 @@ const vehicle =
     VEHICLES[selectedCar]
     || VEHICLES.street;
 
-/* =========================================================
+/* =========================
    QUALITY
-========================================================= */
+========================= */
 
 const QUALITY = {
 
     ultra:{
-
         pixel:.45,
-
         buildings:100,
-
         trees:35,
-
         traffic:3,
-
         view:110
-
     },
 
     balanced:{
-
         pixel:.60,
-
         buildings:150,
-
         trees:55,
-
         traffic:5,
-
         view:140
-
     },
 
     quality:{
-
         pixel:.75,
-
         buildings:200,
-
         trees:75,
-
         traffic:7,
-
         view:170
-
     }
 
 };
@@ -939,9 +874,9 @@ const quality =
     QUALITY[qualityName]
     || QUALITY.balanced;
 
-/* =========================================================
+/* =========================
    HUD
-========================================================= */
+========================= */
 
 document.getElementById(
     "vehicleName"
@@ -958,9 +893,9 @@ document.getElementById(
 ).textContent =
     qualityName;
 
-/* =========================================================
+/* =========================
    SCENE
-========================================================= */
+========================= */
 
 const scene =
     new THREE.Scene();
@@ -974,18 +909,19 @@ scene.background =
 
 scene.fog =
     new THREE.Fog(
+
         nightMode
             ? 0x07111e
             : 0x82add8,
 
         55,
-
         quality.view
+
     );
 
-/* =========================================================
+/* =========================
    CAMERA
-========================================================= */
+========================= */
 
 const camera =
     new THREE.PerspectiveCamera(
@@ -1001,9 +937,9 @@ const camera =
 
     );
 
-/* =========================================================
+/* =========================
    RENDERER
-========================================================= */
+========================= */
 
 const renderer =
     new THREE.WebGLRenderer({
@@ -1039,11 +975,13 @@ renderer.shadowMap.enabled =
 
 document
     .getElementById("game")
-    .appendChild(renderer.domElement);
+    .appendChild(
+        renderer.domElement
+    );
 
-/* =========================================================
+/* =========================
    LIGHT
-========================================================= */
+========================= */
 
 const hemisphere =
     new THREE.HemisphereLight(
@@ -1089,9 +1027,9 @@ scene.add(
     sunlight
 );
 
-/* =========================================================
+/* =========================
    MATERIALS
-========================================================= */
+========================= */
 
 const roadMaterial =
     new THREE.MeshBasicMaterial({
@@ -1118,28 +1056,19 @@ const treeMaterial =
         color:0x2f6b38
     });
 
-/* =========================================================
+/* =========================
    CITY
-========================================================= */
+========================= */
 
-const CITY =
-    10;
+const CITY = 10;
+const BLOCK = 12;
+const ROAD = 5;
+const TOTAL = CITY * BLOCK;
+const OFFSET = TOTAL / 2;
 
-const BLOCK =
-    12;
-
-const ROAD =
-    5;
-
-const TOTAL =
-    CITY * BLOCK;
-
-const OFFSET =
-    TOTAL / 2;
-
-/* =========================================================
+/* =========================
    GROUND
-========================================================= */
+========================= */
 
 const ground =
     new THREE.Mesh(
@@ -1154,15 +1083,15 @@ const ground =
     );
 
 ground.rotation.x =
-    -Math.PI/2;
+    -Math.PI / 2;
 
 scene.add(
     ground
 );
 
-/* =========================================================
+/* =========================
    ROADS
-========================================================= */
+========================= */
 
 function createRoads(){
 
@@ -1171,11 +1100,9 @@ function createRoads(){
 
     const vertical =
         new THREE.BoxGeometry(
-
             ROAD,
             .04,
             TOTAL
-
         );
 
     for(
@@ -1192,9 +1119,9 @@ function createRoads(){
 
         road.position.set(
 
-            i*BLOCK -
+            i * BLOCK -
             OFFSET +
-            BLOCK/2,
+            BLOCK / 2,
 
             .02,
 
@@ -1210,11 +1137,9 @@ function createRoads(){
 
     const horizontal =
         new THREE.BoxGeometry(
-
             TOTAL,
             .04,
             ROAD
-
         );
 
     for(
@@ -1235,9 +1160,9 @@ function createRoads(){
 
             .021,
 
-            i*BLOCK -
+            i * BLOCK -
             OFFSET +
-            BLOCK/2
+            BLOCK / 2
 
         );
 
@@ -1255,9 +1180,9 @@ function createRoads(){
 
 createRoads();
 
-/* =========================================================
+/* =========================
    ROAD LINES
-========================================================= */
+========================= */
 
 function createRoadLines(){
 
@@ -1294,9 +1219,9 @@ function createRoadLines(){
     ){
 
         const roadX =
-            x*BLOCK -
+            x * BLOCK -
             OFFSET +
-            BLOCK/2;
+            BLOCK / 2;
 
         for(
             let z=-OFFSET;
@@ -1307,7 +1232,9 @@ function createRoadLines(){
             if(
                 index>=max
             ){
+
                 break;
+
             }
 
             dummy.position.set(
@@ -1354,9 +1281,9 @@ function createRoadLines(){
 
 createRoadLines();
 
-/* =========================================================
+/* =========================
    BUILDINGS
-========================================================= */
+========================= */
 
 function createBuildings(){
 
@@ -1413,14 +1340,14 @@ function createBuildings(){
         ){
 
             const centerX =
-                x*BLOCK -
+                x * BLOCK -
                 OFFSET +
-                BLOCK/2;
+                BLOCK / 2;
 
             const centerZ =
-                z*BLOCK -
+                z * BLOCK -
                 OFFSET +
-                BLOCK/2;
+                BLOCK / 2;
 
             const positions=[
 
@@ -1440,7 +1367,9 @@ function createBuildings(){
                 if(
                     index>=count
                 ){
+
                     break;
+
                 }
 
                 const px =
@@ -1453,21 +1382,25 @@ function createBuildings(){
 
                 const height =
                     2.5 +
-                    ((x*17+
-                      z*9+
-                      p*3)%7)
-                    *.7;
+                    (
+                        (
+                            x*17 +
+                            z*9 +
+                            p*3
+                        ) % 7
+                    ) * .7;
 
                 const width =
                     2.2 +
-                    ((x+z+p)%4)
-                    *.2;
+                    (
+                        (x+z+p)%4
+                    ) * .2;
 
                 const depth =
                     2.2 +
-                    ((x*2+
-                      z+p)%4)
-                    *.2;
+                    (
+                        (x*2+z+p)%4
+                    ) * .2;
 
                 dummy.position.set(
 
@@ -1486,8 +1419,9 @@ function createBuildings(){
                 );
 
                 dummy.rotation.y =
-                    ((x+z+p)%3)
-                    *.08;
+                    (
+                        (x+z+p)%3
+                    ) * .08;
 
                 dummy.updateMatrix();
 
@@ -1515,9 +1449,9 @@ function createBuildings(){
 
 createBuildings();
 
-/* =========================================================
+/* =========================
    TREES
-========================================================= */
+========================= */
 
 function createTrees(){
 
@@ -1608,14 +1542,8 @@ function createTrees(){
             dummy.matrix
         );
 
-        dummy.position.y=
+        dummy.position.y =
             1.0;
-
-        dummy.scale.set(
-            1,
-            1,
-            1
-        );
 
         dummy.updateMatrix();
 
@@ -1638,9 +1566,9 @@ function createTrees(){
 
 createTrees();
 
-/* =========================================================
-   CAR
-========================================================= */
+/* =========================
+   PLAYER CAR
+========================= */
 
 const car =
     new THREE.Group();
@@ -1648,27 +1576,6 @@ const car =
 scene.add(
     car
 );
-
-/*
-    IMPORTANT :
-
-    DANS CETTE VERSION :
-
-    AVANT = +Z
-
-    ARRIÈRE = -Z
-
-    À rotation Y = 0 :
-
-         AVANT
-           ↑
-           +Z
-
-          🚗
-
-           -Z
-         ARRIÈRE
-*/
 
 const bodyMaterial =
     new THREE.MeshLambertMaterial({
@@ -1709,12 +1616,11 @@ const redLight =
 const wheels=[];
 
 let frontWheelLeft=null;
-
 let frontWheelRight=null;
 
-/* =========================================================
-   BOX
-========================================================= */
+/* =========================
+   BOX HELPER
+========================= */
 
 function box(
 
@@ -1732,11 +1638,9 @@ function box(
         new THREE.Mesh(
 
             new THREE.BoxGeometry(
-
                 width,
                 height,
                 depth
-
             ),
 
             material
@@ -1753,9 +1657,9 @@ function box(
 
 }
 
-/* =========================================================
+/* =========================
    WHEEL
-========================================================= */
+========================= */
 
 function wheel(
 
@@ -1786,7 +1690,7 @@ function wheel(
         );
 
     tire.rotation.z =
-        Math.PI/2;
+        Math.PI / 2;
 
     group.add(
         tire
@@ -1812,18 +1716,16 @@ function wheel(
 
 }
 
-/* =========================================================
+/* =========================
    STREET
-========================================================= */
+========================= */
 
 function createStreet(){
 
     const group =
         new THREE.Group();
 
-    /*
-       AVANT = +Z
-    */
+    /* CORPS */
 
     group.add(
 
@@ -1843,6 +1745,8 @@ function createStreet(){
 
     );
 
+    /* TOIT */
+
     group.add(
 
         box(
@@ -1861,10 +1765,7 @@ function createStreet(){
 
     );
 
-    /*
-       Pare-brise AVANT
-       = +Z
-    */
+    /* PARE-BRISE AVANT +Z */
 
     group.add(
 
@@ -1884,10 +1785,7 @@ function createStreet(){
 
     );
 
-    /*
-       Vitre arrière
-       = -Z
-    */
+    /* VITRE ARRIERE -Z */
 
     group.add(
 
@@ -1907,10 +1805,7 @@ function createStreet(){
 
     );
 
-    /*
-       PHARES AVANT
-       = +Z
-    */
+    /* PHARES AVANT +Z */
 
     group.add(
 
@@ -1948,10 +1843,7 @@ function createStreet(){
 
     );
 
-    /*
-       FEUX ARRIÈRE
-       = -Z
-    */
+    /* FEUX ARRIERE -Z */
 
     group.add(
 
@@ -2025,9 +1917,9 @@ function createStreet(){
 
 }
 
-/* =========================================================
+/* =========================
    FORMULA
-========================================================= */
+========================= */
 
 function createFormula(){
 
@@ -2070,11 +1962,6 @@ function createFormula(){
 
     );
 
-    /*
-       Aileron avant
-       = +Z
-    */
-
     group.add(
 
         box(
@@ -2092,11 +1979,6 @@ function createFormula(){
         )
 
     );
-
-    /*
-       Aileron arrière
-       = -Z
-    */
 
     group.add(
 
@@ -2188,9 +2070,9 @@ function createFormula(){
 
 }
 
-/* =========================================================
+/* =========================
    VAN
-========================================================= */
+========================= */
 
 function createVan(){
 
@@ -2215,10 +2097,6 @@ function createVan(){
 
     );
 
-    /*
-       AVANT +Z
-    */
-
     group.add(
 
         box(
@@ -2236,10 +2114,6 @@ function createVan(){
         )
 
     );
-
-    /*
-       ARRIÈRE -Z
-    */
 
     group.add(
 
@@ -2367,18 +2241,16 @@ function createVan(){
 
 }
 
-/* =========================================================
+/* =========================
    TRUCK
-========================================================= */
+========================= */
 
 function createTruck(){
 
     const group =
         new THREE.Group();
 
-    /*
-       CABINE AVANT +Z
-    */
+    /* CABINE AVANT +Z */
 
     group.add(
 
@@ -2398,9 +2270,7 @@ function createTruck(){
 
     );
 
-    /*
-       CAISSE ARRIÈRE -Z
-    */
+    /* CAISSE ARRIERE -Z */
 
     group.add(
 
@@ -2438,6 +2308,8 @@ function createTruck(){
 
     );
 
+    /* PHARES */
+
     group.add(
 
         box(
@@ -2473,6 +2345,8 @@ function createTruck(){
         )
 
     );
+
+    /* FEUX */
 
     group.add(
 
@@ -2546,9 +2420,9 @@ function createTruck(){
 
 }
 
-/* =========================================================
+/* =========================
    CREATE SELECTED CAR
-========================================================= */
+========================= */
 
 if(
     selectedCar === "formula"
@@ -2577,31 +2451,22 @@ else{
 
 }
 
-/* =========================================================
-   PLAYER VARIABLES
-========================================================= */
+/* =========================
+   PHYSICS VARIABLES
+========================= */
 
 let speed=0;
 
 let steering=0;
 
-/*
-   ANGLE = 0
-   AVANT = +Z
-*/
-
 let carAngle=0;
 
 /*
-   Direction AVANT
+    AVANT = +Z
 */
 
 const forward =
     new THREE.Vector3();
-
-/*
-   Camera target
-*/
 
 const cameraTarget =
     new THREE.Vector3();
@@ -2609,9 +2474,9 @@ const cameraTarget =
 const cameraLook =
     new THREE.Vector3();
 
-/* =========================================================
-   INPUT
-========================================================= */
+/* =========================
+   KEYBOARD
+========================= */
 
 const keys =
     Object.create(null);
@@ -2666,9 +2531,9 @@ window.addEventListener(
 
 );
 
-/* =========================================================
-   INPUT CHECK
-========================================================= */
+/* =========================
+   INPUT
+========================= */
 
 function isPressed(...codes){
 
@@ -2690,9 +2555,9 @@ function isPressed(...codes){
 
 }
 
-/* =========================================================
-   MOBILE INPUT
-========================================================= */
+/* =========================
+   MOBILE
+========================= */
 
 function touchButton(
     id,
@@ -2776,9 +2641,9 @@ touchButton(
     "ArrowDown"
 );
 
-/* =========================================================
-   PHYSICS
-========================================================= */
+/* =========================
+   VEHICLE UPDATE
+========================= */
 
 function updateVehicle(dt){
 
@@ -2811,9 +2676,9 @@ function updateVehicle(dt){
             "Space"
         );
 
-    /* =========================
+    /* =====================
        ACCELERATION
-    ========================= */
+    ===================== */
 
     if(gas){
 
@@ -2822,11 +2687,10 @@ function updateVehicle(dt){
             dt;
 
     }
-
     else if(brake){
 
         if(
-            speed>0.025
+            speed > .025
         ){
 
             speed -=
@@ -2843,7 +2707,6 @@ function updateVehicle(dt){
         }
 
     }
-
     else{
 
         speed *=
@@ -2854,9 +2717,9 @@ function updateVehicle(dt){
 
     }
 
-    /* =========================
-       LIMITS
-    ========================= */
+    /* =====================
+       LIMIT
+    ===================== */
 
     speed =
         THREE.MathUtils.clamp(
@@ -2869,9 +2732,9 @@ function updateVehicle(dt){
 
         );
 
-    /* =========================
+    /* =====================
        HANDBRAKE
-    ========================= */
+    ===================== */
 
     if(handBrake){
 
@@ -2883,11 +2746,19 @@ function updateVehicle(dt){
 
     }
 
-    /* =========================
+    /* =====================
        STEERING
-    ========================= */
+    ===================== */
 
     let targetSteering=0;
+
+    /*
+       A = -1
+       = gauche
+
+       D = +1
+       = droite
+    */
 
     if(left){
 
@@ -2915,9 +2786,9 @@ function updateVehicle(dt){
             dt*10
         );
 
-    /* =========================
-       TURNING
-    ========================= */
+    /* =====================
+       TURN
+    ===================== */
 
     const speedRatio =
         Math.min(
@@ -2929,47 +2800,41 @@ function updateVehicle(dt){
 
         );
 
-    /*
-       Marche avant :
-       A = gauche
-       D = droite
-
-       Marche arrière :
-       direction inversée
-    */
-
     const reverseSign =
-        speed>=0
+        speed >= 0
             ? 1
             : -1;
 
-    carAngle +=
+    /*
+       CORRECTION IMPORTANTE :
+
+       Le signe "-" fait maintenant :
+
+       A -> GAUCHE
+       D -> DROITE
+
+       Tout le reste utilise
+       exactement le même angle.
+    */
+
+    carAngle -=
 
         steering *
 
         vehicle.turn *
 
         (
-
             .12 +
             speedRatio*.88
-
         ) *
 
         reverseSign *
 
         dt;
 
-    /*
-       IMPORTANT :
-
-       AVANT = +Z
-
-       Rotation Y :
-
-       X = sin(angle)
-       Z = cos(angle)
-    */
+    /* =====================
+       FORWARD
+    ===================== */
 
     forward.set(
 
@@ -2985,9 +2850,9 @@ function updateVehicle(dt){
 
     );
 
-    /* =========================
+    /* =====================
        MOVEMENT
-    ========================= */
+    ===================== */
 
     const movementSpeed =
         speed *
@@ -2995,32 +2860,26 @@ function updateVehicle(dt){
         60;
 
     car.position.x +=
-
         forward.x *
         movementSpeed;
 
     car.position.z +=
-
         forward.z *
         movementSpeed;
 
-    /* =========================
+    /* =====================
        ROTATION
-    ========================= */
+    ===================== */
 
     car.rotation.y =
         carAngle;
 
-    /*
-       On garde X/Z droits.
-    */
-
     car.rotation.x=0;
     car.rotation.z=0;
 
-    /* =========================
-       FRONT WHEEL
-    ========================= */
+    /* =====================
+       WHEELS
+    ===================== */
 
     if(
         frontWheelLeft
@@ -3040,15 +2899,15 @@ function updateVehicle(dt){
 
     }
 
-    /* =========================
-       LIMIT WORLD
-    ========================= */
+    /* =====================
+       WORLD LIMIT
+    ===================== */
 
     const limit =
         TOTAL/2-2;
 
     if(
-        car.position.x>limit
+        car.position.x > limit
     ){
 
         car.position.x=limit;
@@ -3058,7 +2917,7 @@ function updateVehicle(dt){
     }
 
     if(
-        car.position.x<-limit
+        car.position.x < -limit
     ){
 
         car.position.x=-limit;
@@ -3068,7 +2927,7 @@ function updateVehicle(dt){
     }
 
     if(
-        car.position.z>limit
+        car.position.z > limit
     ){
 
         car.position.z=limit;
@@ -3078,7 +2937,7 @@ function updateVehicle(dt){
     }
 
     if(
-        car.position.z<-limit
+        car.position.z < -limit
     ){
 
         car.position.z=-limit;
@@ -3089,9 +2948,9 @@ function updateVehicle(dt){
 
 }
 
-/* =========================================================
+/* =========================
    TRAFFIC
-========================================================= */
+========================= */
 
 const traffic=[];
 
@@ -3121,7 +2980,7 @@ if(
     trafficSetting==="high"
 ){
 
-    trafficCount=
+    trafficCount =
         Math.min(
             8,
             quality.traffic+2
@@ -3129,9 +2988,9 @@ if(
 
 }
 
-/* =========================================================
-   CREATE NPC
-========================================================= */
+/* =========================
+   CREATE TRAFFIC
+========================= */
 
 function createTraffic(
 
@@ -3149,17 +3008,13 @@ function createTraffic(
         new THREE.Mesh(
 
             new THREE.BoxGeometry(
-
                 .90,
                 .34,
                 1.55
-
             ),
 
             new THREE.MeshLambertMaterial({
-
                 color:color
-
             })
 
         );
@@ -3174,17 +3029,13 @@ function createTraffic(
         new THREE.Mesh(
 
             new THREE.BoxGeometry(
-
                 .65,
                 .25,
                 .70
-
             ),
 
             new THREE.MeshLambertMaterial({
-
                 color:0x20242d
-
             })
 
         );
@@ -3195,16 +3046,10 @@ function createTraffic(
         roof
     );
 
-    /*
-       NPC avant = +Z
-    */
-
     group.position.set(
-
         x,
         0,
         z
-
     );
 
     group.rotation.y =
@@ -3218,8 +3063,9 @@ function createTraffic(
 
         mesh:group,
 
-        speed:.075+
-        Math.random()*.035,
+        speed:
+            .075 +
+            Math.random()*.035,
 
         direction:direction
 
@@ -3227,9 +3073,9 @@ function createTraffic(
 
 }
 
-/* =========================================================
-   SPAWN NPC
-========================================================= */
+/* =========================
+   SPAWN TRAFFIC
+========================= */
 
 for(
 
@@ -3245,13 +3091,13 @@ for(
             : 1.2;
 
     const z =
-        -45+
+        -45 +
         i*18;
 
     createTraffic(
 
         trafficColors[
-            i%
+            i %
             trafficColors.length
         ],
 
@@ -3263,19 +3109,15 @@ for(
 
 }
 
-/* =========================================================
+/* =========================
    TRAFFIC UPDATE
-========================================================= */
+========================= */
 
 function updateTraffic(dt){
 
     for(
         const npc of traffic
     ){
-
-        /*
-           NPC avance vers +Z
-        */
 
         npc.mesh.position.z +=
 
@@ -3299,9 +3141,9 @@ function updateTraffic(dt){
 
 }
 
-/* =========================================================
+/* =========================
    COLLISION
-========================================================= */
+========================= */
 
 function collisionCheck(){
 
@@ -3327,7 +3169,7 @@ function collisionCheck(){
         if(
 
             distanceSquared <
-            collisionDistance*
+            collisionDistance *
             collisionDistance
 
         ){
@@ -3340,17 +3182,15 @@ function collisionCheck(){
 
 }
 
-/* =========================================================
+/* =========================
    CAMERA
-========================================================= */
+========================= */
 
 function updateCamera(dt){
 
     /*
-       AVANT = +Z
-
-       Donc derrière =
-       -Z
+       La caméra est toujours
+       DERRIÈRE la voiture.
     */
 
     const distance =
@@ -3364,11 +3204,10 @@ function updateCamera(dt){
     cameraTarget.set(
 
         car.position.x -
-
-        forward.x*
+        forward.x *
         distance,
 
-        car.position.y+
+        car.position.y +
         (
             selectedCar==="truck"
                 ? 4.7
@@ -3376,8 +3215,7 @@ function updateCamera(dt){
         ),
 
         car.position.z -
-
-        forward.z*
+        forward.z *
         distance
 
     );
@@ -3393,20 +3231,15 @@ function updateCamera(dt){
 
     );
 
-    /*
-       La caméra regarde
-       légèrement devant.
-    */
-
     cameraLook.set(
 
-        car.position.x+
+        car.position.x +
         forward.x*2.5,
 
-        car.position.y+
+        car.position.y +
         .45,
 
-        car.position.z+
+        car.position.z +
         forward.z*2.5
 
     );
@@ -3417,9 +3250,9 @@ function updateCamera(dt){
 
 }
 
-/* =========================================================
+/* =========================
    MINIMAP
-========================================================= */
+========================= */
 
 const mapCanvas =
     document.getElementById(
@@ -3436,7 +3269,7 @@ let mapTimer=0;
 function updateMinimap(time){
 
     if(
-        time-mapTimer<100
+        time-mapTimer < 100
     ){
 
         return;
@@ -3445,13 +3278,13 @@ function updateMinimap(time){
 
     mapTimer=time;
 
-    const w=
+    const w =
         mapCanvas.width;
 
-    const h=
+    const h =
         mapCanvas.height;
 
-    mapContext.fillStyle=
+    mapContext.fillStyle =
         nightMode
             ? "#08111b"
             : "#172019";
@@ -3463,17 +3296,15 @@ function updateMinimap(time){
         h
     );
 
-    const scale=
+    const scale =
         w/TOTAL;
 
-    /* =========================
-       ROADS
-    ========================= */
+    /* ROADS */
 
-    mapContext.strokeStyle=
+    mapContext.strokeStyle =
         "#565c63";
 
-    mapContext.lineWidth=
+    mapContext.lineWidth =
         ROAD*scale;
 
     for(
@@ -3482,14 +3313,14 @@ function updateMinimap(time){
         i++
     ){
 
-        const p=
+        const p =
 
             (
-                i*BLOCK-
-                OFFSET+
+                i*BLOCK -
+                OFFSET +
                 BLOCK/2
-            )*
-            scale+
+            ) *
+            scale +
             w/2;
 
         mapContext.beginPath();
@@ -3522,20 +3353,18 @@ function updateMinimap(time){
 
     }
 
-    /* =========================
-       PLAYER
-    ========================= */
+    /* PLAYER */
 
-    const playerX=
+    const playerX =
 
-        car.position.x*
-        scale+
+        car.position.x *
+        scale +
         w/2;
 
-    const playerZ=
+    const playerZ =
 
-        car.position.z*
-        scale+
+        car.position.z *
+        scale +
         h/2;
 
     mapContext.save();
@@ -3549,14 +3378,10 @@ function updateMinimap(time){
         carAngle
     );
 
-    mapContext.fillStyle=
+    mapContext.fillStyle =
         "#1769ff";
 
     mapContext.beginPath();
-
-    /*
-       Avant de la flèche = +Y
-    */
 
     mapContext.moveTo(
         0,
@@ -3579,27 +3404,25 @@ function updateMinimap(time){
 
     mapContext.restore();
 
-    /* =========================
-       TRAFFIC
-    ========================= */
+    /* TRAFFIC */
 
-    mapContext.fillStyle=
+    mapContext.fillStyle =
         "#ff3030";
 
     for(
         const npc of traffic
     ){
 
-        const x=
+        const x =
 
-            npc.mesh.position.x*
-            scale+
+            npc.mesh.position.x *
+            scale +
             w/2;
 
-        const z=
+        const z =
 
-            npc.mesh.position.z*
-            scale+
+            npc.mesh.position.z *
+            scale +
             h/2;
 
         mapContext.fillRect(
@@ -3615,24 +3438,24 @@ function updateMinimap(time){
 
 }
 
-/* =========================================================
+/* =========================
    HUD
-========================================================= */
+========================= */
 
 function updateHUD(){
 
-    const kmh=
+    const kmh =
 
         Math.round(
 
-            Math.abs(speed)*
+            Math.abs(speed) *
             145
 
         );
 
     document.getElementById(
         "speed"
-    ).textContent=
+    ).textContent =
         kmh;
 
     let gear="N";
@@ -3654,8 +3477,10 @@ function updateHUD(){
     }
 
     if(
+
         Math.abs(speed)<.02 &&
         isPressed("Space")
+
     ){
 
         gear="P";
@@ -3664,21 +3489,21 @@ function updateHUD(){
 
     document.getElementById(
         "gear"
-    ).textContent=
+    ).textContent =
         gear;
 
 }
 
-/* =========================================================
+/* =========================
    FPS
-========================================================= */
+========================= */
 
 let frameCount=0;
 
-let fpsTime=
+let fpsTime =
     performance.now();
 
-let statisticsTime=
+let statisticsTime =
     performance.now();
 
 function updateFPS(time){
@@ -3686,17 +3511,17 @@ function updateFPS(time){
     frameCount++;
 
     if(
-        time-fpsTime>=500
+        time-fpsTime >= 500
     ){
 
-        const currentFPS=
+        const currentFPS =
 
             Math.round(
 
-                frameCount*
-                1000/
+                frameCount *
+                1000 /
                 (
-                    time-
+                    time -
                     fpsTime
                 )
 
@@ -3704,7 +3529,7 @@ function updateFPS(time){
 
         document.getElementById(
             "fps"
-        ).textContent=
+        ).textContent =
             currentFPS;
 
         frameCount=0;
@@ -3714,17 +3539,17 @@ function updateFPS(time){
     }
 
     if(
-        time-statisticsTime>=500
+        time-statisticsTime >= 500
     ){
 
         document.getElementById(
             "drawInfo"
-        ).textContent=
+        ).textContent =
             renderer.info.render.calls;
 
         document.getElementById(
             "triInfo"
-        ).textContent=
+        ).textContent =
             renderer.info.render.triangles;
 
         statisticsTime=time;
@@ -3733,20 +3558,20 @@ function updateFPS(time){
 
 }
 
-/* =========================================================
+/* =========================
    PAUSE
-========================================================= */
+========================= */
 
 let paused=false;
 
 function togglePause(){
 
-    paused=
+    paused =
         !paused;
 
     document.getElementById(
         "pauseScreen"
-    ).style.display=
+    ).style.display =
 
         paused
             ? "flex"
@@ -3756,43 +3581,43 @@ function togglePause(){
 
 document.getElementById(
     "pauseButton"
-).onclick=
+).onclick =
     togglePause;
 
 document.getElementById(
     "resumeButton"
-).onclick=
+).onclick =
     togglePause;
 
 document.getElementById(
     "homeButton"
-).onclick=
+).onclick =
 
     function(){
 
-        location.href=
+        location.href =
             "index.html";
 
     };
 
 document.getElementById(
     "pauseHomeButton"
-).onclick=
+).onclick =
 
     function(){
 
-        location.href=
+        location.href =
             "index.html";
 
     };
 
-/* =========================================================
+/* =========================
    RESET
-========================================================= */
+========================= */
 
 document.getElementById(
     "resetButton"
-).onclick=
+).onclick =
 
     function(){
 
@@ -3816,9 +3641,9 @@ document.getElementById(
 
     };
 
-/* =========================================================
+/* =========================
    RESIZE
-========================================================= */
+========================= */
 
 window.addEventListener(
 
@@ -3826,8 +3651,8 @@ window.addEventListener(
 
     function(){
 
-        camera.aspect=
-            window.innerWidth/
+        camera.aspect =
+            window.innerWidth /
             window.innerHeight;
 
         camera.updateProjectionMatrix();
@@ -3852,9 +3677,9 @@ window.addEventListener(
 
 );
 
-/* =========================================================
+/* =========================
    START
-========================================================= */
+========================= */
 
 car.position.set(
     0,
@@ -3867,13 +3692,15 @@ carAngle=0;
 car.rotation.y=0;
 
 /*
-   À 0 :
+    Position initiale :
 
-   AVANT = +Z
-   ARRIÈRE = -Z
-
-   La caméra commence derrière
-   la voiture.
+    AVANT
+      +Z
+      ↑
+      🚗
+      ↓
+      -Z
+    CAMERA
 */
 
 camera.position.set(
@@ -3888,22 +3715,18 @@ camera.lookAt(
     3
 );
 
-/* =========================================================
+/* =========================
    CLOCK
-========================================================= */
+========================= */
 
-const clock=
+const clock =
     new THREE.Clock();
-
-/* =========================================================
-   FIRST FRAME
-========================================================= */
 
 let firstFrame=true;
 
-/* =========================================================
+/* =========================
    GAME LOOP
-========================================================= */
+========================= */
 
 function animate(time){
 
@@ -3913,7 +3736,7 @@ function animate(time){
 
         document.getElementById(
             "loading"
-        ).style.display=
+        ).style.display =
             "none";
 
     }
@@ -3929,36 +3752,26 @@ function animate(time){
 
     }
 
-    const dt=
+    const dt =
 
         Math.min(
             clock.getDelta(),
             .05
         );
 
-    updateVehicle(
-        dt
-    );
+    updateVehicle(dt);
 
-    updateTraffic(
-        dt
-    );
+    updateTraffic(dt);
 
     collisionCheck();
 
-    updateCamera(
-        dt
-    );
+    updateCamera(dt);
 
     updateHUD();
 
-    updateMinimap(
-        time
-    );
+    updateMinimap(time);
 
-    updateFPS(
-        time
-    );
+    updateFPS(time);
 
     renderer.render(
         scene,
@@ -3967,21 +3780,17 @@ function animate(time){
 
 }
 
-/* =========================================================
-   ANIMATION LOOP
-========================================================= */
+/* =========================
+   START LOOP
+========================= */
 
 renderer.setAnimationLoop(
     animate
 );
 
-/* =========================================================
+/* =========================
    DEBUG
-========================================================= */
-
-console.log(
-    "=========================="
-);
+========================= */
 
 console.log(
     "ZENTRO DRIVE V2"
@@ -3993,28 +3802,23 @@ console.log(
 );
 
 console.log(
-    "Couleur :",
-    selectedColor
+    "Avant : +Z"
 );
 
 console.log(
-    "AVANT : +Z"
+    "A = GAUCHE"
 );
 
 console.log(
-    "ARRIERE : -Z"
+    "D = DROITE"
 );
 
 console.log(
-    "A / D : direction"
+    "W = ACCELERATION"
 );
 
 console.log(
-    "W / S : accélération"
-);
-
-console.log(
-    "=========================="
+    "S = FREIN / MARCHE ARRIERE"
 );
 
 </script>
