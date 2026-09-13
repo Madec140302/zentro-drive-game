@@ -2,7 +2,7 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.m
 
 // =====================================================
 // ZENTRO V.1
-// ÉTAPE 2A — MONDE + PERSONNAGE
+// PERSONNAGE JOUABLE — ZQSD / WASD / FLÈCHES
 // =====================================================
 
 const scene = new THREE.Scene();
@@ -20,8 +20,6 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     1000
 );
-
-camera.position.set(0, 4, 8);
 
 
 // =====================================================
@@ -87,7 +85,11 @@ scene.add(ground);
 // =====================================================
 
 const road = new THREE.Mesh(
-    new THREE.BoxGeometry(12, 0.15, 100),
+    new THREE.BoxGeometry(
+        12,
+        0.15,
+        100
+    ),
     new THREE.MeshStandardMaterial({
         color: 0x292929
     })
@@ -107,7 +109,11 @@ const lineMaterial =
         color: 0xffffff
     });
 
-for (let z = -45; z < 50; z += 10) {
+for (
+    let z = -45;
+    z < 50;
+    z += 10
+) {
 
     const line = new THREE.Mesh(
         new THREE.BoxGeometry(
@@ -161,8 +167,6 @@ function createBuilding(
     scene.add(building);
 }
 
-
-// gauche
 createBuilding(
     -15,
     -15,
@@ -181,8 +185,6 @@ createBuilding(
     0x888888
 );
 
-
-// droite
 createBuilding(
     15,
     -5,
@@ -203,13 +205,16 @@ createBuilding(
 
 
 // =====================================================
-// PERSONNAGE PROVISOIRE
+// PERSONNAGE
 // =====================================================
 
 const player = new THREE.Group();
 
 
+// =====================================================
 // CORPS
+// =====================================================
+
 const body = new THREE.Mesh(
     new THREE.BoxGeometry(
         0.8,
@@ -226,7 +231,10 @@ body.position.y = 1;
 player.add(body);
 
 
+// =====================================================
 // TÊTE
+// =====================================================
+
 const head = new THREE.Mesh(
     new THREE.SphereGeometry(
         0.32,
@@ -243,11 +251,15 @@ head.position.y = 1.95;
 player.add(head);
 
 
+// =====================================================
 // JAMBES
+// =====================================================
+
 const legMaterial =
     new THREE.MeshStandardMaterial({
         color: 0x222222
     });
+
 
 const leftLeg = new THREE.Mesh(
     new THREE.BoxGeometry(
@@ -285,11 +297,15 @@ rightLeg.position.set(
 player.add(rightLeg);
 
 
+// =====================================================
 // BRAS
+// =====================================================
+
 const armMaterial =
     new THREE.MeshStandardMaterial({
         color: 0x1565ff
     });
+
 
 const leftArm = new THREE.Mesh(
     new THREE.BoxGeometry(
@@ -327,7 +343,10 @@ rightArm.position.set(
 player.add(rightArm);
 
 
-// POSITION
+// =====================================================
+// POSITION DE DÉPART
+// =====================================================
+
 player.position.set(
     0,
     0,
@@ -338,14 +357,199 @@ scene.add(player);
 
 
 // =====================================================
-// CAMÉRA SUR LE PERSONNAGE
+// CONTRÔLES
 // =====================================================
 
-camera.lookAt(
-    player.position.x,
-    player.position.y + 1,
-    player.position.z
-);
+const keys = {};
+
+
+// Touche enfoncée
+window.addEventListener("keydown", (event) => {
+
+    const key = event.key.toLowerCase();
+
+    keys[key] = true;
+
+    // Empêche la page de défiler avec les flèches
+    if (
+        key === "z" ||
+        key === "q" ||
+        key === "s" ||
+        key === "d" ||
+        key === "w" ||
+        key === "a" ||
+        key === "arrowup" ||
+        key === "arrowdown" ||
+        key === "arrowleft" ||
+        key === "arrowright"
+    ) {
+
+        event.preventDefault();
+    }
+});
+
+
+// Touche relâchée
+window.addEventListener("keyup", (event) => {
+
+    const key = event.key.toLowerCase();
+
+    keys[key] = false;
+});
+
+
+// =====================================================
+// PARAMÈTRES
+// =====================================================
+
+const moveSpeed = 5;
+
+const turnSpeed = 2.8;
+
+const clock = new THREE.Clock();
+
+
+// =====================================================
+// CAMÉRA
+// =====================================================
+
+const cameraPosition =
+    new THREE.Vector3();
+
+const cameraTarget =
+    new THREE.Vector3();
+
+
+// =====================================================
+// BOUCLE DU JEU
+// =====================================================
+
+function animate() {
+
+    const delta = Math.min(
+        clock.getDelta(),
+        0.05
+    );
+
+
+    // =================================================
+    // TOURNER À GAUCHE
+    // Q / A / FLÈCHE GAUCHE
+    // =================================================
+
+    if (
+        keys["q"] ||
+        keys["a"] ||
+        keys["arrowleft"]
+    ) {
+
+        player.rotation.y -=
+            turnSpeed * delta;
+    }
+
+
+    // =================================================
+    // TOURNER À DROITE
+    // D / FLÈCHE DROITE
+    // =================================================
+
+    if (
+        keys["d"] ||
+        keys["arrowright"]
+    ) {
+
+        player.rotation.y +=
+            turnSpeed * delta;
+    }
+
+
+    // =================================================
+    // AVANCER
+    // Z / W / FLÈCHE HAUT
+    // =================================================
+
+    if (
+        keys["z"] ||
+        keys["w"] ||
+        keys["arrowup"]
+    ) {
+
+        player.translateZ(
+            moveSpeed * delta
+        );
+    }
+
+
+    // =================================================
+    // RECULER
+    // S / FLÈCHE BAS
+    // =================================================
+
+    if (
+        keys["s"] ||
+        keys["arrowdown"]
+    ) {
+
+        player.translateZ(
+            -moveSpeed * delta
+        );
+    }
+
+
+    // =================================================
+    // CAMÉRA TROISIÈME PERSONNE
+    // =================================================
+
+    const cameraOffset =
+        new THREE.Vector3(
+            0,
+            3.5,
+            -6
+        );
+
+
+    // La caméra tourne avec le personnage
+    cameraOffset.applyQuaternion(
+        player.quaternion
+    );
+
+
+    cameraPosition
+        .copy(player.position)
+        .add(cameraOffset);
+
+
+    camera.position.lerp(
+        cameraPosition,
+        0.12
+    );
+
+
+    // =================================================
+    // CIBLE DE LA CAMÉRA
+    // =================================================
+
+    cameraTarget.set(
+        player.position.x,
+        player.position.y + 1.2,
+        player.position.z
+    );
+
+
+    camera.lookAt(
+        cameraTarget
+    );
+
+
+    // =================================================
+    // RENDU
+    // =================================================
+
+    renderer.render(
+        scene,
+        camera
+    );
+}
 
 
 // =====================================================
@@ -371,16 +575,8 @@ window.addEventListener(
 
 
 // =====================================================
-// BOUCLE
+// DÉMARRAGE
 // =====================================================
-
-function animate() {
-
-    renderer.render(
-        scene,
-        camera
-    );
-}
 
 renderer.setAnimationLoop(
     animate
