@@ -1,225 +1,329 @@
 ```html
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ZENTRO DRIVE</title>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<meta
+    name="theme-color"
+    content="#05070c"
+>
+
+<meta
+    name="description"
+    content="Zentro Drive - expérience de conduite 3D en monde libre"
+>
+
+<title>ZENTRO DRIVE — Monde Libre</title>
 
 <style>
 
 /* =========================================================
+   ZENTRO DRIVE
+   INDEX.HTML V2
+   ========================================================= */
+
+/* =========================
    RESET
-========================================================= */
+========================= */
 
 * {
+
     margin: 0;
     padding: 0;
+
     box-sizing: border-box;
+
 }
 
 html {
+
     scroll-behavior: smooth;
+
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #03060b;
-    color: white;
+
+    min-height: 100vh;
+
     overflow-x: hidden;
-}
-
-
-/* =========================================================
-   BACKGROUND
-========================================================= */
-
-.background {
-    position: fixed;
-    inset: 0;
-    z-index: -10;
-    overflow: hidden;
-    background:
-        linear-gradient(
-            180deg,
-            #07101d 0%,
-            #0a1422 45%,
-            #020409 100%
-        );
-}
-
-.background::before {
-    content: "";
-    position: absolute;
-    inset: 0;
 
     background:
-        linear-gradient(
-            rgba(255,255,255,0.025) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(255,255,255,0.025) 1px,
-            transparent 1px
-        );
+        #05070c;
 
-    background-size: 70px 70px;
+    color: #ffffff;
 
-    transform:
-        perspective(500px)
-        rotateX(60deg)
-        scale(2);
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
-    transform-origin: center bottom;
-
-    opacity: 0.3;
 }
 
-.glow {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
+/* =========================
+   VARIABLES
+========================= */
+
+:root {
+
+    --blue:
+        #3288ff;
+
+    --blue-light:
+        #64a8ff;
+
+    --blue-dark:
+        #1454a8;
+
+    --background:
+        #05070c;
+
+    --panel:
+        #0b111a;
+
+    --panel-light:
+        #101a27;
+
+    --border:
+        rgba(255,255,255,.09);
+
+    --text:
+        #ffffff;
+
+    --muted:
+        #7e8da3;
+
 }
 
-.glow-blue {
-    width: 600px;
-    height: 600px;
+/* =========================
+   SCROLLBAR
+========================= */
 
-    background: rgba(0, 110, 255, 0.18);
+::-webkit-scrollbar {
 
-    top: -250px;
-    left: -200px;
+    width: 8px;
+
 }
 
-.glow-purple {
-    width: 500px;
-    height: 500px;
+::-webkit-scrollbar-track {
 
-    background: rgba(100, 50, 255, 0.12);
+    background:
+        #05070c;
 
-    right: -200px;
-    top: 200px;
 }
 
-.glow-cyan {
-    width: 450px;
-    height: 450px;
+::-webkit-scrollbar-thumb {
 
-    background: rgba(0, 200, 255, 0.08);
+    background:
+        #1d3554;
 
-    left: 35%;
-    bottom: -250px;
+    border-radius:
+        10px;
+
 }
 
+::-webkit-scrollbar-thumb:hover {
+
+    background:
+        var(--blue);
+
+}
 
 /* =========================================================
    HEADER
 ========================================================= */
 
-header {
+.header {
 
     position: fixed;
 
     top: 0;
     left: 0;
-    right: 0;
 
-    height: 80px;
+    width: 100%;
+
+    height: 76px;
+
+    z-index: 1000;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
-    padding: 0 40px;
+    padding:
+        0 35px;
 
-    background: rgba(2, 6, 12, 0.78);
+    background:
+        rgba(4,7,12,.78);
 
     border-bottom:
-        1px solid rgba(255,255,255,0.08);
+        1px solid
+        rgba(255,255,255,.07);
 
-    backdrop-filter: blur(18px);
+    backdrop-filter:
+        blur(18px);
 
-    z-index: 100;
+    -webkit-backdrop-filter:
+        blur(18px);
+
 }
 
+/* =========================
+   LOGO
+========================= */
 
 .logo {
 
-    font-size: 27px;
+    display: flex;
 
-    font-weight: 900;
+    align-items: center;
 
-    letter-spacing: 6px;
+    gap: 10px;
 
     color: white;
 
-    text-shadow:
-        0 0 20px rgba(80,160,255,0.3);
+    text-decoration: none;
+
 }
 
+.logo-mark {
 
-.logo span {
-    color: #3b82f6;
+    width: 38px;
+
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3d91ff,
+            #1553a7
+        );
+
+    box-shadow:
+        0 0 25px
+        rgba(50,136,255,.25);
+
+    font-size: 18px;
+
+    font-weight: 900;
+
 }
 
+.logo-text {
 
-nav {
+    font-size: 22px;
+
+    font-weight: 1000;
+
+    letter-spacing: 5px;
+
+}
+
+.logo-text span {
+
+    color:
+        var(--blue);
+
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+
+.nav {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+}
+
+.nav a {
+
+    position: relative;
 
     display: flex;
 
     align-items: center;
 
     gap: 7px;
-}
 
+    padding:
+        10px 12px;
 
-nav a {
-
-    color: #aab6c8;
+    color:
+        #aebbd0;
 
     text-decoration: none;
 
-    font-size: 13px;
+    border-radius: 9px;
 
-    font-weight: 700;
+    font-size: 11px;
 
-    padding: 12px 14px;
-
-    border-radius: 11px;
+    font-weight: 800;
 
     transition:
-        background 0.2s,
-        color 0.2s,
-        transform 0.2s;
+        .2s ease;
+
 }
 
-
-nav a:hover {
+.nav a:hover {
 
     color: white;
 
     background:
-        rgba(255,255,255,0.08);
+        rgba(50,136,255,.10);
 
-    transform: translateY(-2px);
 }
 
+.nav a.active {
 
-nav .play-nav {
-
-    color: white;
+    color:
+        white;
 
     background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #1d4ed8
-        );
+        rgba(50,136,255,.16);
+
 }
 
+.nav a.active::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 15px;
+    right: 15px;
+
+    bottom: 2px;
+
+    height: 2px;
+
+    border-radius: 5px;
+
+    background:
+        var(--blue);
+
+}
 
 /* =========================================================
    HERO
@@ -227,311 +331,867 @@ nav .play-nav {
 
 .hero {
 
-    min-height: 100vh;
+    position: relative;
+
+    min-height: 850px;
 
     padding:
-        150px
-        40px
-        80px;
+        140px 30px 80px;
 
     display: flex;
 
     align-items: center;
 
-    justify-content: center;
+    overflow: hidden;
 
-    text-align: center;
+    background:
 
-    position: relative;
+        radial-gradient(
+            circle at 70% 45%,
+            rgba(40,120,220,.20),
+            transparent 35%
+        ),
+
+        radial-gradient(
+            circle at 20% 80%,
+            rgba(20,80,150,.14),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            180deg,
+            #08111e,
+            #05070c
+        );
+
 }
 
+/* =========================
+   BACKGROUND GRID
+========================= */
+
+.hero-grid {
+
+    position: absolute;
+
+    left: -20%;
+    right: -20%;
+
+    bottom: -25%;
+
+    height: 70%;
+
+    opacity: .18;
+
+    transform:
+        perspective(500px)
+        rotateX(60deg);
+
+    background-image:
+
+        linear-gradient(
+            rgba(70,150,255,.35)
+            1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(70,150,255,.35)
+            1px,
+            transparent 1px
+        );
+
+    background-size:
+        55px 55px;
+
+}
+
+/* =========================
+   LIGHT GLOW
+========================= */
+
+.hero-glow {
+
+    position: absolute;
+
+    width: 650px;
+
+    height: 650px;
+
+    right:
+        2%;
+
+    top:
+        15%;
+
+    border-radius:
+        50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(54,142,255,.22),
+            transparent 65%
+        );
+
+    filter:
+        blur(10px);
+
+    animation:
+        glowMove 6s
+        ease-in-out
+        infinite;
+
+}
+
+@keyframes glowMove {
+
+    0%,
+    100% {
+
+        transform:
+            scale(1);
+
+        opacity:
+            .65;
+
+    }
+
+    50% {
+
+        transform:
+            scale(1.15);
+
+        opacity:
+            1;
+
+    }
+
+}
+
+/* =========================
+   HERO CONTENT
+========================= */
 
 .hero-content {
 
-    width: 100%;
+    position: relative;
 
-    max-width: 1100px;
+    z-index: 5;
+
+    width:
+        min(1150px, 100%);
+
+    margin:
+        0 auto;
+
 }
 
-
-/* BADGE */
-
-.badge {
+.hero-small {
 
     display: inline-flex;
 
     align-items: center;
 
-    gap: 9px;
+    gap: 8px;
 
     padding:
-        9px
-        16px;
+        8px 13px;
 
-    border-radius: 40px;
+    margin-bottom:
+        25px;
 
     border:
         1px solid
-        rgba(96,165,250,0.25);
+        rgba(80,155,255,.25);
+
+    border-radius:
+        30px;
+
+    color:
+        #82b8ff;
 
     background:
-        rgba(37,99,235,0.08);
+        rgba(45,120,220,.07);
 
-    color: #93c5fd;
+    font-size:
+        11px;
 
-    font-size: 12px;
+    font-weight:
+        900;
 
-    font-weight: 800;
+    letter-spacing:
+        2px;
 
-    letter-spacing: 2px;
-
-    margin-bottom: 28px;
 }
 
+.hero-small-dot {
 
-.badge-dot {
+    width:
+        7px;
 
-    width: 7px;
-    height: 7px;
+    height:
+        7px;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
-    background: #22c55e;
+    background:
+        #49a0ff;
 
     box-shadow:
-        0 0 12px #22c55e;
+        0 0 12px
+        #49a0ff;
+
+    animation:
+        blink 1.5s
+        infinite;
+
 }
 
+@keyframes blink {
 
-/* TITLE */
+    0%,
+    100% {
+        opacity: 1;
+    }
 
-.title {
+    50% {
+        opacity: .3;
+    }
+
+}
+
+/* =========================
+   HERO TITLE
+========================= */
+
+.hero h1 {
+
+    max-width:
+        850px;
 
     font-size:
         clamp(
-            70px,
-            13vw,
-            170px
+            65px,
+            11vw,
+            150px
         );
 
-    line-height: 0.85;
+    line-height:
+        .82;
 
-    font-weight: 1000;
+    font-weight:
+        1000;
 
-    letter-spacing: 12px;
+    letter-spacing:
+        -5px;
 
-    margin-bottom: 30px;
+}
 
-    background:
-        linear-gradient(
-            180deg,
-            #ffffff 0%,
-            #dbeafe 45%,
-            #7da7d9 100%
-        );
+.hero h1 span {
 
-    -webkit-background-clip: text;
-
-    background-clip: text;
-
-    color: transparent;
+    color:
+        var(--blue);
 
     text-shadow:
-        0 30px 70px
-        rgba(0,0,0,0.6);
+        0 0 50px
+        rgba(50,136,255,.3);
+
 }
 
+.hero-subtitle {
 
-.subtitle {
+    margin-top:
+        30px;
 
-    color: #a4b0c0;
+    max-width:
+        650px;
+
+    color:
+        #8c9ab0;
 
     font-size:
-        clamp(
-            16px,
-            2vw,
-            22px
-        );
+        18px;
 
-    line-height: 1.6;
+    line-height:
+        1.7;
 
-    max-width: 700px;
-
-    margin:
-        0 auto
-        40px;
 }
 
+/* =========================
+   HERO BUTTONS
+========================= */
 
-/* =========================================================
-   MAIN PLAY BUTTON
-========================================================= */
+.hero-actions {
 
-.play-button {
+    display:
+        flex;
 
-    display: inline-flex;
+    flex-wrap:
+        wrap;
 
-    align-items: center;
+    gap:
+        12px;
 
-    justify-content: center;
+    margin-top:
+        35px;
 
-    gap: 13px;
+}
 
-    min-width: 280px;
+.btn {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        9px;
+
+    min-width:
+        190px;
 
     padding:
-        20px
-        45px;
+        16px 22px;
 
-    border-radius: 16px;
+    border-radius:
+        11px;
 
-    text-decoration: none;
+    text-decoration:
+        none;
 
-    color: white;
+    font-size:
+        13px;
 
-    font-size: 20px;
+    font-weight:
+        900;
 
-    font-weight: 900;
+    transition:
+        .25s ease;
 
-    letter-spacing: 2px;
+}
+
+.btn:hover {
+
+    transform:
+        translateY(-4px);
+
+}
+
+.btn-primary {
+
+    color:
+        white;
 
     background:
         linear-gradient(
             135deg,
-            #3b82f6,
-            #1d4ed8
+            #4295ff,
+            #1763c5
+        );
+
+    box-shadow:
+        0 15px 40px
+        rgba(40,120,240,.22);
+
+}
+
+.btn-primary:hover {
+
+    box-shadow:
+        0 20px 55px
+        rgba(40,120,240,.38);
+
+}
+
+.btn-secondary {
+
+    color:
+        #dce8f8;
+
+    background:
+        rgba(255,255,255,.05);
+
+    border:
+        1px solid
+        rgba(255,255,255,.10);
+
+}
+
+.btn-secondary:hover {
+
+    background:
+        rgba(255,255,255,.09);
+
+}
+
+/* =========================================================
+   HERO CAR
+========================================================= */
+
+.hero-car {
+
+    position:
+        absolute;
+
+    right:
+        4%;
+
+    bottom:
+        100px;
+
+    width:
+        520px;
+
+    height:
+        180px;
+
+    z-index:
+        3;
+
+    transform:
+        perspective(700px)
+        rotateY(-12deg)
+        rotateX(3deg)
+        rotateZ(-2deg);
+
+    animation:
+        carFloat 5s
+        ease-in-out
+        infinite;
+
+}
+
+@keyframes carFloat {
+
+    0%,
+    100% {
+
+        transform:
+            perspective(700px)
+            rotateY(-12deg)
+            rotateX(3deg)
+            rotateZ(-2deg)
+            translateY(0);
+
+    }
+
+    50% {
+
+        transform:
+            perspective(700px)
+            rotateY(-12deg)
+            rotateX(3deg)
+            rotateZ(-2deg)
+            translateY(-10px);
+
+    }
+
+}
+
+.hero-car-body {
+
+    position:
+        absolute;
+
+    left:
+        50px;
+
+    bottom:
+        30px;
+
+    width:
+        420px;
+
+    height:
+        105px;
+
+    border-radius:
+        75px
+        100px
+        25px
+        25px;
+
+    background:
+        linear-gradient(
+            160deg,
+            #3990ff,
+            #1764c5 55%,
+            #0a3268
+        );
+
+    box-shadow:
+
+        inset
+        0 -25px
+        35px
+        rgba(0,0,0,.35),
+
+        0 30px
+        60px
+        rgba(0,0,0,.65);
+
+}
+
+/* roof */
+
+.hero-car-roof {
+
+    position:
+        absolute;
+
+    left:
+        145px;
+
+    bottom:
+        105px;
+
+    width:
+        220px;
+
+    height:
+        80px;
+
+    border-radius:
+        90px
+        90px
+        10px
+        10px;
+
+    background:
+        linear-gradient(
+            160deg,
+            #3488ec,
+            #14519c
+        );
+
+}
+
+/* windshield */
+
+.hero-car-window {
+
+    position:
+        absolute;
+
+    left:
+        174px;
+
+    bottom:
+        115px;
+
+    width:
+        155px;
+
+    height:
+        55px;
+
+    border-radius:
+        60px
+        60px
+        8px
+        8px;
+
+    background:
+        linear-gradient(
+            140deg,
+            #294d6f,
+            #091522
         );
 
     border:
         1px solid
-        rgba(255,255,255,0.25);
+        rgba(255,255,255,.22);
+
+}
+
+/* wheels */
+
+.hero-wheel {
+
+    position:
+        absolute;
+
+    bottom:
+        5px;
+
+    width:
+        72px;
+
+    height:
+        72px;
+
+    border-radius:
+        50%;
+
+    background:
+        #050608;
+
+    border:
+        10px
+        solid
+        #242a32;
 
     box-shadow:
-        0 20px 60px
-        rgba(37,99,235,0.35),
-
         inset
-        0 1px
-        rgba(255,255,255,0.3);
+        0 0 0 7px
+        #11151a;
 
-    transition:
-        transform 0.25s,
-        box-shadow 0.25s;
 }
 
+.hero-wheel.front {
 
-.play-button:hover {
+    right:
+        65px;
 
-    transform:
-        translateY(-6px)
-        scale(1.025);
+}
+
+.hero-wheel.rear {
+
+    left:
+        75px;
+
+}
+
+/* headlights */
+
+.hero-light {
+
+    position:
+        absolute;
+
+    width:
+        30px;
+
+    height:
+        12px;
+
+    border-radius:
+        10px;
+
+    background:
+        #d8edff;
 
     box-shadow:
-        0 30px 80px
-        rgba(37,99,235,0.5),
+        0 0 20px
+        rgba(170,220,255,.9);
 
-        inset
-        0 1px
-        rgba(255,255,255,0.4);
 }
 
+.hero-light.left {
 
-.play-button:active {
+    right:
+        34px;
 
-    transform:
-        scale(0.97);
+    bottom:
+        85px;
+
 }
 
+.hero-light.right {
 
-.play-icon {
+    right:
+        34px;
 
-    font-size: 25px;
+    bottom:
+        105px;
+
 }
-
 
 /* =========================================================
-   QUICK MENU
+   QUICK BAR
 ========================================================= */
 
-.quick-menu {
+.quick-bar {
 
-    margin-top: 65px;
+    position:
+        relative;
 
-    display: grid;
+    z-index:
+        20;
+
+    width:
+        min(1100px, 92%);
+
+    margin:
+        -35px auto
+        0;
+
+    display:
+        grid;
 
     grid-template-columns:
         repeat(4, 1fr);
 
-    gap: 15px;
-}
-
-
-.quick-card {
-
-    padding: 25px 18px;
-
-    text-decoration: none;
-
-    color: white;
-
     background:
-        rgba(255,255,255,0.045);
+        rgba(11,17,26,.92);
 
     border:
         1px solid
-        rgba(255,255,255,0.08);
+        rgba(255,255,255,.08);
 
-    border-radius: 18px;
+    border-radius:
+        18px;
 
-    backdrop-filter: blur(15px);
+    overflow:
+        hidden;
+
+    backdrop-filter:
+        blur(15px);
+
+}
+
+.quick-item {
+
+    padding:
+        22px;
+
+    text-align:
+        center;
+
+    border-right:
+        1px solid
+        rgba(255,255,255,.06);
+
+    text-decoration:
+        none;
+
+    color:
+        white;
 
     transition:
-        transform 0.25s,
-        background 0.25s,
-        border 0.25s;
+        .2s;
+
 }
 
+.quick-item:last-child {
 
-.quick-card:hover {
+    border-right:
+        none;
 
-    transform:
-        translateY(-7px);
+}
+
+.quick-item:hover {
 
     background:
-        rgba(255,255,255,0.08);
+        rgba(45,130,255,.08);
 
-    border-color:
-        rgba(96,165,250,0.3);
 }
-
 
 .quick-icon {
 
-    font-size: 30px;
+    display:
+        block;
 
-    margin-bottom: 13px;
+    margin-bottom:
+        7px;
+
+    font-size:
+        24px;
+
 }
 
+.quick-item strong {
 
-.quick-title {
+    display:
+        block;
 
-    font-size: 15px;
+    font-size:
+        12px;
 
-    font-weight: 900;
-
-    margin-bottom: 7px;
 }
 
+.quick-item span {
 
-.quick-text {
+    display:
+        block;
 
-    font-size: 12px;
+    margin-top:
+        4px;
 
-    line-height: 1.5;
+    color:
+        #6f7d92;
 
-    color: #7f8ca0;
+    font-size:
+        10px;
+
 }
 
+/* =========================================================
+   GENERAL SECTION
+========================================================= */
+
+.section {
+
+    width:
+        min(1150px, 92%);
+
+    margin:
+        0 auto;
+
+    padding:
+        110px 0;
+
+}
+
+.section-heading {
+
+    margin-bottom:
+        45px;
+
+}
+
+.section-label {
+
+    color:
+        var(--blue-light);
+
+    font-size:
+        11px;
+
+    font-weight:
+        900;
+
+    letter-spacing:
+        3px;
+
+}
+
+.section-heading h2 {
+
+    margin-top:
+        10px;
+
+    font-size:
+        clamp(
+            32px,
+            5vw,
+            55px
+        );
+
+}
+
+.section-heading p {
+
+    max-width:
+        650px;
+
+    margin-top:
+        12px;
+
+    color:
+        var(--muted);
+
+    line-height:
+        1.7;
+
+}
 
 /* =========================================================
    FEATURES
@@ -539,93 +1199,298 @@ nav .play-nav {
 
 .features {
 
-    max-width: 1200px;
-
-    margin:
-        0 auto;
-
-    padding:
-        80px 35px;
-}
-
-
-.section-title {
-
-    text-align: center;
-
-    font-size: 38px;
-
-    font-weight: 900;
-
-    margin-bottom: 12px;
-}
-
-
-.section-description {
-
-    text-align: center;
-
-    color: #8290a3;
-
-    margin-bottom: 45px;
-}
-
-
-.feature-grid {
-
-    display: grid;
+    display:
+        grid;
 
     grid-template-columns:
         repeat(3, 1fr);
 
-    gap: 20px;
-}
+    gap:
+        18px;
 
+}
 
 .feature {
 
-    padding: 30px;
+    position:
+        relative;
 
-    border-radius: 22px;
+    min-height:
+        250px;
+
+    padding:
+        30px;
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        18px;
 
     background:
         linear-gradient(
             145deg,
-            rgba(255,255,255,0.07),
-            rgba(255,255,255,0.025)
+            #101a27,
+            #090e15
         );
 
-    border:
-        1px solid
-        rgba(255,255,255,0.08);
+    transition:
+        .25s ease;
+
 }
 
+.feature:hover {
+
+    transform:
+        translateY(-7px);
+
+    border-color:
+        rgba(65,145,255,.35);
+
+}
+
+.feature::after {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    width:
+        150px;
+
+    height:
+        150px;
+
+    right:
+        -60px;
+
+    bottom:
+        -60px;
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(50,136,255,.08);
+
+}
 
 .feature-icon {
 
-    font-size: 38px;
+    width:
+        55px;
 
-    margin-bottom: 20px;
+    height:
+        55px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    margin-bottom:
+        22px;
+
+    border-radius:
+        14px;
+
+    background:
+        rgba(50,136,255,.10);
+
+    font-size:
+        25px;
+
 }
 
+.feature h3 {
 
-.feature h2 {
+    margin-bottom:
+        10px;
 
-    font-size: 20px;
+    font-size:
+        19px;
 
-    margin-bottom: 12px;
 }
-
 
 .feature p {
 
-    color: #8491a3;
+    color:
+        #748298;
 
-    font-size: 14px;
+    line-height:
+        1.7;
 
-    line-height: 1.7;
+    font-size:
+        13px;
+
 }
 
+/* =========================================================
+   GAME MODES
+========================================================= */
+
+.modes {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1.4fr
+        .8fr;
+
+    gap:
+        18px;
+
+}
+
+.mode-large,
+.mode-small {
+
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #111d2c,
+            #080d14
+        );
+
+}
+
+.mode-large {
+
+    min-height:
+        390px;
+
+    padding:
+        38px;
+
+    display:
+        flex;
+
+    align-items:
+        flex-end;
+
+}
+
+.mode-small {
+
+    padding:
+        30px;
+
+    min-height:
+        185px;
+
+}
+
+.mode-bg {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    opacity:
+        .45;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            transparent 40%,
+            rgba(40,120,230,.16)
+        );
+
+}
+
+.mode-content {
+
+    position:
+        relative;
+
+    z-index:
+        2;
+
+}
+
+.mode-icon {
+
+    font-size:
+        35px;
+
+    margin-bottom:
+        18px;
+
+}
+
+.mode-large h3,
+.mode-small h3 {
+
+    font-size:
+        25px;
+
+    margin-bottom:
+        10px;
+
+}
+
+.mode-large p,
+.mode-small p {
+
+    color:
+        #77869d;
+
+    line-height:
+        1.6;
+
+    font-size:
+        13px;
+
+}
+
+.mode-link {
+
+    display:
+        inline-block;
+
+    margin-top:
+        20px;
+
+    color:
+        #6badff;
+
+    text-decoration:
+        none;
+
+    font-weight:
+        900;
+
+    font-size:
+        12px;
+
+}
 
 /* =========================================================
    STATS
@@ -633,198 +1498,566 @@ nav .play-nav {
 
 .stats {
 
-    max-width: 1100px;
-
-    margin:
-        30px auto
-        100px;
-
-    padding:
-        0 35px;
-}
-
-
-.stats-grid {
-
-    display: grid;
+    display:
+        grid;
 
     grid-template-columns:
         repeat(4, 1fr);
 
-    gap: 15px;
-}
+    gap:
+        14px;
 
+}
 
 .stat {
 
-    text-align: center;
+    padding:
+        30px 20px;
 
-    padding: 30px 15px;
-
-    border-radius: 18px;
-
-    background:
-        rgba(255,255,255,0.035);
+    text-align:
+        center;
 
     border:
         1px solid
-        rgba(255,255,255,0.06);
+        var(--border);
+
+    border-radius:
+        16px;
+
+    background:
+        #0b111a;
+
 }
 
+.stat strong {
 
-.stat-number {
+    display:
+        block;
 
-    font-size: 32px;
+    color:
+        #5ca1ff;
 
-    font-weight: 900;
+    font-size:
+        38px;
 
-    color: #60a5fa;
+    font-weight:
+        1000;
 
-    margin-bottom: 7px;
 }
 
+.stat span {
 
-.stat-label {
+    display:
+        block;
 
-    font-size: 12px;
+    margin-top:
+        7px;
 
-    color: #788598;
+    color:
+        #65748a;
 
-    text-transform: uppercase;
+    font-size:
+        10px;
 
-    letter-spacing: 1px;
+    letter-spacing:
+        1px;
+
 }
 
+/* =========================================================
+   UPDATE SECTION
+========================================================= */
+
+.update {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap:
+        18px;
+
+}
+
+.update-card {
+
+    padding:
+        30px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        18px;
+
+    background:
+        #0b111a;
+
+}
+
+.update-date {
+
+    color:
+        #5da2ff;
+
+    font-size:
+        10px;
+
+    font-weight:
+        900;
+
+    letter-spacing:
+        2px;
+
+}
+
+.update-card h3 {
+
+    margin:
+        12px 0;
+
+    font-size:
+        21px;
+
+}
+
+.update-card p {
+
+    color:
+        #758399;
+
+    line-height:
+        1.7;
+
+    font-size:
+        13px;
+
+}
+
+/* =========================================================
+   CALL TO ACTION
+========================================================= */
+
+.cta {
+
+    position:
+        relative;
+
+    width:
+        min(1150px, 92%);
+
+    margin:
+        0 auto 100px;
+
+    padding:
+        65px 50px;
+
+    overflow:
+        hidden;
+
+    text-align:
+        center;
+
+    border:
+        1px solid
+        rgba(55,140,255,.20);
+
+    border-radius:
+        25px;
+
+    background:
+
+        radial-gradient(
+            circle at center,
+            rgba(50,136,255,.15),
+            transparent 65%
+        ),
+
+        #0a111b;
+
+}
+
+.cta h2 {
+
+    font-size:
+        clamp(
+            30px,
+            5vw,
+            50px
+        );
+
+}
+
+.cta p {
+
+    max-width:
+        600px;
+
+    margin:
+        15px auto 25px;
+
+    color:
+        #78879c;
+
+    line-height:
+        1.7;
+
+}
 
 /* =========================================================
    FOOTER
 ========================================================= */
 
-footer {
+.footer {
+
+    padding:
+        55px 30px;
+
+    background:
+        #030509;
 
     border-top:
         1px solid
-        rgba(255,255,255,0.07);
+        rgba(255,255,255,.06);
 
-    padding:
+}
+
+.footer-inner {
+
+    width:
+        min(1150px, 100%);
+
+    margin:
+        auto;
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
         30px;
 
-    text-align: center;
-
-    color: #647084;
-
-    font-size: 12px;
 }
 
+.footer-brand h3 {
 
-footer strong {
+    font-size:
+        20px;
 
-    color: #94a3b8;
+    letter-spacing:
+        4px;
+
 }
 
+.footer-brand p {
+
+    max-width:
+        400px;
+
+    margin-top:
+        10px;
+
+    color:
+        #59677a;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.6;
+
+}
+
+.footer-links {
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        15px;
+
+}
+
+.footer-links a {
+
+    color:
+        #758399;
+
+    text-decoration:
+        none;
+
+    font-size:
+        11px;
+
+}
+
+.footer-links a:hover {
+
+    color:
+        white;
+
+}
+
+.footer-bottom {
+
+    width:
+        min(1150px,100%);
+
+    margin:
+        35px auto 0;
+
+    padding-top:
+        20px;
+
+    border-top:
+        1px solid
+        rgba(255,255,255,.05);
+
+    color:
+        #4f5c6e;
+
+    font-size:
+        10px;
+
+}
 
 /* =========================================================
    MOBILE
 ========================================================= */
 
-@media(max-width: 850px) {
+@media(max-width:950px) {
 
-    header {
+    .hero-car {
 
-        height: auto;
+        opacity:
+            .22;
 
-        padding:
-            15px;
+        right:
+            -100px;
 
-        flex-direction:
-            column;
-
-        gap: 12px;
     }
 
-
-    nav {
-
-        justify-content: center;
-
-        flex-wrap: wrap;
-    }
-
-
-    nav a {
-
-        font-size: 11px;
-
-        padding:
-            8px 9px;
-    }
-
-
-    .hero {
-
-        padding:
-            150px 20px
-            60px;
-    }
-
-
-    .title {
-
-        font-size:
-            clamp(
-                58px,
-                17vw,
-                110px
-            );
-
-        letter-spacing: 5px;
-    }
-
-
-    .quick-menu {
+    .features {
 
         grid-template-columns:
-            repeat(2, 1fr);
+            1fr
+            1fr;
+
     }
 
-
-    .feature-grid {
+    .modes {
 
         grid-template-columns:
             1fr;
-    }
 
-
-    .stats-grid {
-
-        grid-template-columns:
-            repeat(2, 1fr);
     }
 
 }
 
+@media(max-width:750px) {
 
-@media(max-width: 500px) {
+    .header {
 
-    .quick-menu {
+        height:
+            auto;
+
+        min-height:
+            70px;
+
+        padding:
+            12px 15px;
+
+        flex-direction:
+            column;
+
+        gap:
+            10px;
+
+    }
+
+    .nav {
+
+        width:
+            100%;
+
+        justify-content:
+            center;
+
+        flex-wrap:
+            wrap;
+
+    }
+
+    .nav a {
+
+        padding:
+            7px 8px;
+
+        font-size:
+            9px;
+
+    }
+
+    .hero {
+
+        min-height:
+            780px;
+
+        padding-top:
+            160px;
+
+    }
+
+    .hero h1 {
+
+        letter-spacing:
+            -3px;
+
+    }
+
+    .hero-subtitle {
+
+        font-size:
+            15px;
+
+    }
+
+    .hero-actions {
+
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
+    }
+
+    .btn {
+
+        width:
+            100%;
+
+    }
+
+    .hero-car {
+
+        transform:
+            scale(.65);
+
+        right:
+            -150px;
+
+        bottom:
+            40px;
+
+    }
+
+    .quick-bar {
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+    .quick-item:nth-child(2) {
+
+        border-right:
+            none;
+
+    }
+
+    .quick-item:nth-child(-n+2) {
+
+        border-bottom:
+            1px solid
+            rgba(255,255,255,.06);
+
+    }
+
+    .section {
+
+        padding:
+            75px 0;
+
+    }
+
+    .features {
 
         grid-template-columns:
             1fr;
+
     }
 
-
-    .play-button {
-
-        width: 95%;
-
-        min-width: 0;
-    }
-
-
-    .stats-grid {
+    .stats {
 
         grid-template-columns:
             1fr 1fr;
+
+    }
+
+    .update {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+    .footer-inner {
+
+        flex-direction:
+            column;
+
+    }
+
+}
+
+@media(max-width:450px) {
+
+    .logo-text {
+
+        font-size:
+            18px;
+
+    }
+
+    .hero {
+
+        padding-left:
+            18px;
+
+        padding-right:
+            18px;
+
+    }
+
+    .hero h1 {
+
+        font-size:
+            62px;
+
+    }
+
+    .quick-bar {
+
+        width:
+            94%;
+
+    }
+
+    .quick-item {
+
+        padding:
+            18px 8px;
+
     }
 
 }
@@ -833,224 +2066,124 @@ footer strong {
 
 </head>
 
-
 <body>
-
-
-<!-- =====================================================
-     BACKGROUND
-===================================================== -->
-
-<div class="background">
-
-    <div class="glow glow-blue"></div>
-
-    <div class="glow glow-purple"></div>
-
-    <div class="glow glow-cyan"></div>
-
-</div>
-
 
 <!-- =====================================================
      HEADER
 ===================================================== -->
 
-<header>
+<header class="header">
 
-    <div class="logo">
+<a
+    href="index.html"
+    class="logo"
+>
+
+    <div class="logo-mark">
+        Z
+    </div>
+
+    <div class="logo-text">
         ZENTRO<span>.</span>
     </div>
 
+</a>
 
-    <nav>
+<nav class="nav">
 
-        <a href="index.html">
-            🏠 ACCUEIL
-        </a>
+    <a
+        href="index.html"
+        class="active"
+    >
+        🏠 ACCUEIL
+    </a>
 
+    <a href="jeu.html">
+        🎮 JOUER
+    </a>
 
-        <!-- MONDE LIBRE -->
+    <a href="voiture.html">
+        🚗 VOITURES
+    </a>
 
-        <a
-            href="jeu.html"
-            class="play-nav"
-        >
-            🎮 JOUER
-        </a>
+    <a href="garage.html">
+        🔧 GARAGE
+    </a>
 
+    <a href="map.html">
+        🗺️ MAP
+    </a>
 
-        <a href="garage.html">
-            🔧 GARAGE
-        </a>
+    <a href="setting.html">
+        ⚙️ SETTINGS
+    </a>
 
-
-        <a href="map.html">
-            🗺️ MAP
-        </a>
-
-
-        <a href="voiture.html">
-            🚗 VOITURES
-        </a>
-
-
-        <a href="setting.html">
-            ⚙️ SETTINGS
-        </a>
-
-    </nav>
+</nav>
 
 </header>
-
 
 
 <!-- =====================================================
      HERO
 ===================================================== -->
 
+<main>
+
 <section class="hero">
+
+    <div class="hero-grid"></div>
+
+    <div class="hero-glow"></div>
 
     <div class="hero-content">
 
+        <div class="hero-small">
 
-        <div class="badge">
+            <span class="hero-small-dot"></span>
 
-            <span class="badge-dot"></span>
-
-            ZENTRO DRIVE • FREE ROAM
+            ZENTRO DRIVE V2
 
         </div>
 
+        <h1>
 
+            DRIVE<br>
 
-        <h1 class="title">
-
-            ZENTRO
+            <span>YOUR WORLD.</span>
 
         </h1>
 
+        <p class="hero-subtitle">
 
-
-        <p class="subtitle">
-
-            Bienvenue dans ton monde de conduite.
-            Choisis ta voiture, prends la route et
-            explore librement la ville. 🚗💨
+            Bienvenue dans Zentro Drive.
+            Explore une ville 3D en monde libre,
+            choisis ta voiture, découvre les routes
+            et construis progressivement ton propre
+            univers automobile.
 
         </p>
 
-
-
-        <!-- =================================================
-             BOUTON JOUER
-        ================================================= -->
-
-        <a
-            href="jeu.html"
-            class="play-button"
-        >
-
-            <span class="play-icon">
-                ▶
-            </span>
-
-            JOUER AU MONDE LIBRE
-
-        </a>
-
-
-
-        <!-- =================================================
-             QUICK MENU
-        ================================================= -->
-
-        <div class="quick-menu">
-
+        <div class="hero-actions">
 
             <a
                 href="jeu.html"
-                class="quick-card"
+                class="btn btn-primary"
             >
 
-                <div class="quick-icon">
-                    🌆
-                </div>
+                ▶
 
-                <div class="quick-title">
-                    MONDE LIBRE
-                </div>
-
-                <div class="quick-text">
-                    Explore la ville et conduis
-                    librement.
-                </div>
+                JOUER AU MONDE LIBRE
 
             </a>
-
-
 
             <a
                 href="voiture.html"
-                class="quick-card"
+                class="btn btn-secondary"
             >
 
-                <div class="quick-icon">
-                    🚗
-                </div>
+                🚗
 
-                <div class="quick-title">
-                    VOITURES
-                </div>
-
-                <div class="quick-text">
-                    Choisis la voiture avec laquelle
-                    tu veux rouler.
-                </div>
-
-            </a>
-
-
-
-            <a
-                href="garage.html"
-                class="quick-card"
-            >
-
-                <div class="quick-icon">
-                    🔧
-                </div>
-
-                <div class="quick-title">
-                    GARAGE
-                </div>
-
-                <div class="quick-text">
-                    Prépare et personnalise
-                    ta voiture.
-                </div>
-
-            </a>
-
-
-
-            <a
-                href="map.html"
-                class="quick-card"
-            >
-
-                <div class="quick-icon">
-                    🗺️
-                </div>
-
-                <div class="quick-title">
-                    CARTE
-                </div>
-
-                <div class="quick-text">
-                    Découvre les différentes
-                    zones de la ville.
-                </div>
+                CHOISIR MA VOITURE
 
             </a>
 
@@ -1058,245 +2191,675 @@ footer strong {
 
     </div>
 
+
+    <!-- voiture décorative -->
+
+    <div class="hero-car">
+
+        <div class="hero-car-body"></div>
+
+        <div class="hero-car-roof"></div>
+
+        <div class="hero-car-window"></div>
+
+        <div
+            class="hero-wheel rear"
+        ></div>
+
+        <div
+            class="hero-wheel front"
+        ></div>
+
+        <div
+            class="hero-light left"
+        ></div>
+
+        <div
+            class="hero-light right"
+        ></div>
+
+    </div>
+
 </section>
 
+
+<!-- =====================================================
+     QUICK BAR
+===================================================== -->
+
+<div class="quick-bar">
+
+<a
+    href="jeu.html"
+    class="quick-item"
+>
+
+    <span class="quick-icon">
+        🎮
+    </span>
+
+    <strong>
+        MONDE LIBRE
+    </strong>
+
+    <span>
+        Commencer à conduire
+    </span>
+
+</a>
+
+<a
+    href="voiture.html"
+    class="quick-item"
+>
+
+    <span class="quick-icon">
+        🚗
+    </span>
+
+    <strong>
+        VOITURES
+    </strong>
+
+    <span>
+        Choisir un véhicule
+    </span>
+
+</a>
+
+<a
+    href="garage.html"
+    class="quick-item"
+>
+
+    <span class="quick-icon">
+        🔧
+    </span>
+
+    <strong>
+        GARAGE
+    </strong>
+
+    <span>
+        Gérer ton véhicule
+    </span>
+
+</a>
+
+<a
+    href="map.html"
+    class="quick-item"
+>
+
+    <span class="quick-icon">
+        🗺️
+    </span>
+
+    <strong>
+        CARTE
+    </strong>
+
+    <span>
+        Explorer le monde
+    </span>
+
+</a>
+
+</div>
 
 
 <!-- =====================================================
      FEATURES
 ===================================================== -->
 
-<section class="features">
+<section class="section">
 
+<div class="section-heading">
 
-    <h2 class="section-title">
-        TON MONDE. TA VOITURE.
+    <div class="section-label">
+        ZENTRO DRIVE
+    </div>
+
+    <h2>
+        Un monde automobile
+        en constante évolution.
     </h2>
 
+    <p>
 
-    <p class="section-description">
-        Tout ce qu'il te faut pour partir rouler.
+        Zentro est conçu pour évoluer.
+        La base du jeu permet d'ajouter
+        progressivement de nouvelles voitures,
+        de nouvelles zones, du trafic,
+        des fonctionnalités et des améliorations
+        graphiques.
+
     </p>
 
+</div>
 
 
-    <div class="feature-grid">
+<div class="features">
 
 
-        <div class="feature">
+<div class="feature">
 
-            <div class="feature-icon">
-                🌆
-            </div>
-
-            <h2>
-                Ville ouverte
-            </h2>
-
-            <p>
-                Parcours les routes de Zentro,
-                explore les rues et découvre
-                librement l'environnement.
-            </p>
-
-        </div>
-
-
-
-        <div class="feature">
-
-            <div class="feature-icon">
-                🚘
-            </div>
-
-            <h2>
-                Plusieurs voitures
-            </h2>
-
-            <p>
-                Choisis ton véhicule avant
-                de commencer ta balade
-                dans le monde libre.
-            </p>
-
-        </div>
-
-
-
-        <div class="feature">
-
-            <div class="feature-icon">
-                🎮
-            </div>
-
-            <h2>
-                Conduite libre
-            </h2>
-
-            <p>
-                Accélère, freine, tourne
-                et explore la ville à ton
-                propre rythme.
-            </p>
-
-        </div>
-
-
-
-        <div class="feature">
-
-            <div class="feature-icon">
-                💡
-            </div>
-
-            <h2>
-                Phares
-            </h2>
-
-            <p>
-                Les voitures disposent
-                de phares et d'effets
-                lumineux pour une conduite
-                plus immersive.
-            </p>
-
-        </div>
-
-
-
-        <div class="feature">
-
-            <div class="feature-icon">
-                🔥
-            </div>
-
-            <h2>
-                Effets moteur
-            </h2>
-
-            <p>
-                Profite des effets visuels
-                du moteur et des échappements
-                pendant la conduite.
-            </p>
-
-        </div>
-
-
-
-        <div class="feature">
-
-            <div class="feature-icon">
-                📱
-            </div>
-
-            <h2>
-                PC & mobile
-            </h2>
-
-            <p>
-                Le jeu est conçu pour fonctionner
-                aussi bien sur ordinateur que
-                sur téléphone.
-            </p>
-
-        </div>
-
-
+    <div class="feature-icon">
+        🌆
     </div>
+
+    <h3>
+        Monde 3D
+    </h3>
+
+    <p>
+
+        Explore une ville générée en 3D
+        avec routes, bâtiments, végétation
+        et différentes zones à découvrir.
+
+    </p>
+
+</div>
+
+
+<div class="feature">
+
+    <div class="feature-icon">
+        🚗
+    </div>
+
+    <h3>
+        Tes voitures
+    </h3>
+
+    <p>
+
+        Sélectionne ton véhicule,
+        change sa couleur et retrouve
+        automatiquement ta configuration
+        dans le jeu.
+
+    </p>
+
+</div>
+
+
+<div class="feature">
+
+    <div class="feature-icon">
+        🚦
+    </div>
+
+    <h3>
+        Trafic
+    </h3>
+
+    <p>
+
+        Des véhicules PNJ pourront
+        progressivement peupler les rues
+        afin de rendre la ville plus vivante.
+
+    </p>
+
+</div>
+
+
+<div class="feature">
+
+    <div class="feature-icon">
+        🌙
+    </div>
+
+    <h3>
+        Jour et nuit
+    </h3>
+
+    <p>
+
+        Le monde pourra évoluer avec
+        différentes ambiances lumineuses
+        et un cycle jour / nuit.
+
+    </p>
+
+</div>
+
+
+<div class="feature">
+
+    <div class="feature-icon">
+        📱
+    </div>
+
+    <h3>
+        Compatible mobile
+    </h3>
+
+    <p>
+
+        L'interface est pensée pour
+        fonctionner également sur téléphone
+        avec des commandes tactiles.
+
+    </p>
+
+</div>
+
+
+<div class="feature">
+
+    <div class="feature-icon">
+        ⚡
+    </div>
+
+    <h3>
+        Performance
+    </h3>
+
+    <p>
+
+        L'architecture du projet est
+        progressivement découpée afin de
+        faciliter les optimisations du jeu.
+
+    </p>
+
+</div>
+
+
+</div>
 
 </section>
 
+
+<!-- =====================================================
+     MODES
+===================================================== -->
+
+<section class="section">
+
+<div class="section-heading">
+
+    <div class="section-label">
+        EXPÉRIENCE
+    </div>
+
+    <h2>
+        Entre directement
+        dans le monde.
+    </h2>
+
+</div>
+
+
+<div class="modes">
+
+
+<div class="mode-large">
+
+    <div class="mode-bg"></div>
+
+    <div class="mode-content">
+
+        <div class="mode-icon">
+            🏙️
+        </div>
+
+        <h3>
+            Monde libre
+        </h3>
+
+        <p>
+
+            Monte dans ta voiture et
+            parcours les rues de Zentro
+            sans objectif imposé.
+
+        </p>
+
+        <a
+            href="jeu.html"
+            class="mode-link"
+        >
+            LANCER LE MONDE LIBRE →
+        </a>
+
+    </div>
+
+</div>
+
+
+<div>
+
+
+<div class="mode-small">
+
+    <div class="mode-content">
+
+        <div class="mode-icon">
+            🚗
+        </div>
+
+        <h3>
+            Garage
+        </h3>
+
+        <p>
+
+            Consulte ton véhicule actuel
+            et prépare ta prochaine session.
+
+        </p>
+
+        <a
+            href="garage.html"
+            class="mode-link"
+        >
+            OUVRIR LE GARAGE →
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<div
+    class="mode-small"
+    style="margin-top:18px;"
+>
+
+    <div class="mode-content">
+
+        <div class="mode-icon">
+            🗺️
+        </div>
+
+        <h3>
+            Explorer
+        </h3>
+
+        <p>
+
+            Découvre les différentes
+            zones prévues pour le monde Zentro.
+
+        </p>
+
+        <a
+            href="map.html"
+            class="mode-link"
+        >
+            OUVRIR LA CARTE →
+
+        </a>
+
+    </div>
+
+</div>
+
+
+</div>
+
+</div>
+
+</section>
 
 
 <!-- =====================================================
      STATS
 ===================================================== -->
 
-<section class="stats">
+<section class="section">
 
-    <div class="stats-grid">
+<div class="section-heading">
 
-
-        <div class="stat">
-
-            <div class="stat-number">
-                3D
-            </div>
-
-            <div class="stat-label">
-                Monde
-            </div>
-
-        </div>
-
-
-
-        <div class="stat">
-
-            <div class="stat-number">
-                ∞
-            </div>
-
-            <div class="stat-label">
-                Exploration
-            </div>
-
-        </div>
-
-
-
-        <div class="stat">
-
-            <div class="stat-number">
-                4+
-            </div>
-
-            <div class="stat-label">
-                Voitures
-            </div>
-
-        </div>
-
-
-
-        <div class="stat">
-
-            <div class="stat-number">
-                🚗
-            </div>
-
-            <div class="stat-label">
-                Free Roam
-            </div>
-
-        </div>
-
-
+    <div class="section-label">
+        ZENTRO EN CHIFFRES
     </div>
+
+    <h2>
+        Une base prête à grandir.
+    </h2>
+
+</div>
+
+
+<div class="stats">
+
+
+<div class="stat">
+
+    <strong>
+        3D
+    </strong>
+
+    <span>
+        MONDE
+    </span>
+
+</div>
+
+
+<div class="stat">
+
+    <strong>
+        6+
+    </strong>
+
+    <span>
+        PAGES DU PROJET
+    </span>
+
+</div>
+
+
+<div class="stat">
+
+    <strong>
+        V2
+    </strong>
+
+    <span>
+        VERSION
+    </span>
+
+</div>
+
+
+<div class="stat">
+
+    <strong>
+        ∞
+    </strong>
+
+    <span>
+        POSSIBILITÉS
+    </span>
+
+</div>
+
+
+</div>
 
 </section>
 
+
+<!-- =====================================================
+     UPDATES
+===================================================== -->
+
+<section class="section">
+
+<div class="section-heading">
+
+    <div class="section-label">
+        ACTUALITÉS
+    </div>
+
+    <h2>
+        Évolution de Zentro.
+    </h2>
+
+</div>
+
+
+<div class="update">
+
+
+<div class="update-card">
+
+    <div class="update-date">
+        ZENTRO DRIVE
+    </div>
+
+    <h3>
+        🏙️ Nouveau monde 3D
+    </h3>
+
+    <p>
+
+        La ville constitue la base du
+        monde libre. Elle pourra ensuite
+        recevoir de nouvelles routes,
+        zones, bâtiments et éléments
+        interactifs.
+
+    </p>
+
+</div>
+
+
+<div class="update-card">
+
+    <div class="update-date">
+        PROCHAINE ÉVOLUTION
+    </div>
+
+    <h3>
+        🚗 Système automobile
+    </h3>
+
+    <p>
+
+        La prochaine étape consiste
+        à séparer le moteur, la voiture,
+        la ville, le trafic et les contrôles
+        dans différents fichiers JavaScript.
+
+    </p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     CTA
+===================================================== -->
+
+<section class="cta">
+
+<h2>
+    Prêt à prendre la route ?
+</h2>
+
+<p>
+
+    Choisis ta voiture et entre
+    directement dans le monde libre
+    de Zentro Drive.
+
+</p>
+
+<a
+    href="jeu.html"
+    class="btn btn-primary"
+>
+
+    ▶
+
+    COMMENCER À JOUER
+
+</a>
+
+</section>
+
+</main>
 
 
 <!-- =====================================================
      FOOTER
 ===================================================== -->
 
-<footer>
+<footer class="footer">
 
-    <strong>ZENTRO DRIVE</strong>
+<div class="footer-inner">
 
-    <br><br>
 
-    Projet de jeu de conduite 3D
+<div class="footer-brand">
 
-    <br>
+    <h3>
+        ZENTRO<span style="color:#3288ff;">.</span>
+    </h3>
 
-    © 2026 Zentro
+    <p>
+
+        Zentro Drive est un projet de
+        jeu automobile 3D développé
+        progressivement avec HTML,
+        JavaScript et Three.js.
+
+    </p>
+
+</div>
+
+
+<div class="footer-links">
+
+    <a href="index.html">
+        Accueil
+    </a>
+
+    <a href="jeu.html">
+        Jeu
+    </a>
+
+    <a href="voiture.html">
+        Voitures
+    </a>
+
+    <a href="garage.html">
+        Garage
+    </a>
+
+    <a href="map.html">
+        Carte
+    </a>
+
+    <a href="setting.html">
+        Paramètres
+    </a>
+
+</div>
+
+
+</div>
+
+
+<div class="footer-bottom">
+
+    © 2026 Zentro Drive —
+    Projet personnel de jeu 3D.
+
+</div>
 
 </footer>
-
 
 
 <!-- =====================================================
@@ -1307,96 +2870,169 @@ footer strong {
 
 /*
 =========================================================
-ZENTRO DRIVE
-Navigation
+ZENTRO INDEX SYSTEM
 =========================================================
 */
 
+(function () {
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        /*
-        -------------------------------------------------
-        Vérification des boutons du monde libre
-        -------------------------------------------------
-        */
-
-        const playButtons =
-            document.querySelectorAll(
-                'a[href="jeu.html"]'
-            );
+    "use strict";
 
 
-        playButtons.forEach(
-            function(button) {
+    /* ==============================================
+       RÉCUPÉRATION DE LA VOITURE
+    ============================================== */
 
-                button.addEventListener(
-                    "click",
-                    function(event) {
+    const savedCar =
+        localStorage.getItem(
+            "zentroCarName"
+        );
 
-                        /*
-                        On laisse le navigateur
-                        ouvrir jeu.html normalement.
-                        */
 
-                        console.log(
-                            "Zentro Drive : lancement du monde libre"
-                        );
+    /* ==============================================
+       CONSOLE
+    ============================================== */
+
+    console.log(
+        "================================"
+    );
+
+    console.log(
+        "ZENTRO DRIVE"
+    );
+
+    console.log(
+        "Accueil chargé"
+    );
+
+    if (savedCar) {
+
+        console.log(
+            "Voiture sélectionnée :",
+            savedCar
+        );
+
+    } else {
+
+        console.log(
+            "Aucune voiture sélectionnée."
+        );
+
+    }
+
+    console.log(
+        "================================"
+    );
+
+
+    /* ==============================================
+       ANIMATION D'APPARITION
+    ============================================== */
+
+    const elements =
+        document.querySelectorAll(
+            ".feature, .mode-small, .mode-large, .update-card, .stat"
+        );
+
+
+    const observer =
+        new IntersectionObserver(
+            entries => {
+
+                entries.forEach(
+                    entry => {
+
+                        if (
+                            entry.isIntersecting
+                        ) {
+
+                            entry.target.style.opacity =
+                                "1";
+
+                            entry.target.style.transform =
+                                "translateY(0)";
+
+                        }
 
                     }
                 );
 
+            },
+            {
+                threshold: .12
             }
         );
 
 
-        /*
-        -------------------------------------------------
-        Animation d'apparition
-        -------------------------------------------------
-        */
+    elements.forEach(
+        element => {
 
-        const cards =
-            document.querySelectorAll(
-                ".quick-card"
+            element.style.opacity =
+                "0";
+
+            element.style.transform =
+                "translateY(20px)";
+
+            element.style.transition =
+                "opacity .6s ease, transform .6s ease";
+
+            observer.observe(
+                element
             );
 
-
-        cards.forEach(
-            function(card, index) {
-
-                card.style.opacity = "0";
-
-                card.style.transform =
-                    "translateY(20px)";
+        }
+    );
 
 
-                setTimeout(
-                    function() {
+    /* ==============================================
+       EMPÊCHER LES ERREURS SI LE LOCALSTORAGE
+       EST VIDE
+    ============================================== */
 
-                        card.style.transition =
-                            "opacity 0.6s ease, transform 0.6s ease";
+    try {
 
-                        card.style.opacity = "1";
+        const car =
+            localStorage.getItem(
+                "zentroCar"
+            );
 
-                        card.style.transform =
-                            "translateY(0)";
+        const color =
+            localStorage.getItem(
+                "zentroColor"
+            );
 
-                    },
-                    300 + index * 120
-                );
+        if (car) {
 
-            }
+            console.log(
+                "ID voiture :",
+                car
+            );
+
+        }
+
+        if (color) {
+
+            console.log(
+                "Couleur voiture :",
+                color
+            );
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "LocalStorage indisponible."
         );
 
     }
-);
+
+
+})();
 
 </script>
 
-
 </body>
+
 </html>
 ```
