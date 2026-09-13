@@ -1,944 +1,1964 @@
-```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#05070c">
+<meta name="description" content="Zentro Drive - Garage">
 <title>ZENTRO — Garage</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+:root{
+    --bg:#05070c;
+    --bg2:#090d15;
+    --panel:#0c111b;
+    --panel2:#101722;
+    --border:rgba(255,255,255,.08);
+    --text:#f5f7fb;
+    --muted:#8993a5;
+    --blue:#1e8cff;
+    --blue2:#00c6ff;
+    --green:#27e58a;
+    --orange:#ff9d2e;
+    --red:#ff4f68;
+    --shadow:0 20px 60px rgba(0,0,0,.35);
 }
 
-html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  font-family:Arial,Helvetica,sans-serif;
-  background:#05070b;
-  color:white;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    scroll-behavior:smooth;
 }
 
 body{
-  background:
-    radial-gradient(circle at 50% 25%,#17243a 0%,#080b12 45%,#020306 100%);
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 50% -10%,rgba(30,140,255,.18),transparent 35%),
+        linear-gradient(180deg,#05070c 0%,#070a11 45%,#04060a 100%);
+    color:var(--text);
+    font-family:Arial,Helvetica,sans-serif;
+    overflow-x:hidden;
 }
 
-/* ===== FOND ===== */
-
-.background{
-  position:fixed;
-  inset:0;
-  overflow:hidden;
-  pointer-events:none;
-}
-
-.light{
-  position:absolute;
-  width:600px;
-  height:600px;
-  border-radius:50%;
-  filter:blur(100px);
-  opacity:.18;
-  background:#278cff;
-}
-
-.light.one{
-  top:-250px;
-  left:-150px;
-}
-
-.light.two{
-  right:-250px;
-  bottom:-300px;
-  background:#8b35ff;
-}
-
-/* ===== HEADER ===== */
+/* =========================
+   HEADER
+========================= */
 
 header{
-  position:fixed;
-  z-index:20;
-  top:0;
-  left:0;
-  right:0;
-  height:78px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 28px;
-  background:rgba(4,7,12,.82);
-  backdrop-filter:blur(18px);
-  border-bottom:1px solid rgba(255,255,255,.08);
+    position:sticky;
+    top:0;
+    z-index:1000;
+    height:74px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 5%;
+    background:rgba(5,7,12,.88);
+    border-bottom:1px solid var(--border);
+    backdrop-filter:blur(18px);
 }
 
 .logo{
-  font-size:25px;
-  font-weight:900;
-  letter-spacing:5px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-decoration:none;
+    color:white;
+    font-size:24px;
+    font-weight:900;
+    letter-spacing:4px;
 }
 
-.logo span{
-  color:#4da3ff;
+.logo-dot{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:var(--blue2);
+    box-shadow:0 0 18px var(--blue2);
 }
 
 nav{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
 
 nav a{
-  color:#aaa;
-  text-decoration:none;
-  font-size:13px;
-  font-weight:bold;
-  padding:11px 14px;
-  border-radius:10px;
-  transition:.2s;
+    position:relative;
+    padding:11px 14px;
+    border-radius:10px;
+    color:#aeb7c6;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:.4px;
+    transition:.25s;
 }
 
-nav a:hover,
+nav a:hover{
+    color:white;
+    background:rgba(255,255,255,.06);
+}
+
 nav a.active{
-  color:white;
-  background:rgba(255,255,255,.08);
+    color:white;
+    background:rgba(30,140,255,.12);
 }
 
-/* ===== MAIN ===== */
+nav a.active::after{
+    content:"";
+    position:absolute;
+    left:14px;
+    right:14px;
+    bottom:5px;
+    height:2px;
+    border-radius:5px;
+    background:var(--blue2);
+    box-shadow:0 0 10px var(--blue2);
+}
+
+.mobile-menu{
+    display:none;
+    border:1px solid var(--border);
+    background:#0c1119;
+    color:white;
+    width:44px;
+    height:44px;
+    border-radius:12px;
+    font-size:20px;
+}
+
+/* =========================
+   PAGE
+========================= */
 
 main{
-  position:absolute;
-  inset:78px 0 0;
-  display:grid;
-  grid-template-columns:340px 1fr 300px;
-  min-height:0;
+    width:min(1400px,92%);
+    margin:auto;
+    padding:50px 0 80px;
 }
 
-/* ===== LEFT PANEL ===== */
-
-.left{
-  padding:28px;
-  border-right:1px solid rgba(255,255,255,.07);
-  background:rgba(3,5,9,.45);
-  overflow:auto;
+.page-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:30px;
+    margin-bottom:35px;
 }
 
-.section-title{
-  font-size:12px;
-  color:#718097;
-  text-transform:uppercase;
-  letter-spacing:2px;
-  margin-bottom:14px;
+.eyebrow{
+    color:var(--blue2);
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:3px;
+    margin-bottom:10px;
 }
 
 h1{
-  font-size:36px;
-  margin-bottom:8px;
+    font-size:clamp(38px,6vw,72px);
+    line-height:.95;
+    letter-spacing:-3px;
 }
 
-.subtitle{
-  color:#8793a7;
-  line-height:1.5;
-  margin-bottom:28px;
+.page-description{
+    max-width:650px;
+    margin-top:15px;
+    color:var(--muted);
+    line-height:1.7;
 }
 
-.car-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+.status{
+    padding:12px 17px;
+    border:1px solid rgba(39,229,138,.2);
+    background:rgba(39,229,138,.07);
+    color:#79efb3;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:800;
+    white-space:nowrap;
 }
 
-.car-card{
-  padding:17px;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:15px;
-  background:rgba(255,255,255,.035);
-  cursor:pointer;
-  transition:.22s;
+/* =========================
+   GARAGE LAYOUT
+========================= */
+
+.garage-grid{
+    display:grid;
+    grid-template-columns:1.35fr .75fr;
+    gap:24px;
 }
 
-.car-card:hover{
-  transform:translateX(4px);
-  background:rgba(255,255,255,.07);
+/* =========================
+   CAR SHOWCASE
+========================= */
+
+.showcase{
+    min-height:590px;
+    position:relative;
+    overflow:hidden;
+    border:1px solid var(--border);
+    border-radius:26px;
+    background:
+        radial-gradient(circle at 50% 25%,rgba(30,140,255,.15),transparent 35%),
+        linear-gradient(145deg,#0d141f,#080b11);
+    box-shadow:var(--shadow);
 }
 
-.car-card.selected{
-  border-color:#4da3ff;
-  background:rgba(77,163,255,.12);
-  box-shadow:0 0 25px rgba(77,163,255,.1);
+.showcase::before{
+    content:"";
+    position:absolute;
+    width:520px;
+    height:520px;
+    left:50%;
+    top:42%;
+    transform:translate(-50%,-50%);
+    border:1px solid rgba(255,255,255,.04);
+    border-radius:50%;
 }
 
-.car-name{
-  font-size:17px;
-  font-weight:bold;
+.showcase::after{
+    content:"";
+    position:absolute;
+    width:760px;
+    height:760px;
+    left:50%;
+    top:42%;
+    transform:translate(-50%,-50%);
+    border:1px solid rgba(255,255,255,.025);
+    border-radius:50%;
 }
 
-.car-type{
-  margin-top:5px;
-  color:#758196;
-  font-size:12px;
+.showcase-top{
+    position:absolute;
+    top:25px;
+    left:25px;
+    right:25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    z-index:5;
 }
 
-/* ===== SHOWROOM ===== */
-
-.showroom{
-  position:relative;
-  min-width:0;
-  min-height:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
+.badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 12px;
+    border-radius:999px;
+    background:rgba(0,0,0,.35);
+    border:1px solid var(--border);
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:1px;
 }
 
-.floor{
-  position:absolute;
-  width:85%;
-  height:55%;
-  bottom:5%;
-  border-radius:50%;
-  background:
-    radial-gradient(ellipse,#202a38 0%,#101722 45%,transparent 72%);
-  transform:perspective(500px) rotateX(65deg);
+.badge span{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 10px var(--green);
 }
 
-.floor-line{
-  position:absolute;
-  bottom:17%;
-  width:65%;
-  height:1px;
-  background:linear-gradient(90deg,transparent,#49627e,transparent);
-  box-shadow:0 0 25px rgba(80,150,255,.4);
+.car-scene{
+    position:absolute;
+    inset:100px 20px 120px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    perspective:900px;
 }
 
-/* ===== VOITURE ===== */
+.car-shadow{
+    position:absolute;
+    width:min(650px,80%);
+    height:55px;
+    bottom:75px;
+    background:rgba(0,0,0,.75);
+    filter:blur(22px);
+    border-radius:50%;
+}
 
 .car{
-  position:relative;
-  width:500px;
-  height:270px;
-  transform:perspective(900px) rotateX(4deg) rotateY(-8deg);
-  transition:transform .5s ease;
-  filter:drop-shadow(0 35px 25px rgba(0,0,0,.7));
+    position:relative;
+    width:min(620px,82%);
+    height:220px;
+    transform:rotateX(3deg) rotateY(-9deg);
+    transition:transform .5s ease;
+    filter:drop-shadow(0 25px 25px rgba(0,0,0,.35));
 }
 
 .car:hover{
-  transform:perspective(900px) rotateX(3deg) rotateY(-12deg) scale(1.03);
+    transform:rotateX(3deg) rotateY(-4deg) scale(1.025);
 }
 
-.body{
-  position:absolute;
-  left:50px;
-  top:105px;
-  width:400px;
-  height:95px;
-  border-radius:45px 35px 28px 28px;
-  background:
-    linear-gradient(110deg,#080b10,#252c37 45%,#05070a 75%);
-  box-shadow:
-    inset 0 8px 12px rgba(255,255,255,.12),
-    inset 0 -10px 20px rgba(0,0,0,.8),
-    0 15px 25px rgba(0,0,0,.5);
-  border:1px solid rgba(255,255,255,.13);
+/* carrosserie */
+
+.car-body{
+    position:absolute;
+    left:5%;
+    right:5%;
+    bottom:38px;
+    height:112px;
+    border-radius:38px 70px 30px 28px;
+    background:var(--car-color,#1e8cff);
+    box-shadow:
+        inset 0 12px 20px rgba(255,255,255,.16),
+        inset 0 -20px 25px rgba(0,0,0,.28),
+        0 8px 20px rgba(0,0,0,.4);
 }
 
-.roof{
-  position:absolute;
-  left:140px;
-  top:55px;
-  width:235px;
-  height:105px;
-  border-radius:110px 125px 20px 20px;
-  background:linear-gradient(125deg,#090d13,#252f3d,#080a0d);
-  clip-path:polygon(17% 100%,28% 10%,66% 0%,95% 100%);
+.car-roof{
+    position:absolute;
+    width:48%;
+    height:90px;
+    left:25%;
+    bottom:110px;
+    border-radius:80px 80px 8px 8px;
+    background:var(--car-color,#1e8cff);
+    box-shadow:inset 0 10px 15px rgba(255,255,255,.12);
 }
 
-.window{
-  position:absolute;
-  top:68px;
-  width:85px;
-  height:55px;
-  background:
-    linear-gradient(130deg,#26394c,#071018 65%);
-  border:1px solid rgba(120,180,230,.25);
+.window-front,
+.window-back{
+    position:absolute;
+    bottom:122px;
+    height:62px;
+    background:linear-gradient(135deg,#172332,#05090f);
+    border:2px solid rgba(255,255,255,.1);
 }
 
-.window.front{
-  left:235px;
-  clip-path:polygon(8% 100%,22% 0%,100% 0%,100% 100%);
+.window-front{
+    width:21%;
+    left:48%;
+    border-radius:7px 48px 5px 5px;
+    transform:skewX(-14deg);
 }
 
-.window.back{
-  left:145px;
-  clip-path:polygon(0 100%,15% 0,90% 0,100% 100%);
+.window-back{
+    width:20%;
+    left:27%;
+    border-radius:48px 7px 5px 5px;
+    transform:skewX(14deg);
 }
 
-.hood{
-  position:absolute;
-  left:42px;
-  top:95px;
-  width:145px;
-  height:72px;
-  border-radius:50% 10% 10% 30%;
-  background:linear-gradient(160deg,#2d3745,#080b0f);
-}
-
-.front{
-  position:absolute;
-  left:28px;
-  top:137px;
-  width:70px;
-  height:43px;
-  border-radius:25px 8px 8px 20px;
-  background:#090d12;
-}
-
-.grille{
-  position:absolute;
-  left:43px;
-  top:151px;
-  width:45px;
-  height:20px;
-  border-radius:5px;
-  background:#020304;
-  border:1px solid #222b35;
-}
-
-.headlight{
-  position:absolute;
-  left:47px;
-  top:127px;
-  width:53px;
-  height:18px;
-  border-radius:50%;
-  background:linear-gradient(90deg,#ffffff,#86c7ff);
-  box-shadow:0 0 20px #72c3ff;
-  transform:rotate(-5deg);
-}
-
-.headlight.right{
-  left:420px;
-}
-
-.side-mirror{
-  position:absolute;
-  width:20px;
-  height:12px;
-  border-radius:50%;
-  background:#0a0d12;
-  top:110px;
-}
-
-.side-mirror.left{
-  left:126px;
-}
-
-.side-mirror.right{
-  right:102px;
+.window-reflection{
+    position:absolute;
+    left:31%;
+    width:35%;
+    bottom:164px;
+    height:4px;
+    border-radius:20px;
+    background:rgba(255,255,255,.15);
+    filter:blur(2px);
 }
 
 .wheel{
-  position:absolute;
-  width:75px;
-  height:75px;
-  border-radius:50%;
-  background:#050608;
-  border:9px solid #101318;
-  box-shadow:
-    inset 0 0 0 4px #252c35,
-    0 10px 15px rgba(0,0,0,.7);
+    position:absolute;
+    bottom:18px;
+    width:74px;
+    height:74px;
+    border-radius:50%;
+    background:#030406;
+    border:10px solid #141922;
+    box-shadow:
+        inset 0 0 0 5px #080a0e,
+        0 8px 12px rgba(0,0,0,.5);
 }
 
-.wheel:after{
-  content:"";
-  position:absolute;
-  width:32px;
-  height:32px;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  border-radius:50%;
-  background:
-    radial-gradient(circle,#8995a5 0 15%,#202832 16% 35%,#657080 36% 42%,#0b0d11 43%);
+.wheel::before{
+    content:"";
+    position:absolute;
+    inset:14px;
+    border-radius:50%;
+    background:
+        radial-gradient(circle,#aeb7c3 0 15%,#333a45 16% 30%,#11151b 31% 100%);
 }
 
-.wheel.fl{
-  left:78px;
-  top:157px;
+.wheel-left{
+    left:15%;
 }
 
-.wheel.fr{
-  right:75px;
-  top:157px;
+.wheel-right{
+    right:14%;
 }
 
-/* ===== RIGHT PANEL ===== */
-
-.right{
-  padding:28px;
-  background:rgba(3,5,9,.5);
-  border-left:1px solid rgba(255,255,255,.07);
-  overflow:auto;
+.headlight{
+    position:absolute;
+    right:5%;
+    bottom:98px;
+    width:52px;
+    height:25px;
+    border-radius:8px 15px 6px 8px;
+    background:#e9f7ff;
+    box-shadow:0 0 25px rgba(200,240,255,.8);
 }
 
-.stat{
-  margin-bottom:22px;
+.taillight{
+    position:absolute;
+    left:6%;
+    bottom:100px;
+    width:45px;
+    height:20px;
+    border-radius:8px;
+    background:#ff314f;
+    box-shadow:0 0 22px rgba(255,49,79,.7);
 }
 
-.stat-head{
-  display:flex;
-  justify-content:space-between;
-  color:#aab5c6;
-  font-size:13px;
-  margin-bottom:8px;
+.front-grille{
+    position:absolute;
+    right:4%;
+    bottom:54px;
+    width:68px;
+    height:22px;
+    border-radius:5px;
+    background:#030405;
+    border:1px solid rgba(255,255,255,.08);
 }
 
-.bar{
-  width:100%;
-  height:7px;
-  border-radius:10px;
-  overflow:hidden;
-  background:#161c25;
+.exhaust{
+    position:absolute;
+    left:5%;
+    bottom:52px;
+    width:48px;
+    display:flex;
+    justify-content:space-between;
 }
 
-.bar div{
-  height:100%;
-  width:0;
-  border-radius:10px;
-  background:linear-gradient(90deg,#2689ff,#73c7ff);
-  transition:width .4s;
+.exhaust i{
+    width:16px;
+    height:10px;
+    border-radius:50%;
+    background:#08090b;
+    border:2px solid #222832;
+}
+
+.showcase-info{
+    position:absolute;
+    left:28px;
+    right:28px;
+    bottom:25px;
+    z-index:10;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:20px;
+}
+
+.car-name{
+    font-size:32px;
+    font-weight:900;
+}
+
+.car-type{
+    margin-top:6px;
+    color:var(--muted);
+    font-size:13px;
+}
+
+.selected-dot{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    border:3px solid rgba(255,255,255,.75);
+    background:var(--car-color,#1e8cff);
+    box-shadow:0 0 25px rgba(30,140,255,.3);
+}
+
+/* =========================
+   SIDE PANEL
+========================= */
+
+.panel{
+    border:1px solid var(--border);
+    border-radius:24px;
+    background:linear-gradient(145deg,#0d131d,#090c12);
+    box-shadow:var(--shadow);
+    padding:25px;
+}
+
+.panel-title{
+    font-size:20px;
+    font-weight:900;
+    margin-bottom:6px;
+}
+
+.panel-sub{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.5;
+    margin-bottom:24px;
+}
+
+.car-list{
+    display:grid;
+    gap:10px;
+}
+
+.car-option{
+    width:100%;
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:15px;
+    background:#0b1018;
+    color:white;
+    text-align:left;
+    cursor:pointer;
+    transition:.25s;
+    display:grid;
+    grid-template-columns:54px 1fr auto;
+    gap:13px;
+    align-items:center;
+}
+
+.car-option:hover{
+    transform:translateY(-2px);
+    border-color:rgba(30,140,255,.4);
+    background:#0e1520;
+}
+
+.car-option.active{
+    border-color:var(--blue);
+    background:rgba(30,140,255,.1);
+    box-shadow:0 0 25px rgba(30,140,255,.08);
+}
+
+.mini-car{
+    height:32px;
+    border-radius:10px 16px 8px 8px;
+    background:var(--mini-color);
+    position:relative;
+    box-shadow:inset 0 5px 7px rgba(255,255,255,.15);
+}
+
+.mini-car::before,
+.mini-car::after{
+    content:"";
+    position:absolute;
+    bottom:-5px;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:#050607;
+}
+
+.mini-car::before{
+    left:7px;
+}
+
+.mini-car::after{
+    right:7px;
+}
+
+.option-name{
+    font-weight:900;
+    font-size:14px;
+}
+
+.option-type{
+    margin-top:4px;
+    color:var(--muted);
+    font-size:11px;
+}
+
+.check{
+    width:23px;
+    height:23px;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    border:1px solid var(--border);
+    color:transparent;
+}
+
+.car-option.active .check{
+    color:white;
+    background:var(--blue);
+    border-color:var(--blue);
+}
+
+/* =========================
+   COLORS
+========================= */
+
+.color-section{
+    margin-top:28px;
+    padding-top:25px;
+    border-top:1px solid var(--border);
+}
+
+.color-title{
+    font-size:13px;
+    font-weight:900;
+    margin-bottom:14px;
 }
 
 .colors{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:15px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
 }
 
 .color{
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  border:2px solid transparent;
-  cursor:pointer;
-  transition:.2s;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:3px solid transparent;
+    cursor:pointer;
+    transition:.2s;
+    box-shadow:0 5px 15px rgba(0,0,0,.3);
 }
 
 .color:hover{
-  transform:scale(1.1);
+    transform:scale(1.12);
 }
 
 .color.active{
-  border-color:white;
-  box-shadow:0 0 0 3px rgba(255,255,255,.12);
+    border-color:white;
+    box-shadow:0 0 0 2px #111,0 0 0 4px white;
 }
 
-.black{background:#07080a}
-.white{background:#eee}
-.blue{background:#246dca}
-.red{background:#c62828}
-.green{background:#1e754e}
-.yellow{background:#d4a72c}
-.purple{background:#703ac2}
+/* =========================
+   STATS
+========================= */
 
-.action{
-  width:100%;
-  margin-top:25px;
-  padding:16px;
-  border:0;
-  border-radius:13px;
-  color:white;
-  background:linear-gradient(135deg,#1674e8,#42a9ff);
-  font-weight:900;
-  cursor:pointer;
-  font-size:15px;
-  transition:.2s;
+.stats{
+    margin-top:28px;
+    display:grid;
+    gap:10px;
 }
 
-.action:hover{
-  transform:translateY(-2px);
-  box-shadow:0 10px 30px rgba(30,130,255,.25);
+.stat{
+    display:grid;
+    grid-template-columns:95px 1fr 42px;
+    gap:10px;
+    align-items:center;
 }
 
-.secondary{
-  display:block;
-  text-align:center;
-  margin-top:10px;
-  padding:13px;
-  border-radius:13px;
-  color:#9ba8ba;
-  text-decoration:none;
-  background:rgba(255,255,255,.05);
+.stat-name{
+    font-size:11px;
+    color:#aeb7c6;
+    font-weight:800;
 }
 
-.info{
-  margin-top:25px;
-  padding:15px;
-  border-radius:13px;
-  background:rgba(255,255,255,.035);
-  border:1px solid rgba(255,255,255,.06);
+.bar{
+    height:7px;
+    overflow:hidden;
+    border-radius:10px;
+    background:#171d27;
 }
 
-.info-row{
-  display:flex;
-  justify-content:space-between;
-  padding:8px 0;
-  border-bottom:1px solid rgba(255,255,255,.05);
-  color:#8995a7;
-  font-size:13px;
+.bar span{
+    display:block;
+    height:100%;
+    width:var(--value);
+    border-radius:10px;
+    background:linear-gradient(90deg,var(--blue),var(--blue2));
 }
 
-.info-row:last-child{
-  border-bottom:0;
+.stat-value{
+    text-align:right;
+    font-size:11px;
+    font-weight:900;
 }
 
-.info-row strong{
-  color:white;
+/* =========================
+   BUTTONS
+========================= */
+
+.actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:28px;
 }
 
-/* ===== TOAST ===== */
+.btn{
+    min-height:48px;
+    border:none;
+    border-radius:13px;
+    padding:0 16px;
+    cursor:pointer;
+    font-weight:900;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:.25s;
+}
+
+.btn-primary{
+    color:white;
+    background:linear-gradient(135deg,#167df1,#00b9ff);
+    box-shadow:0 10px 30px rgba(0,150,255,.2);
+}
+
+.btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 35px rgba(0,150,255,.3);
+}
+
+.btn-secondary{
+    color:#d9e0ea;
+    background:#121821;
+    border:1px solid var(--border);
+}
+
+.btn-secondary:hover{
+    background:#18212d;
+}
+
+/* =========================
+   BOTTOM CARDS
+========================= */
+
+.bottom-grid{
+    margin-top:24px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.info-card{
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:23px;
+    background:rgba(10,14,21,.85);
+}
+
+.info-icon{
+    width:42px;
+    height:42px;
+    display:grid;
+    place-items:center;
+    border-radius:12px;
+    background:rgba(30,140,255,.1);
+    font-size:20px;
+    margin-bottom:15px;
+}
+
+.info-card h3{
+    font-size:15px;
+    margin-bottom:7px;
+}
+
+.info-card p{
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.6;
+}
+
+/* =========================
+   TOAST
+========================= */
 
 .toast{
-  position:fixed;
-  z-index:50;
-  left:50%;
-  bottom:30px;
-  transform:translate(-50%,20px);
-  padding:13px 20px;
-  border-radius:12px;
-  background:rgba(8,11,17,.94);
-  border:1px solid rgba(255,255,255,.1);
-  opacity:0;
-  pointer-events:none;
-  transition:.3s;
+    position:fixed;
+    left:50%;
+    bottom:28px;
+    transform:translate(-50%,30px);
+    z-index:3000;
+    opacity:0;
+    pointer-events:none;
+    padding:14px 20px;
+    border-radius:14px;
+    background:#101722;
+    border:1px solid rgba(30,140,255,.35);
+    box-shadow:0 15px 50px rgba(0,0,0,.4);
+    color:white;
+    font-size:13px;
+    font-weight:800;
+    transition:.3s;
 }
 
 .toast.show{
-  opacity:1;
-  transform:translate(-50%,0);
+    opacity:1;
+    transform:translate(-50%,0);
 }
 
-/* ===== MOBILE ===== */
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+    border-top:1px solid var(--border);
+    padding:30px 5%;
+    color:#667184;
+    text-align:center;
+    font-size:12px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
 
 @media(max-width:1050px){
-  main{
-    grid-template-columns:280px 1fr;
-  }
+    .garage-grid{
+        grid-template-columns:1fr;
+    }
 
-  .right{
-    display:none;
-  }
-
-  .car{
-    transform:scale(.85) perspective(900px) rotateX(4deg) rotateY(-8deg);
-  }
+    .showcase{
+        min-height:560px;
+    }
 }
 
-@media(max-width:720px){
-  html,body{
-    overflow:auto;
-  }
+@media(max-width:800px){
+    header{
+        padding:0 20px;
+    }
 
-  header{
-    height:auto;
-    min-height:70px;
-    padding:12px 15px;
-    align-items:flex-start;
-    flex-direction:column;
-    gap:10px;
-  }
+    nav{
+        display:none;
+        position:absolute;
+        left:15px;
+        right:15px;
+        top:82px;
+        padding:10px;
+        flex-direction:column;
+        align-items:stretch;
+        background:#090d14;
+        border:1px solid var(--border);
+        border-radius:16px;
+        box-shadow:var(--shadow);
+    }
 
-  nav{
-    width:100%;
-    overflow-x:auto;
-    padding-bottom:3px;
-  }
+    nav.open{
+        display:flex;
+    }
 
-  nav a{
-    white-space:nowrap;
-  }
+    nav a{
+        padding:14px;
+    }
 
-  main{
-    position:relative;
-    inset:auto;
-    margin-top:125px;
-    display:flex;
-    flex-direction:column;
-  }
+    .mobile-menu{
+        display:block;
+    }
 
-  .left{
-    order:2;
-    border:0;
-  }
+    main{
+        width:94%;
+        padding-top:35px;
+    }
 
-  .showroom{
-    order:1;
-    height:360px;
-    min-height:360px;
-  }
+    .page-head{
+        align-items:flex-start;
+        flex-direction:column;
+    }
 
-  .car{
-    transform:scale(.62) perspective(900px) rotateX(4deg) rotateY(-8deg);
-  }
+    .bottom-grid{
+        grid-template-columns:1fr;
+    }
 
-  .car:hover{
-    transform:scale(.64) perspective(900px) rotateX(3deg) rotateY(-10deg);
-  }
+    .showcase{
+        min-height:500px;
+    }
 
-  .floor{
-    width:120%;
-  }
+    .car{
+        width:90%;
+    }
+}
+
+@media(max-width:520px){
+    h1{
+        letter-spacing:-2px;
+    }
+
+    .showcase{
+        min-height:460px;
+        border-radius:20px;
+    }
+
+    .showcase-info{
+        left:18px;
+        right:18px;
+    }
+
+    .car-name{
+        font-size:25px;
+    }
+
+    .car{
+        transform:rotateX(3deg) rotateY(-5deg) scale(.9);
+    }
+
+    .wheel{
+        width:58px;
+        height:58px;
+        bottom:20px;
+    }
+
+    .wheel-left{
+        left:13%;
+    }
+
+    .wheel-right{
+        right:12%;
+    }
+
+    .actions{
+        grid-template-columns:1fr;
+    }
+
+    .panel{
+        padding:19px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div class="background">
-  <div class="light one"></div>
-  <div class="light two"></div>
-</div>
-
 <header>
-  <div class="logo">ZENTRO<span>•</span></div>
 
-  <nav>
-    <a href="index.html">ACCUEIL</a>
-    <a href="jeu.html">JOUER</a>
-    <a class="active" href="garage.html">GARAGE</a>
-    <a href="map.html">MAP</a>
-    <a href="voiture.html">VOITURES</a>
-    <a href="setting.html">SETTINGS</a>
-  </nav>
+    <a class="logo" href="index.html">
+        <span class="logo-dot"></span>
+        ZENTRO
+    </a>
+
+    <button class="mobile-menu" id="mobileMenu">☰</button>
+
+    <nav id="nav">
+        <a href="index.html">🏠 ACCUEIL</a>
+        <a href="jeu.html">🎮 JOUER</a>
+        <a href="garage.html" class="active">🔧 GARAGE</a>
+        <a href="map.html">🗺️ MAP</a>
+        <a href="voiture.html">🚗 VOITURES</a>
+        <a href="setting.html">⚙️ SETTINGS</a>
+    </nav>
+
 </header>
+
 
 <main>
 
-  <!-- GAUCHE -->
-  <section class="left">
+    <section class="page-head">
 
-    <div class="section-title">Zentro Garage</div>
+        <div>
+            <div class="eyebrow">ZENTRO DRIVE / GARAGE</div>
 
-    <h1>Garage</h1>
+            <h1>
+                TON<br>
+                GARAGE.
+            </h1>
 
-    <p class="subtitle">
-      Prépare ta voiture avant de partir explorer la ville.
-      Choisis ton modèle et personnalise son apparence.
-    </p>
+            <p class="page-description">
+                Configure ta voiture, choisis sa couleur et prépare-la
+                avant de partir explorer le monde libre de Zentro Drive.
+            </p>
+        </div>
 
-    <div class="section-title">Mes voitures</div>
+        <div class="status">
+            ● CONFIGURATION SAUVEGARDÉE
+        </div>
 
-    <div class="car-list">
+    </section>
 
-      <div class="car-card selected" data-name="Golf R"
-           data-power="94" data-speed="88" data-control="91">
-        <div class="car-name">Golf R</div>
-        <div class="car-type">SPORT • AWD</div>
-      </div>
 
-      <div class="car-card" data-name="Sport GT"
-           data-power="88" data-speed="92" data-control="82">
-        <div class="car-name">Sport GT</div>
-        <div class="car-type">SPORT • RWD</div>
-      </div>
+    <section class="garage-grid">
 
-      <div class="car-card" data-name="City RS"
-           data-power="72" data-speed="74" data-control="96">
-        <div class="car-name">City RS</div>
-        <div class="car-type">CITY • AWD</div>
-      </div>
+        <!-- =====================
+             CAR SHOWCASE
+        ====================== -->
 
-      <div class="car-card" data-name="Hyper X"
-           data-power="100" data-speed="100" data-control="78">
-        <div class="car-name">Hyper X</div>
-        <div class="car-type">HYPER • AWD</div>
-      </div>
+        <div class="showcase">
 
-    </div>
+            <div class="showcase-top">
 
-  </section>
+                <div class="badge">
+                    <span></span>
+                    VÉHICULE ACTUEL
+                </div>
 
-  <!-- SHOWROOM -->
-  <section class="showroom">
+                <div class="badge">
+                    ZENTRO V2
+                </div>
 
-    <div class="floor"></div>
-    <div class="floor-line"></div>
+            </div>
 
-    <div class="car" id="car">
 
-      <div class="roof"></div>
+            <div class="car-scene">
 
-      <div class="window back"></div>
-      <div class="window front"></div>
+                <div class="car-shadow"></div>
 
-      <div class="body"></div>
-      <div class="hood"></div>
-      <div class="front"></div>
+                <div class="car" id="car">
 
-      <div class="grille"></div>
+                    <div class="car-body"></div>
 
-      <div class="headlight"></div>
-      <div class="headlight right"></div>
+                    <div class="car-roof"></div>
 
-      <div class="side-mirror left"></div>
-      <div class="side-mirror right"></div>
+                    <div class="window-front"></div>
+                    <div class="window-back"></div>
 
-      <div class="wheel fl"></div>
-      <div class="wheel fr"></div>
+                    <div class="window-reflection"></div>
 
-    </div>
+                    <div class="wheel wheel-left"></div>
+                    <div class="wheel wheel-right"></div>
 
-  </section>
+                    <div class="headlight"></div>
 
-  <!-- DROITE -->
-  <aside class="right">
+                    <div class="taillight"></div>
 
-    <div class="section-title">Véhicule sélectionné</div>
+                    <div class="front-grille"></div>
 
-    <h2 id="selectedName">Golf R</h2>
+                    <div class="exhaust">
+                        <i></i>
+                        <i></i>
+                    </div>
 
-    <div class="stat">
-      <div class="stat-head">
-        <span>Puissance</span>
-        <strong id="powerText">94%</strong>
-      </div>
-      <div class="bar">
-        <div id="powerBar" style="width:94%"></div>
-      </div>
-    </div>
+                </div>
 
-    <div class="stat">
-      <div class="stat-head">
-        <span>Vitesse</span>
-        <strong id="speedText">88%</strong>
-      </div>
-      <div class="bar">
-        <div id="speedBar" style="width:88%"></div>
-      </div>
-    </div>
+            </div>
 
-    <div class="stat">
-      <div class="stat-head">
-        <span>Contrôle</span>
-        <strong id="controlText">91%</strong>
-      </div>
-      <div class="bar">
-        <div id="controlBar" style="width:91%"></div>
-      </div>
-    </div>
 
-    <div class="section-title">Couleur</div>
+            <div class="showcase-info">
 
-    <div class="colors">
+                <div>
+                    <div class="car-name" id="selectedCarName">
+                        Golf R
+                    </div>
 
-      <button class="color black active"
-              data-color="#08090b"></button>
+                    <div class="car-type" id="selectedCarType">
+                        Sport / Performance
+                    </div>
+                </div>
 
-      <button class="color white"
-              data-color="#eeeeee"></button>
+                <div class="selected-dot" id="selectedDot"></div>
 
-      <button class="color blue"
-              data-color="#246dca"></button>
+            </div>
 
-      <button class="color red"
-              data-color="#c62828"></button>
+        </div>
 
-      <button class="color green"
-              data-color="#1e754e"></button>
 
-      <button class="color yellow"
-              data-color="#d4a72c"></button>
+        <!-- =====================
+             CONFIG PANEL
+        ====================== -->
 
-      <button class="color purple"
-              data-color="#703ac2"></button>
+        <aside class="panel">
 
-    </div>
+            <div class="panel-title">
+                Configuration
+            </div>
 
-    <div class="info">
+            <div class="panel-sub">
+                Sélectionne ton véhicule principal pour le monde libre.
+            </div>
 
-      <div class="info-row">
-        <span>Transmission</span>
-        <strong>AWD</strong>
-      </div>
 
-      <div class="info-row">
-        <span>Moteur</span>
-        <strong>Turbo</strong>
-      </div>
+            <div class="car-list" id="carList">
 
-      <div class="info-row">
-        <span>Freins</span>
-        <strong>Sport</strong>
-      </div>
+                <button
+                    class="car-option active"
+                    data-car="golf-r"
+                    data-name="Golf R"
+                    data-type="Sport / Performance"
+                    data-color="#1e8cff"
+                >
 
-      <div class="info-row">
-        <span>Éclairage</span>
-        <strong>LED</strong>
-      </div>
+                    <div
+                        class="mini-car"
+                        style="--mini-color:#1e8cff"
+                    ></div>
 
-    </div>
+                    <div>
+                        <div class="option-name">
+                            Golf R
+                        </div>
 
-    <button class="action" id="playButton">
-      🚗 JOUER AVEC CETTE VOITURE
-    </button>
+                        <div class="option-type">
+                            Sport / Performance
+                        </div>
+                    </div>
 
-    <a class="secondary" href="voiture.html">
-      🏎️ Voir toutes les voitures
-    </a>
+                    <div class="check">
+                        ✓
+                    </div>
 
-  </aside>
+                </button>
+
+
+                <button
+                    class="car-option"
+                    data-car="sport-gt"
+                    data-name="Sport GT"
+                    data-type="Grand Tourisme"
+                    data-color="#e52b3f"
+                >
+
+                    <div
+                        class="mini-car"
+                        style="--mini-color:#e52b3f"
+                    ></div>
+
+                    <div>
+                        <div class="option-name">
+                            Sport GT
+                        </div>
+
+                        <div class="option-type">
+                            Grand Tourisme
+                        </div>
+                    </div>
+
+                    <div class="check">
+                        ✓
+                    </div>
+
+                </button>
+
+
+                <button
+                    class="car-option"
+                    data-car="city-rs"
+                    data-name="City RS"
+                    data-type="Urban / Agile"
+                    data-color="#21d58a"
+                >
+
+                    <div
+                        class="mini-car"
+                        style="--mini-color:#21d58a"
+                    ></div>
+
+                    <div>
+                        <div class="option-name">
+                            City RS
+                        </div>
+
+                        <div class="option-type">
+                            Urban / Agile
+                        </div>
+                    </div>
+
+                    <div class="check">
+                        ✓
+                    </div>
+
+                </button>
+
+
+                <button
+                    class="car-option"
+                    data-car="hyper-x"
+                    data-name="Hyper X"
+                    data-type="Hypercar"
+                    data-color="#a66cff"
+                >
+
+                    <div
+                        class="mini-car"
+                        style="--mini-color:#a66cff"
+                    ></div>
+
+                    <div>
+                        <div class="option-name">
+                            Hyper X
+                        </div>
+
+                        <div class="option-type">
+                            Hypercar
+                        </div>
+                    </div>
+
+                    <div class="check">
+                        ✓
+                    </div>
+
+                </button>
+
+            </div>
+
+
+            <!-- COLORS -->
+
+            <div class="color-section">
+
+                <div class="color-title">
+                    COULEUR DE LA CARROSSERIE
+                </div>
+
+                <div class="colors">
+
+                    <button
+                        class="color active"
+                        data-color="#1e8cff"
+                        style="background:#1e8cff"
+                        aria-label="Bleu"
+                    ></button>
+
+                    <button
+                        class="color"
+                        data-color="#f4f5f7"
+                        style="background:#f4f5f7"
+                        aria-label="Blanc"
+                    ></button>
+
+                    <button
+                        class="color"
+                        data-color="#090b0f"
+                        style="background:#090b0f"
+                        aria-label="Noir"
+                    ></button>
+
+                    <button
+                        class="color"
+                        data-color="#e52b3f"
+                        style="background:#e52b3f"
+                        aria-label="Rouge"
+                    ></button>
+
+                    <button
+                        class="color"
+                        data-color="#21d58a"
+                        style="background:#21d58a"
+                        aria-label="Vert"
+                    ></button>
+
+                    <button
+                        class="color"
+                        data-color="#a66cff"
+                        style="background:#a66cff"
+                        aria-label="Violet"
+                    ></button>
+
+                    <button
+                        class="color"
+                        data-color="#ff9d2e"
+                        style="background:#ff9d2e"
+                        aria-label="Orange"
+                    ></button>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATS -->
+
+            <div class="stats">
+
+                <div class="stat">
+                    <div class="stat-name">VITESSE</div>
+                    <div class="bar">
+                        <span id="speedBar" style="--value:88%"></span>
+                    </div>
+                    <div class="stat-value" id="speedValue">88</div>
+                </div>
+
+
+                <div class="stat">
+                    <div class="stat-name">ACCÉL.</div>
+                    <div class="bar">
+                        <span id="accelBar" style="--value:92%"></span>
+                    </div>
+                    <div class="stat-value" id="accelValue">92</div>
+                </div>
+
+
+                <div class="stat">
+                    <div class="stat-name">MANIABILITÉ</div>
+                    <div class="bar">
+                        <span id="handlingBar" style="--value:86%"></span>
+                    </div>
+                    <div class="stat-value" id="handlingValue">86</div>
+                </div>
+
+
+                <div class="stat">
+                    <div class="stat-name">FREINAGE</div>
+                    <div class="bar">
+                        <span id="brakeBar" style="--value:80%"></span>
+                    </div>
+                    <div class="stat-value" id="brakeValue">80</div>
+                </div>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="actions">
+
+                <a
+                    href="jeu.html"
+                    class="btn btn-primary"
+                    id="playButton"
+                >
+                    ▶ JOUER
+                </a>
+
+                <a
+                    href="voiture.html"
+                    class="btn btn-secondary"
+                >
+                    🚗 VOITURES
+                </a>
+
+            </div>
+
+        </aside>
+
+    </section>
+
+
+    <!-- =====================
+         INFO CARDS
+    ====================== -->
+
+    <section class="bottom-grid">
+
+        <article class="info-card">
+
+            <div class="info-icon">
+                🎨
+            </div>
+
+            <h3>
+                Personnalisation
+            </h3>
+
+            <p>
+                Choisis une couleur de carrosserie.
+                La sélection est automatiquement conservée
+                pour les autres pages de Zentro Drive.
+            </p>
+
+        </article>
+
+
+        <article class="info-card">
+
+            <div class="info-icon">
+                💾
+            </div>
+
+            <h3>
+                Sauvegarde automatique
+            </h3>
+
+            <p>
+                Ton véhicule sélectionné et sa couleur sont
+                enregistrés directement dans le navigateur.
+            </p>
+
+        </article>
+
+
+        <article class="info-card">
+
+            <div class="info-icon">
+                🎮
+            </div>
+
+            <h3>
+                Prêt pour le monde libre
+            </h3>
+
+            <p>
+                Une fois ta configuration terminée,
+                lance le jeu et retrouve immédiatement
+                ta voiture.
+            </p>
+
+        </article>
+
+    </section>
 
 </main>
 
-<div class="toast" id="toast"></div>
+
+<footer>
+    ZENTRO DRIVE © 2026 — Garage V2
+</footer>
+
+
+<div class="toast" id="toast">
+    Configuration sauvegardée ✓
+</div>
+
 
 <script>
 
-/* =========================
-   SÉLECTION DES VOITURES
-========================= */
+/* ============================================================
+   ZENTRO GARAGE V2
+   ============================================================ */
 
-const cards = document.querySelectorAll(".car-card");
 
-const selectedName = document.getElementById("selectedName");
+/* -------------------------
+   MOBILE MENU
+------------------------- */
 
-const powerBar = document.getElementById("powerBar");
-const speedBar = document.getElementById("speedBar");
-const controlBar = document.getElementById("controlBar");
+const mobileMenu =
+    document.getElementById("mobileMenu");
 
-const powerText = document.getElementById("powerText");
-const speedText = document.getElementById("speedText");
-const controlText = document.getElementById("controlText");
+const nav =
+    document.getElementById("nav");
 
-let selectedCar = "Golf R";
+mobileMenu.addEventListener("click", () => {
 
-cards.forEach(card => {
-
-  card.addEventListener("click", () => {
-
-    cards.forEach(c => c.classList.remove("selected"));
-
-    card.classList.add("selected");
-
-    selectedCar = card.dataset.name;
-
-    const power = card.dataset.power;
-    const speed = card.dataset.speed;
-    const control = card.dataset.control;
-
-    selectedName.textContent = selectedCar;
-
-    powerBar.style.width = power + "%";
-    speedBar.style.width = speed + "%";
-    controlBar.style.width = control + "%";
-
-    powerText.textContent = power + "%";
-    speedText.textContent = speed + "%";
-    controlText.textContent = control + "%";
-
-    localStorage.setItem("zentroCar",selectedCar);
-
-    showToast(selectedCar + " sélectionnée 🚗");
-
-  });
+    nav.classList.toggle("open");
 
 });
 
-/* =========================
-   COULEURS
-========================= */
 
-const colors = document.querySelectorAll(".color");
+/* -------------------------
+   DATA DES VOITURES
+------------------------- */
 
-const body = document.querySelector(".body");
-const roof = document.querySelector(".roof");
-const hood = document.querySelector(".hood");
+const cars = {
 
-colors.forEach(button => {
+    "golf-r": {
+        name:"Golf R",
+        type:"Sport / Performance",
+        color:"#1e8cff",
+        speed:88,
+        accel:92,
+        handling:86,
+        brake:80
+    },
 
-  button.addEventListener("click", () => {
+    "sport-gt": {
+        name:"Sport GT",
+        type:"Grand Tourisme",
+        color:"#e52b3f",
+        speed:91,
+        accel:84,
+        handling:80,
+        brake:85
+    },
 
-    colors.forEach(c => c.classList.remove("active"));
+    "city-rs": {
+        name:"City RS",
+        type:"Urban / Agile",
+        color:"#21d58a",
+        speed:76,
+        accel:87,
+        handling:96,
+        brake:91
+    },
 
-    button.classList.add("active");
-
-    const color = button.dataset.color;
-
-    body.style.background =
-      "linear-gradient(110deg," +
-      color +
-      ",#252c37 45%,#05070a 75%)";
-
-    roof.style.background =
-      "linear-gradient(125deg," +
-      color +
-      ",#252f3d,#080a0d)";
-
-    hood.style.background =
-      "linear-gradient(160deg,#2d3745," +
-      color + ")";
-
-    localStorage.setItem("zentroColor",color);
-
-    showToast("Couleur modifiée 🎨");
-
-  });
-
-});
-
-/* =========================
-   CHARGEMENT DES DONNÉES
-========================= */
-
-const savedCar = localStorage.getItem("zentroCar");
-
-if(savedCar){
-
-  cards.forEach(card => {
-
-    if(card.dataset.name === savedCar){
-
-      card.click();
-
+    "hyper-x": {
+        name:"Hyper X",
+        type:"Hypercar",
+        color:"#a66cff",
+        speed:99,
+        accel:98,
+        handling:88,
+        brake:94
     }
 
-  });
+};
+
+
+/* -------------------------
+   ELEMENTS
+------------------------- */
+
+const carElement =
+    document.getElementById("car");
+
+const carName =
+    document.getElementById("selectedCarName");
+
+const carType =
+    document.getElementById("selectedCarType");
+
+const selectedDot =
+    document.getElementById("selectedDot");
+
+const speedBar =
+    document.getElementById("speedBar");
+
+const accelBar =
+    document.getElementById("accelBar");
+
+const handlingBar =
+    document.getElementById("handlingBar");
+
+const brakeBar =
+    document.getElementById("brakeBar");
+
+const speedValue =
+    document.getElementById("speedValue");
+
+const accelValue =
+    document.getElementById("accelValue");
+
+const handlingValue =
+    document.getElementById("handlingValue");
+
+const brakeValue =
+    document.getElementById("brakeValue");
+
+const toast =
+    document.getElementById("toast");
+
+
+/* -------------------------
+   TOAST
+------------------------- */
+
+let toastTimer;
+
+function showToast(message){
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    },1800);
 
 }
 
-const savedColor = localStorage.getItem("zentroColor");
 
-if(savedColor){
+/* -------------------------
+   LOAD STORAGE
+------------------------- */
 
-  colors.forEach(button => {
+let savedCar =
+    localStorage.getItem("zentroCar");
 
-    if(button.dataset.color === savedColor){
+let savedColor =
+    localStorage.getItem("zentroColor");
 
-      button.click();
 
-    }
+/* sécurité */
 
-  });
+if(!savedCar || !cars[savedCar]){
+
+    savedCar = "golf-r";
 
 }
 
-/* =========================
-   BOUTON JOUER
-========================= */
+if(!savedColor){
 
-document.getElementById("playButton")
-.addEventListener("click", () => {
+    savedColor =
+        cars[savedCar].color;
 
-  localStorage.setItem("zentroCar",selectedCar);
+}
 
-  window.location.href = "jeu.html";
 
-});
+/* -------------------------
+   UPDATE CAR
+------------------------- */
 
-/* =========================
- 
-```
+function updateCar(carId){
+
+    const data =
+        cars[carId];
+
+    if(!data) return;
+
+
+    /* sauvegarde */
+
+    localStorage.setItem(
+        "zentroCar",
+        carId
+    );
+
+    localStorage.setItem(
+        "zentroCarName",
+        data.name
+    );
+
+
+    /* texte */
+
+    carName.textContent =
+        data.name;
+
+    carType.textContent =
+        data.type;
+
+
+    /* stats */
+
+    speedBar.style.setProperty(
+        "--value",
+        data.speed + "%"
+    );
+
+    accelBar.style.setProperty(
+        "--value",
+        data.accel + "%"
+    );
+
+    handlingBar.style.setProperty(
+        "--value",
+        data.handling + "%"
+    );
+
+    brakeBar.style.setProperty(
+        "--value",
+        data.brake + "%"
+    );
+
+
+    speedValue.textContent =
+        data.speed;
+
+    accelValue.textContent =
+        data.accel;
+
+    handlingValue.textContent =
+        data.handling;
+
+    brakeValue.textContent =
+        data.brake;
+
+
+    /* boutons */
+
+    document
+        .querySelectorAll(".car-option")
+        .forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.car === carId
+            );
+
+        });
+
+
+    /* couleur */
+
+    updateColor(
+        localStorage.getItem("zentroColor")
+        || data.color
+    );
+
+}
+
+
+/* -------------------------
+   UPDATE COLOR
+------------------------- */
+
+function updateColor(color){
+
+    if(!color) return;
+
+
+    localStorage.setItem(
+        "zentroColor",
+        color
+    );
+
+
+    document.documentElement
+        .style.setProperty(
+            "--car-color",
+            color
+        );
+
+
+    selectedDot.style.background =
+        color;
+
+
+    selectedDot.style.boxShadow =
+        `0 0 25px ${color}66`;
+
+
+    document
+        .querySelectorAll(".color")
+        .forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.color.toLowerCase()
+                === color.toLowerCase()
+            );
+
+        });
+
+
+    /* petites voitures */
+
+    document
+        .querySelectorAll(".car-option")
+        .forEach(button => {
+
+            if(button.classList.contains("active")){
+
+                const mini =
+                    button.querySelector(".mini-car");
+
+                if(mini){
+
+                    mini.style.setProperty(
+                        "--mini-color",
+                        color
+                    );
+
+                }
+
+            }
+
+        });
+
+}
+
+
+/* -------------------------
+   SELECT CAR
+------------------------- */
+
+document
+    .querySelectorAll(".car-option")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const id =
+                    button.dataset.car;
+
+                const data =
+                    cars[id];
+
+                if(!data) return;
+
+
+                localStorage.setItem(
+                    "zentroCar",
+                    id
+                );
+
+                localStorage.setItem(
+                    "zentroCarName",
+                    data.name
+                );
+
+
+                /*
+                 Si l'utilisateur change
+                 de voiture, on garde sa
+                 couleur actuelle si elle existe.
+                */
+
+                if(!localStorage.getItem("zentroColor")){
+
+                    localStorage.setItem(
+                        "zentroColor",
+                        data.color
+                    );
+
+                }
+
+
+                updateCar(id);
+
+                showToast(
+                    data.name + " sélectionnée ✓"
+                );
+
+            }
+        );
+
+    });
+
+
+/* -------------------------
+   SELECT COLOR
+------------------------- */
+
+document
+    .querySelectorAll(".color")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const color =
+                    button.dataset.color;
+
+                updateColor(color);
+
+                showToast(
+                    "Couleur sauvegardée ✓"
+                );
+
+            }
+        );
+
+    });
+
+
+/* -------------------------
+   INITIALISATION
+------------------------- */
+
+updateCar(savedCar);
+
+
+/* -------------------------
+   KEYBOARD SHORTCUTS
+------------------------- */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        /*
+         G = Garage
+         J = Jeu
+         V = Voitures
+        */
+
+        if(
+            event.target.tagName === "INPUT" ||
+            event.target.tagName === "TEXTAREA"
+        ){
+
+            return;
+
+        }
+
+
+        if(event.key.toLowerCase() === "g"){
+
+            location.href =
+                "garage.html";
+
+        }
+
+
+        if(event.key.toLowerCase() === "j"){
+
+            location.href =
+                "jeu.html";
+
+        }
+
+
+        if(event.key.toLowerCase() === "v"){
+
+            location.href =
+                "voiture.html";
+
+        }
+
+    }
+);
+
+
+/* -------------------------
+   HOVER EFFECT
+------------------------- */
+
+carElement.addEventListener(
+    "mousemove",
+    event => {
+
+        const rect =
+            carElement.getBoundingClientRect();
+
+        const x =
+            (event.clientX - rect.left)
+            / rect.width;
+
+        const y =
+            (event.clientY - rect.top)
+            / rect.height;
+
+        const rotateY =
+            -14 + x * 18;
+
+        const rotateX =
+            1 + y * -5;
+
+
+        carElement.style.transform =
+            `rotateX(${rotateX}deg)
+             rotateY(${rotateY}deg)
+             scale(1.02)`;
+
+    }
+);
+
+
+carElement.addEventListener(
+    "mouseleave",
+    () => {
+
+        carElement.style.transform =
+            "rotateX(3deg) rotateY(-9deg)";
+
+    }
+);
+
+
+/* -------------------------
+   SAVE BEFORE LEAVING
+------------------------- */
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        const current =
+            localStorage.getItem("zentroCar");
+
+        const color =
+            localStorage.getItem("zentroColor");
+
+
+        if(current){
+
+            localStorage.setItem(
+                "zentroCar",
+                current
+            );
+
+        }
+
+        if(color){
+
+            localStorage.setItem(
+                "zentroColor",
+                color
+            );
+
+        }
+
+    }
+);
+
+
+/* -------------------------
+   DEBUG ZENTRO
+------------------------- */
+
+console.log(
+    "%c ZENTRO DRIVE ",
+    "background:#0b8cff;color:white;font-weight:bold;padding:5px 10px;border-radius:5px;"
+);
+
+console.log(
+    "Voiture:",
+    localStorage.getItem("zentroCar")
+);
+
+console.log(
+    "Couleur:",
+    localStorage.getItem("zentroColor")
+);
+
+</script>
+
+</body>
+</html>
