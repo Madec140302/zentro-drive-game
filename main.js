@@ -1,52 +1,86 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+import * as THREE from
+    "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
 
-// =====================================================
-// ZENTRO V.3 — OPEN WORLD
-// PERSONNAGE + VOITURE + CONDUITE
-// =====================================================
+
+// ============================================================
+// ZENTRO V.4 — REALISTIC GRAPHICS
+// ============================================================
+
+
+// ============================================================
+// SCENE
+// ============================================================
 
 const scene = new THREE.Scene();
 
-scene.background = new THREE.Color(0x87b9e8);
-scene.fog = new THREE.Fog(0x87b9e8, 100, 420);
+scene.background = new THREE.Color(0x8fb8d8);
 
-// =====================================================
-// CAMÉRA
-// =====================================================
-
-const camera = new THREE.PerspectiveCamera(
-    70,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    700
+scene.fog = new THREE.Fog(
+    0x8fb8d8,
+    120,
+    650
 );
 
-// =====================================================
-// RENDERER
-// =====================================================
+
+// ============================================================
+// CAMERA
+// ============================================================
+
+const camera = new THREE.PerspectiveCamera(
+    65,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+);
+
+camera.position.set(
+    0,
+    5,
+    10
+);
+
+
+// ============================================================
+// RENDERER — REALISTIC GRAPHICS
+// ============================================================
 
 const renderer = new THREE.WebGLRenderer({
-    antialias: false,
+    antialias: true,
     powerPreference: "high-performance"
 });
+
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio, 2)
+);
 
 renderer.setSize(
     window.innerWidth,
     window.innerHeight
 );
 
-renderer.setPixelRatio(1);
-renderer.shadowMap.enabled = false;
+// Realistic color management
+renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-document.body.appendChild(renderer.domElement);
+// Cinematic tone mapping
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
 
-// =====================================================
-// LUMIÈRES
-// =====================================================
+// Realistic soft shadows
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+document.body.appendChild(
+    renderer.domElement
+);
+
+
+// ============================================================
+// LIGHTING
+// ============================================================
 
 const sun = new THREE.DirectionalLight(
     0xffffff,
-    2.2
+    3.0
 );
 
 sun.position.set(
@@ -55,60 +89,92 @@ sun.position.set(
     80
 );
 
+sun.castShadow = true;
+
+sun.shadow.mapSize.width = 2048;
+sun.shadow.mapSize.height = 2048;
+
+sun.shadow.camera.left = -180;
+sun.shadow.camera.right = 180;
+sun.shadow.camera.top = 180;
+sun.shadow.camera.bottom = -180;
+
+sun.shadow.camera.near = 1;
+sun.shadow.camera.far = 500;
+
+sun.shadow.bias = -0.0002;
+
 scene.add(sun);
 
-const ambient = new THREE.HemisphereLight(
+
+const hemiLight = new THREE.HemisphereLight(
+    0xcfe8ff,
+    0x6d7d57,
+    1.4
+);
+
+scene.add(hemiLight);
+
+
+const ambient = new THREE.AmbientLight(
     0xffffff,
-    0x426044,
-    1.5
+    0.25
 );
 
 scene.add(ambient);
 
-// =====================================================
-// MATÉRIAUX
-// =====================================================
 
-const grassMaterial =
+// ============================================================
+// GROUND
+// ============================================================
+
+const groundGeometry =
+    new THREE.PlaneGeometry(
+        1200,
+        1200
+    );
+
+const groundMaterial =
     new THREE.MeshStandardMaterial({
-        color: 0x3f8145,
-        roughness: 1
+        color: 0x4f7d3f,
+        roughness: 0.95,
+        metalness: 0
     });
 
-const roadMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0x242424,
-        roughness: 1
-    });
-
-const sidewalkMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0x888888,
-        roughness: 1
-    });
-
-const whiteMaterial =
-    new THREE.MeshBasicMaterial({
-        color: 0xffffff
-    });
-
-// =====================================================
-// SOL
-// =====================================================
-
-const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(600, 600),
-    grassMaterial
-);
+const ground =
+    new THREE.Mesh(
+        groundGeometry,
+        groundMaterial
+    );
 
 ground.rotation.x = -Math.PI / 2;
-ground.position.y = -0.02;
+
+ground.receiveShadow = true;
 
 scene.add(ground);
 
-// =====================================================
-// ROUTES
-// =====================================================
+
+// ============================================================
+// ROAD MATERIAL
+// ============================================================
+
+const roadMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x292b2e,
+        roughness: 0.92,
+        metalness: 0.02
+    });
+
+const roadLineMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0xf4f1df,
+        roughness: 0.8
+    });
+
+
+// ============================================================
+// ROAD FUNCTION
+// ============================================================
 
 function createRoad(
     x,
@@ -118,239 +184,124 @@ function createRoad(
     rotation = 0
 ) {
 
-    const road = new THREE.Mesh(
+    const geometry =
         new THREE.BoxGeometry(
             width,
-            0.16,
+            0.08,
             length
-        ),
-        roadMaterial
-    );
+        );
+
+    const road =
+        new THREE.Mesh(
+            geometry,
+            roadMaterial
+        );
 
     road.position.set(
         x,
-        0.05,
+        0.04,
         z
     );
 
-    road.rotation.y = rotation;
+    road.rotation.y =
+        rotation;
+
+    road.receiveShadow = true;
 
     scene.add(road);
 
-    const count = Math.floor(length / 10);
 
-    for (
-        let i = -count / 2;
-        i < count / 2;
-        i++
-    ) {
+    // Center lines
 
-        const line = new THREE.Mesh(
-            new THREE.BoxGeometry(
-                0.22,
-                0.035,
-                4
-            ),
-            whiteMaterial
+    const lineGeometry =
+        new THREE.BoxGeometry(
+            0.12,
+            0.09,
+            length
         );
 
-        if (rotation === 0) {
+    const line =
+        new THREE.Mesh(
+            lineGeometry,
+            roadLineMaterial
+        );
 
-            line.position.set(
-                x,
-                0.15,
-                z + i * 10
-            );
+    line.position.set(
+        x,
+        0.10,
+        z
+    );
 
-        } else {
+    line.rotation.y =
+        rotation;
 
-            line.position.set(
-                x + i * 10,
-                0.15,
-                z
-            );
-
-            line.rotation.y =
-                Math.PI / 2;
-        }
-
-        scene.add(line);
-    }
+    scene.add(line);
 }
 
-createRoad(0, 0, 16, 420);
-createRoad(0, 0, 16, 420, Math.PI / 2);
-createRoad(80, 0, 14, 420);
-createRoad(-95, 0, 12, 420);
+
+// ============================================================
+// MAIN ROADS
+// ============================================================
 
 createRoad(
     0,
-    80,
-    10,
-    220,
+    0,
+    16,
+    600,
+    0
+);
+
+createRoad(
+    0,
+    0,
+    16,
+    600,
+    Math.PI / 2
+);
+
+createRoad(
+    -90,
+    0,
+    12,
+    500,
+    0
+);
+
+createRoad(
+    90,
+    0,
+    12,
+    500,
+    0
+);
+
+createRoad(
+    0,
+    -100,
+    12,
+    500,
     Math.PI / 2
 );
 
 createRoad(
     0,
-    -80,
-    10,
-    220,
+    100,
+    12,
+    500,
     Math.PI / 2
 );
 
-createRoad(
-    110,
-    0,
-    10,
-    250,
-    Math.PI / 2
-);
 
-// =====================================================
-// BORDURES
-// =====================================================
+// ============================================================
+// SIDEWALKS
+// ============================================================
 
-const curbMaterial =
-    new THREE.MeshBasicMaterial({
-        color: 0xaaaaaa
+const sidewalkMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x888888,
+        roughness: 0.85
     });
 
-function createRoadLine(
-    x,
-    z,
-    rotation = 0,
-    count = 20
-) {
-
-    if (rotation === 0) {
-
-        const leftCurb = new THREE.Mesh(
-            new THREE.BoxGeometry(
-                0.35,
-                0.25,
-                180
-            ),
-            curbMaterial
-        );
-
-        leftCurb.position.set(
-            x - 7.2,
-            0.12,
-            z
-        );
-
-        scene.add(leftCurb);
-
-        const rightCurb = new THREE.Mesh(
-            new THREE.BoxGeometry(
-                0.35,
-                0.25,
-                180
-            ),
-            curbMaterial
-        );
-
-        rightCurb.position.set(
-            x + 7.2,
-            0.12,
-            z
-        );
-
-        scene.add(rightCurb);
-
-        for (
-            let i = -count;
-            i <= count;
-            i++
-        ) {
-
-            const line = new THREE.Mesh(
-                new THREE.BoxGeometry(
-                    0.22,
-                    0.025,
-                    4
-                ),
-                whiteMaterial
-            );
-
-            line.position.set(
-                x,
-                0.15,
-                z + i * 10
-            );
-
-            scene.add(line);
-        }
-
-    } else {
-
-        const leftCurb = new THREE.Mesh(
-            new THREE.BoxGeometry(
-                180,
-                0.25,
-                0.35
-            ),
-            curbMaterial
-        );
-
-        leftCurb.position.set(
-            x,
-            0.12,
-            z - 7.2
-        );
-
-        scene.add(leftCurb);
-
-        const rightCurb = new THREE.Mesh(
-            new THREE.BoxGeometry(
-                180,
-                0.25,
-                0.35
-            ),
-            curbMaterial
-        );
-
-        rightCurb.position.set(
-            x,
-            0.12,
-            z + 7.2
-        );
-
-        scene.add(rightCurb);
-
-        for (
-            let i = -count;
-            i <= count;
-            i++
-        ) {
-
-            const line = new THREE.Mesh(
-                new THREE.BoxGeometry(
-                    4,
-                    0.025,
-                    0.22
-                ),
-                whiteMaterial
-            );
-
-            line.position.set(
-                x + i * 10,
-                0.15,
-                z
-            );
-
-            scene.add(line);
-        }
-    }
-}
-
-createRoadLine(0, 0);
-createRoadLine(0, 0, Math.PI / 2);
-
-// =====================================================
-// TROTTOIRS
-// =====================================================
 
 function createSidewalk(
     x,
@@ -360,78 +311,97 @@ function createSidewalk(
     rotation = 0
 ) {
 
-    const sidewalk = new THREE.Mesh(
+    const geometry =
         new THREE.BoxGeometry(
             width,
-            0.22,
+            0.16,
             length
-        ),
-        sidewalkMaterial
-    );
+        );
+
+    const sidewalk =
+        new THREE.Mesh(
+            geometry,
+            sidewalkMaterial
+        );
 
     sidewalk.position.set(
         x,
-        0.11,
+        0.08,
         z
     );
 
     sidewalk.rotation.y =
         rotation;
 
+    sidewalk.receiveShadow = true;
+
     scene.add(sidewalk);
 }
 
-createSidewalk(-9, 0, 2, 420);
-createSidewalk(9, 0, 2, 420);
+
+createSidewalk(
+    -10,
+    0,
+    2,
+    600
+);
+
+createSidewalk(
+    10,
+    0,
+    2,
+    600
+);
 
 createSidewalk(
     0,
-    -9,
+    -10,
     2,
-    420,
+    600,
     Math.PI / 2
 );
 
 createSidewalk(
     0,
-    9,
+    10,
     2,
-    420,
+    600,
     Math.PI / 2
 );
 
-// =====================================================
-// BÂTIMENTS
-// =====================================================
 
-const buildingColors = [
-    0x737373,
-    0x8b8b8b,
-    0x666666,
-    0x969696,
-    0x5e6970
-];
+// ============================================================
+// BUILDINGS
+// ============================================================
 
 function createBuilding(
     x,
     z,
     width,
-    height,
     depth,
+    height,
     color
 ) {
 
-    const building = new THREE.Mesh(
+    const geometry =
         new THREE.BoxGeometry(
             width,
             height,
             depth
-        ),
+        );
+
+    const material =
         new THREE.MeshStandardMaterial({
             color: color,
-            roughness: 0.9
-        })
-    );
+            roughness: 0.82,
+            metalness: 0
+        });
+
+    const building =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
 
     building.position.set(
         x,
@@ -439,220 +409,239 @@ function createBuilding(
         z
     );
 
+    building.castShadow = true;
+    building.receiveShadow = true;
+
     scene.add(building);
 
-    const roof = new THREE.Mesh(
+
+    // Roof
+
+    const roofGeometry =
         new THREE.BoxGeometry(
-            width * 1.03,
-            0.15,
-            depth * 1.03
-        ),
+            width + 0.2,
+            0.25,
+            depth + 0.2
+        );
+
+    const roofMaterial =
         new THREE.MeshStandardMaterial({
-            color: 0x303030
-        })
-    );
+            color: 0x333333,
+            roughness: 0.9
+        });
+
+    const roof =
+        new THREE.Mesh(
+            roofGeometry,
+            roofMaterial
+        );
 
     roof.position.set(
         x,
-        height + 0.08,
+        height + 0.12,
         z
     );
+
+    roof.castShadow = true;
 
     scene.add(roof);
 }
 
-createBuilding(
-    -25,
-    -25,
-    15,
-    18,
-    15,
-    buildingColors[0]
-);
 
 createBuilding(
     -45,
-    -25,
-    15,
-    25,
-    15,
-    buildingColors[1]
-);
-
-createBuilding(
-    -25,
-    -50,
-    18,
-    13,
-    15,
-    buildingColors[2]
-);
-
-createBuilding(
-    -48,
-    -52,
-    15,
-    20,
-    15,
-    buildingColors[3]
-);
-
-createBuilding(
-    25,
-    25,
-    16,
-    22,
-    16,
-    buildingColors[1]
-);
-
-createBuilding(
-    48,
-    25,
-    15,
-    17,
-    15,
-    buildingColors[2]
-);
-
-createBuilding(
-    25,
-    50,
-    18,
-    28,
-    15,
-    buildingColors[0]
-);
-
-createBuilding(
-    50,
-    52,
-    15,
-    20,
-    15,
-    buildingColors[4]
-);
-
-createBuilding(
-    -35,
-    90,
-    16,
-    15,
-    16,
-    buildingColors[3]
-);
-
-createBuilding(
-    35,
-    90,
-    18,
+    -40,
     24,
-    18,
-    buildingColors[0]
-);
-
-createBuilding(
-    -35,
-    -90,
-    18,
-    16,
-    18,
-    buildingColors[2]
-);
-
-createBuilding(
-    35,
-    -90,
-    16,
     20,
-    16,
-    buildingColors[1]
+    25,
+    0xb9b0a4
 );
 
-// =====================================================
-// MAISONS
-// =====================================================
+createBuilding(
+    -80,
+    -60,
+    20,
+    25,
+    32,
+    0x9caaa9
+);
+
+createBuilding(
+    45,
+    -45,
+    25,
+    22,
+    28,
+    0xd0b79d
+);
+
+createBuilding(
+    70,
+    -75,
+    18,
+    25,
+    22,
+    0xa9b2bd
+);
+
+createBuilding(
+    -55,
+    55,
+    25,
+    25,
+    30,
+    0xb7a58e
+);
+
+createBuilding(
+    55,
+    55,
+    22,
+    25,
+    26,
+    0xc2c2b8
+);
+
+
+// ============================================================
+// HOUSES
+// ============================================================
 
 function createHouse(
     x,
-    z,
-    scale = 1
+    z
 ) {
 
-    const house =
-        new THREE.Group();
-
-    const base = new THREE.Mesh(
+    const bodyGeometry =
         new THREE.BoxGeometry(
-            9 * scale,
-            4 * scale,
-            7 * scale
-        ),
+            14,
+            7,
+            12
+        );
+
+    const bodyMaterial =
         new THREE.MeshStandardMaterial({
-            color: 0xc9c0ad
-        })
+            color: 0xd6c4a8,
+            roughness: 0.85
+        });
+
+    const body =
+        new THREE.Mesh(
+            bodyGeometry,
+            bodyMaterial
+        );
+
+    body.position.set(
+        x,
+        3.5,
+        z
     );
 
-    base.position.y =
-        2 * scale;
+    body.castShadow = true;
+    body.receiveShadow = true;
 
-    house.add(base);
+    scene.add(body);
 
-    const roof = new THREE.Mesh(
+
+    const roofGeometry =
         new THREE.ConeGeometry(
-            6 * scale,
-            3 * scale,
+            10,
+            6,
             4
-        ),
-        new THREE.MeshStandardMaterial({
-            color: 0x673d32
-        })
-    );
+        );
 
-    roof.position.y =
-        5.5 * scale;
+    const roofMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0x713f32,
+            roughness: 0.9
+        });
+
+    const roof =
+        new THREE.Mesh(
+            roofGeometry,
+            roofMaterial
+        );
+
+    roof.position.set(
+        x,
+        10,
+        z
+    );
 
     roof.rotation.y =
         Math.PI / 4;
 
-    house.add(roof);
+    roof.castShadow = true;
 
-    house.position.set(
-        x,
-        0,
-        z
-    );
-
-    scene.add(house);
+    scene.add(roof);
 }
 
-createHouse(-115, -40, 1.1);
-createHouse(-135, -10, 0.9);
-createHouse(-110, 35, 1);
-createHouse(-140, 70, 1.15);
 
-createHouse(135, -45, 1);
-createHouse(145, 10, 0.9);
-createHouse(135, 55, 1.2);
+createHouse(
+    -130,
+    -40
+);
 
-// =====================================================
-// ARBRES
-// =====================================================
+createHouse(
+    -155,
+    -70
+);
+
+createHouse(
+    135,
+    -45
+);
+
+createHouse(
+    155,
+    -80
+);
+
+createHouse(
+    -130,
+    80
+);
+
+createHouse(
+    140,
+    80
+);
+
+
+// ============================================================
+// TREES
+// ============================================================
 
 const treeCount = 250;
 
 const trunkGeometry =
     new THREE.CylinderGeometry(
-        0.22,
-        0.32,
-        2.2,
-        6
+        0.35,
+        0.55,
+        4,
+        8
     );
 
 const trunkMaterial =
     new THREE.MeshStandardMaterial({
-        color: 0x70452d
+        color: 0x62452d,
+        roughness: 0.95
     });
+
+
+const leavesGeometry =
+    new THREE.SphereGeometry(
+        2.7,
+        8,
+        8
+    );
+
+const leavesMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x3f7035,
+        roughness: 0.9
+    });
+
 
 const trunks =
     new THREE.InstancedMesh(
@@ -661,45 +650,58 @@ const trunks =
         treeCount
     );
 
-const crownGeometry =
-    new THREE.ConeGeometry(
-        1.8,
-        4.2,
-        7
-    );
-
-const crownMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0x236b32
-    });
-
-const crowns =
+const leaves =
     new THREE.InstancedMesh(
-        crownGeometry,
-        crownMaterial,
+        leavesGeometry,
+        leavesMaterial,
         treeCount
     );
+
+
+trunks.castShadow = true;
+trunks.receiveShadow = true;
+
+leaves.castShadow = true;
+leaves.receiveShadow = true;
+
 
 const dummy =
     new THREE.Object3D();
 
-let treeIndex = 0;
 
-function addTree(
-    x,
-    z,
-    scale
+for (
+    let i = 0;
+    i < treeCount;
+    i++
 ) {
 
-    if (
-        treeIndex >= treeCount
-    ) {
-        return;
-    }
+    let x;
+    let z;
+
+    do {
+
+        x =
+            (Math.random() - 0.5) *
+            500;
+
+        z =
+            (Math.random() - 0.5) *
+            500;
+
+    } while (
+        Math.abs(x) < 35 &&
+        Math.abs(z) < 35
+    );
+
+
+    const scale =
+        0.7 +
+        Math.random() * 0.8;
+
 
     dummy.position.set(
         x,
-        1.1 * scale,
+        2,
         z
     );
 
@@ -709,64 +711,42 @@ function addTree(
         scale
     );
 
-    dummy.rotation.y =
-        Math.random() * Math.PI;
-
     dummy.updateMatrix();
 
     trunks.setMatrixAt(
-        treeIndex,
+        i,
         dummy.matrix
     );
 
-    dummy.position.y =
-        3.6 * scale;
+
+    dummy.position.set(
+        x,
+        5.5 * scale,
+        z
+    );
+
+    dummy.scale.set(
+        scale,
+        scale,
+        scale
+    );
 
     dummy.updateMatrix();
 
-    crowns.setMatrixAt(
-        treeIndex,
+    leaves.setMatrixAt(
+        i,
         dummy.matrix
     );
-
-    treeIndex++;
 }
 
-for (
-    let i = 0;
-    i < 130;
-    i++
-) {
-
-    addTree(
-        -170 + Math.random() * 100,
-        -170 + Math.random() * 340,
-        0.8 + Math.random() * 0.7
-    );
-}
-
-for (
-    let i = 0;
-    i < 120;
-    i++
-) {
-
-    addTree(
-        170 + Math.random() * 70,
-        -170 + Math.random() * 340,
-        0.8 + Math.random() * 0.7
-    );
-}
-
-trunks.instanceMatrix.needsUpdate = true;
-crowns.instanceMatrix.needsUpdate = true;
 
 scene.add(trunks);
-scene.add(crowns);
+scene.add(leaves);
 
-// =====================================================
-// CHAMPS
-// =====================================================
+
+// ============================================================
+// FIELDS
+// ============================================================
 
 function createField(
     x,
@@ -775,148 +755,203 @@ function createField(
     depth
 ) {
 
-    const field = new THREE.Mesh(
-        new THREE.PlaneGeometry(
+    const geometry =
+        new THREE.BoxGeometry(
             width,
+            0.03,
             depth
-        ),
-        new THREE.MeshStandardMaterial({
-            color: 0x6e9942,
-            roughness: 1
-        })
-    );
+        );
 
-    field.rotation.x =
-        -Math.PI / 2;
+    const material =
+        new THREE.MeshStandardMaterial({
+            color: 0x789447,
+            roughness: 1
+        });
+
+    const field =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
 
     field.position.set(
         x,
-        0.01,
+        0.015,
         z
     );
+
+    field.receiveShadow = true;
 
     scene.add(field);
 }
 
-createField(-160, -100, 80, 100);
-createField(-160, 100, 80, 100);
-createField(170, -100, 60, 100);
-createField(170, 100, 60, 100);
 
-// =====================================================
-// FEUX
-// =====================================================
+createField(
+    -180,
+    180,
+    180,
+    120
+);
+
+createField(
+    180,
+    180,
+    180,
+    120
+);
+
+createField(
+    -180,
+    -180,
+    180,
+    120
+);
+
+createField(
+    180,
+    -180,
+    180,
+    120
+);
+
+
+// ============================================================
+// TRAFFIC LIGHTS
+// ============================================================
 
 function createTrafficLight(
     x,
     z
 ) {
 
-    const group =
-        new THREE.Group();
-
-    const pole = new THREE.Mesh(
-        new THREE.BoxGeometry(
-            0.18,
+    const poleGeometry =
+        new THREE.CylinderGeometry(
+            0.12,
+            0.12,
             5,
-            0.18
-        ),
+            8
+        );
+
+    const poleMaterial =
         new THREE.MeshStandardMaterial({
-            color: 0x222222
-        })
-    );
+            color: 0x333333,
+            roughness: 0.7,
+            metalness: 0.5
+        });
 
-    pole.position.y = 2.5;
-    group.add(pole);
+    const pole =
+        new THREE.Mesh(
+            poleGeometry,
+            poleMaterial
+        );
 
-    const box = new THREE.Mesh(
-        new THREE.BoxGeometry(
-            0.65,
-            1.8,
-            0.45
-        ),
-        new THREE.MeshStandardMaterial({
-            color: 0x171717
-        })
-    );
-
-    box.position.y = 4.5;
-    group.add(box);
-
-    const red = new THREE.Mesh(
-        new THREE.SphereGeometry(
-            0.16,
-            8,
-            8
-        ),
-        new THREE.MeshBasicMaterial({
-            color: 0xff2020
-        })
-    );
-
-    red.position.set(
-        0,
-        4.95,
-        0.24
-    );
-
-    group.add(red);
-
-    const orange = new THREE.Mesh(
-        new THREE.SphereGeometry(
-            0.16,
-            8,
-            8
-        ),
-        new THREE.MeshBasicMaterial({
-            color: 0xffa500
-        })
-    );
-
-    orange.position.set(
-        0,
-        4.5,
-        0.24
-    );
-
-    group.add(orange);
-
-    const green = new THREE.Mesh(
-        new THREE.SphereGeometry(
-            0.16,
-            8,
-            8
-        ),
-        new THREE.MeshBasicMaterial({
-            color: 0x20dd50
-        })
-    );
-
-    green.position.set(
-        0,
-        4.05,
-        0.24
-    );
-
-    group.add(green);
-
-    group.position.set(
+    pole.position.set(
         x,
-        0,
+        2.5,
         z
     );
 
-    scene.add(group);
+    pole.castShadow = true;
+
+    scene.add(pole);
+
+
+    const boxGeometry =
+        new THREE.BoxGeometry(
+            0.65,
+            1.7,
+            0.45
+        );
+
+    const boxMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0x222222,
+            roughness: 0.7
+        });
+
+    const box =
+        new THREE.Mesh(
+            boxGeometry,
+            boxMaterial
+        );
+
+    box.position.set(
+        x,
+        4.8,
+        z
+    );
+
+    box.castShadow = true;
+
+    scene.add(box);
+
+
+    const colors = [
+        0xff2222,
+        0xffcc22,
+        0x22dd44
+    ];
+
+    colors.forEach(
+        (color, index) => {
+
+            const lightGeometry =
+                new THREE.SphereGeometry(
+                    0.16,
+                    12,
+                    12
+                );
+
+            const lightMaterial =
+                new THREE.MeshStandardMaterial({
+                    color: color,
+                    emissive: color,
+                    emissiveIntensity:
+                        index === 2 ? 1.5 : 0.2
+                });
+
+            const light =
+                new THREE.Mesh(
+                    lightGeometry,
+                    lightMaterial
+                );
+
+            light.position.set(
+                x,
+                5.25 - index * 0.45,
+                z - 0.25
+            );
+
+            scene.add(light);
+        }
+    );
 }
 
-createTrafficLight(-9, -9);
-createTrafficLight(9, -9);
-createTrafficLight(-9, 9);
-createTrafficLight(9, 9);
 
-// =====================================================
-// PERSONNAGE
-// =====================================================
+createTrafficLight(
+    9,
+    9
+);
+
+createTrafficLight(
+    -9,
+    -9
+);
+
+createTrafficLight(
+    9,
+    -9
+);
+
+createTrafficLight(
+    -9,
+    9
+);
+
+
+// ============================================================
+// CHARACTER
+// ============================================================
 
 const player =
     new THREE.Group();
@@ -927,481 +962,519 @@ player.position.set(
     20
 );
 
-const playerMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0x315fbd
-    });
+scene.add(player);
 
-const skinMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0xf0b58c
-    });
 
-const body = new THREE.Mesh(
+// Body
+
+const bodyGeometry =
     new THREE.BoxGeometry(
         0.8,
-        1.1,
+        1.4,
         0.45
-    ),
-    playerMaterial
-);
+    );
 
-body.position.y = 1;
-player.add(body);
-
-const head = new THREE.Mesh(
-    new THREE.SphereGeometry(
-        0.32,
-        12,
-        12
-    ),
-    skinMaterial
-);
-
-head.position.y = 1.95;
-player.add(head);
-
-const legMaterial =
+const bodyMaterial =
     new THREE.MeshStandardMaterial({
-        color: 0x202b45
+        color: 0x1769aa,
+        roughness: 0.75
     });
 
-const leftLeg = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        0.28,
-        0.85,
-        0.3
-    ),
-    legMaterial
-);
+const playerBody =
+    new THREE.Mesh(
+        bodyGeometry,
+        bodyMaterial
+    );
 
-leftLeg.position.set(
-    -0.22,
-    0.35,
-    0
-);
+playerBody.position.y =
+    1.5;
 
-player.add(leftLeg);
+playerBody.castShadow = true;
 
-const rightLeg = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        0.28,
-        0.85,
-        0.3
-    ),
-    legMaterial
-);
+player.add(playerBody);
 
-rightLeg.position.set(
-    0.22,
-    0.35,
-    0
-);
 
-player.add(rightLeg);
+// Head
 
-const leftArm = new THREE.Mesh(
+const headGeometry =
+    new THREE.SphereGeometry(
+        0.35,
+        20,
+        20
+    );
+
+const headMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0xe0a27c,
+        roughness: 0.75
+    });
+
+const head =
+    new THREE.Mesh(
+        headGeometry,
+        headMaterial
+    );
+
+head.position.y =
+    2.5;
+
+head.castShadow = true;
+
+player.add(head);
+
+
+// Arms
+
+const armGeometry =
     new THREE.BoxGeometry(
         0.22,
-        0.85,
+        1.15,
         0.22
-    ),
-    playerMaterial
-);
+    );
+
+const armMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x1769aa,
+        roughness: 0.75
+    });
+
+
+const leftArm =
+    new THREE.Mesh(
+        armGeometry,
+        armMaterial
+    );
 
 leftArm.position.set(
     -0.58,
-    1.05,
+    1.55,
     0
 );
+
+leftArm.castShadow = true;
 
 player.add(leftArm);
 
-const rightArm = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        0.22,
-        0.85,
-        0.22
-    ),
-    playerMaterial
-);
+
+const rightArm =
+    new THREE.Mesh(
+        armGeometry,
+        armMaterial
+    );
 
 rightArm.position.set(
     0.58,
-    1.05,
+    1.55,
     0
 );
 
+rightArm.castShadow = true;
+
 player.add(rightArm);
 
-scene.add(player);
 
-// =====================================================
-// VOITURE
-// =====================================================
+// Legs
+
+const legGeometry =
+    new THREE.BoxGeometry(
+        0.25,
+        1.15,
+        0.28
+    );
+
+const legMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x20242a,
+        roughness: 0.9
+    });
+
+
+const leftLeg =
+    new THREE.Mesh(
+        legGeometry,
+        legMaterial
+    );
+
+leftLeg.position.set(
+    -0.22,
+    0.55,
+    0
+);
+
+leftLeg.castShadow = true;
+
+player.add(leftLeg);
+
+
+const rightLeg =
+    new THREE.Mesh(
+        legGeometry,
+        legMaterial
+    );
+
+rightLeg.position.set(
+    0.22,
+    0.55,
+    0
+);
+
+rightLeg.castShadow = true;
+
+player.add(rightLeg);
+
+
+// ============================================================
+// CAR
+// ============================================================
 
 const car =
     new THREE.Group();
 
-car.name = "ZentroCar";
-
 car.position.set(
-    4,
     0,
-    10
+    0,
+    0
 );
 
-// =====================================================
-// CARROSSERIE
-// =====================================================
+scene.add(car);
 
-const carBodyMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0x1769d2,
-        metalness: 0.35,
-        roughness: 0.25
+
+// Car body
+
+const carBodyGeometry =
+    new THREE.BoxGeometry(
+        3.6,
+        0.75,
+        7
+    );
+
+const carPaint =
+    new THREE.MeshPhysicalMaterial({
+        color: 0x1769ff,
+        metalness: 0.75,
+        roughness: 0.25,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.08
     });
 
-const carBody = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        3.2,
-        0.85,
-        4.8
-    ),
-    carBodyMaterial
-);
+const carBody =
+    new THREE.Mesh(
+        carBodyGeometry,
+        carPaint
+    );
 
-carBody.position.y = 0.85;
+carBody.position.y =
+    1.0;
+
+carBody.castShadow = true;
+carBody.receiveShadow = true;
+
 car.add(carBody);
 
-// =====================================================
-// CAPOT
-// =====================================================
 
-const hood = new THREE.Mesh(
+// ============================================================
+// CAR CABIN
+// ============================================================
+
+const cabinGeometry =
     new THREE.BoxGeometry(
         2.9,
-        0.3,
-        1.25
-    ),
-    carBodyMaterial
-);
-
-hood.position.set(
-    0,
-    1.2,
-    1.65
-);
-
-car.add(hood);
-
-// =====================================================
-// CABINE
-// =====================================================
+        1.2,
+        3.5
+    );
 
 const cabinMaterial =
-    new THREE.MeshStandardMaterial({
+    new THREE.MeshPhysicalMaterial({
         color: 0x111827,
-        metalness: 0.3,
-        roughness: 0.25
+        metalness: 0.15,
+        roughness: 0.12,
+        clearcoat: 0.7
     });
 
-const cabin = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        2.55,
-        0.85,
-        2.65
-    ),
-    cabinMaterial
-);
+const cabin =
+    new THREE.Mesh(
+        cabinGeometry,
+        cabinMaterial
+    );
 
 cabin.position.set(
     0,
-    1.55,
-    -0.2
+    1.65,
+    -0.25
 );
+
+cabin.castShadow = true;
 
 car.add(cabin);
 
-// =====================================================
-// VITRES
-// =====================================================
 
-const glassMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0x101b29,
+// ============================================================
+// WINDOWS
+// ============================================================
+
+const windshieldMaterial =
+    new THREE.MeshPhysicalMaterial({
+        color: 0x17202b,
         metalness: 0.1,
-        roughness: 0.15,
+        roughness: 0.08,
+        transmission: 0.35,
         transparent: true,
-        opacity: 0.85
+        opacity: 0.75,
+        clearcoat: 1
     });
 
-const windshield = new THREE.Mesh(
+
+const windshieldGeometry =
     new THREE.BoxGeometry(
-        2.15,
-        0.55,
+        2.65,
+        0.75,
         0.08
-    ),
-    glassMaterial
-);
+    );
+
+
+const windshield =
+    new THREE.Mesh(
+        windshieldGeometry,
+        windshieldMaterial
+    );
 
 windshield.position.set(
     0,
-    1.68,
-    1.05
+    1.8,
+    -2.0
 );
 
-windshield.rotation.x = -0.2;
+windshield.rotation.x =
+    -0.12;
 
 car.add(windshield);
 
-const rearWindow = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        2.15,
-        0.55,
-        0.08
-    ),
-    glassMaterial
-);
+
+// Rear window
+
+const rearWindow =
+    new THREE.Mesh(
+        windshieldGeometry,
+        windshieldMaterial
+    );
 
 rearWindow.position.set(
     0,
-    1.68,
-    -1.55
+    1.8,
+    1.55
 );
 
-rearWindow.rotation.x = 0.2;
+rearWindow.rotation.x =
+    0.12;
 
 car.add(rearWindow);
 
-const sideWindowMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0x101923,
-        metalness: 0.2,
-        roughness: 0.2
-    });
 
-const leftWindow = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        0.06,
-        0.52,
-        1.7
-    ),
-    sideWindowMaterial
-);
-
-leftWindow.position.set(
-    -1.29,
-    1.67,
-    -0.2
-);
-
-car.add(leftWindow);
-
-const rightWindow = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        0.06,
-        0.52,
-        1.7
-    ),
-    sideWindowMaterial
-);
-
-rightWindow.position.set(
-    1.29,
-    1.67,
-    -0.2
-);
-
-car.add(rightWindow);
-
-// =====================================================
-// ROUES
-// =====================================================
+// ============================================================
+// WHEELS
+// ============================================================
 
 const wheelGeometry =
     new THREE.CylinderGeometry(
-        0.52,
-        0.52,
-        0.38,
-        16
+        0.65,
+        0.65,
+        0.45,
+        24
     );
 
 const tireMaterial =
     new THREE.MeshStandardMaterial({
-        color: 0x101010,
-        roughness: 1
+        color: 0x111111,
+        roughness: 0.95,
+        metalness: 0
     });
+
+
+const rimGeometry =
+    new THREE.CylinderGeometry(
+        0.34,
+        0.34,
+        0.47,
+        20
+    );
 
 const rimMaterial =
     new THREE.MeshStandardMaterial({
-        color: 0x888888,
-        metalness: 0.8,
-        roughness: 0.2
+        color: 0xb7bcc5,
+        roughness: 0.28,
+        metalness: 0.85
     });
+
+
+const wheels = [];
 
 function createWheel(
     x,
     z
 ) {
 
-    const steering =
-        new THREE.Group();
-
-    steering.position.set(
-        x,
-        0.55,
-        z
-    );
-
     const wheel =
         new THREE.Group();
 
-    steering.add(wheel);
-
-    const tire = new THREE.Mesh(
-        wheelGeometry,
-        tireMaterial
+    wheel.position.set(
+        x,
+        0.65,
+        z
     );
 
-    tire.rotation.z =
+    wheel.rotation.z =
         Math.PI / 2;
+
+    const tire =
+        new THREE.Mesh(
+            wheelGeometry,
+            tireMaterial
+        );
+
+    tire.castShadow = true;
 
     wheel.add(tire);
 
-    const rim = new THREE.Mesh(
-        new THREE.CylinderGeometry(
-            0.27,
-            0.27,
-            0.39,
-            12
-        ),
-        rimMaterial
-    );
 
-    rim.rotation.z =
-        Math.PI / 2;
+    const rim =
+        new THREE.Mesh(
+            rimGeometry,
+            rimMaterial
+        );
+
+    rim.castShadow = true;
 
     wheel.add(rim);
 
-    car.add(steering);
+    car.add(wheel);
 
-    return {
-        steering,
-        wheel
-    };
+    wheels.push(wheel);
+
+    return wheel;
 }
 
-const frontLeftWheel =
-    createWheel(-1.72, 1.55);
 
-const frontRightWheel =
-    createWheel(1.72, 1.55);
+const frontLeft =
+    createWheel(
+        -1.9,
+        -2.25
+    );
 
-const rearLeftWheel =
-    createWheel(-1.72, -1.55);
+const frontRight =
+    createWheel(
+        1.9,
+        -2.25
+    );
 
-const rearRightWheel =
-    createWheel(1.72, -1.55);
+const rearLeft =
+    createWheel(
+        -1.9,
+        2.25
+    );
 
-// =====================================================
-// PHARES
-// =====================================================
+const rearRight =
+    createWheel(
+        1.9,
+        2.25
+    );
+
+
+// ============================================================
+// HEADLIGHTS
+// ============================================================
+
+const headlightGeometry =
+    new THREE.BoxGeometry(
+        0.8,
+        0.3,
+        0.12
+    );
 
 const headlightMaterial =
-    new THREE.MeshBasicMaterial({
-        color: 0xffffee
+    new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: 0xffffff,
+        emissiveIntensity: 3
     });
 
-function createHeadlight(x) {
 
-    const light = new THREE.Mesh(
-        new THREE.BoxGeometry(
-            0.72,
-            0.22,
-            0.08
-        ),
+const headlightLeft =
+    new THREE.Mesh(
+        headlightGeometry,
         headlightMaterial
     );
 
-    light.position.set(
-        x,
-        1.05,
-        2.43
+headlightLeft.position.set(
+    -1.1,
+    1.15,
+    -3.52
+);
+
+car.add(headlightLeft);
+
+
+const headlightRight =
+    headlightLeft.clone();
+
+headlightRight.position.x =
+    1.1;
+
+car.add(headlightRight);
+
+
+// ============================================================
+// TAIL LIGHTS
+// ============================================================
+
+const tailGeometry =
+    new THREE.BoxGeometry(
+        0.85,
+        0.3,
+        0.12
     );
 
-    car.add(light);
-}
-
-createHeadlight(-0.85);
-createHeadlight(0.85);
-
-function createSpotLight(x) {
-
-    const light =
-        new THREE.SpotLight(
-            0xffffff,
-            2.5,
-            25,
-            Math.PI / 7,
-            0.5,
-            1
-        );
-
-    light.position.set(
-        x,
-        1.1,
-        2.75
-    );
-
-    light.target.position.set(
-        x,
-        0,
-        15
-    );
-
-    car.add(light);
-    car.add(light.target);
-}
-
-createSpotLight(-0.85);
-createSpotLight(0.85);
-
-// =====================================================
-// FEUX ARRIÈRE
-// =====================================================
-
-const rearLightMaterial =
-    new THREE.MeshBasicMaterial({
-        color: 0xff2020
+const tailMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0xaa0000,
+        emissive: 0xff0000,
+        emissiveIntensity: 2
     });
 
-function createRearLight(x) {
 
-    const light = new THREE.Mesh(
-        new THREE.BoxGeometry(
-            0.7,
-            0.22,
-            0.08
-        ),
-        rearLightMaterial
+const tailLeft =
+    new THREE.Mesh(
+        tailGeometry,
+        tailMaterial
     );
 
-    light.position.set(
-        x,
-        1.05,
-        -2.43
+tailLeft.position.set(
+    -1.1,
+    1.15,
+    3.52
+);
+
+car.add(tailLeft);
+
+
+const tailRight =
+    tailLeft.clone();
+
+tailRight.position.x =
+    1.1;
+
+car.add(tailRight);
+
+
+// ============================================================
+// MIRRORS
+// ============================================================
+
+const mirrorGeometry =
+    new THREE.BoxGeometry(
+        0.25,
+        0.25,
+        0.5
     );
-
-    car.add(light);
-}
-
-createRearLight(-0.85);
-createRearLight(0.85);
-
-// =====================================================
-// RÉTROVISEURS
-// =====================================================
 
 const mirrorMaterial =
     new THREE.MeshStandardMaterial({
@@ -1410,178 +1483,271 @@ const mirrorMaterial =
         roughness: 0.3
     });
 
-function createMirror(x) {
 
-    const mirror = new THREE.Mesh(
-        new THREE.BoxGeometry(
-            0.25,
-            0.2,
-            0.45
-        ),
+const mirrorLeft =
+    new THREE.Mesh(
+        mirrorGeometry,
         mirrorMaterial
     );
 
-    mirror.position.set(
-        x,
-        1.45,
-        0.65
+mirrorLeft.position.set(
+    -1.7,
+    1.65,
+    -1.0
+);
+
+mirrorLeft.castShadow = true;
+
+car.add(mirrorLeft);
+
+
+const mirrorRight =
+    mirrorLeft.clone();
+
+mirrorRight.position.x =
+    1.7;
+
+car.add(mirrorRight);
+
+
+// ============================================================
+// BUMPERS
+// ============================================================
+
+const bumperGeometry =
+    new THREE.BoxGeometry(
+        3.4,
+        0.3,
+        0.25
     );
-
-    car.add(mirror);
-}
-
-createMirror(-1.48);
-createMirror(1.48);
-
-// =====================================================
-// PARE-CHOCS
-// =====================================================
 
 const bumperMaterial =
     new THREE.MeshStandardMaterial({
-        color: 0x101010,
-        roughness: 0.7
+        color: 0x111111,
+        roughness: 0.6,
+        metalness: 0.35
     });
 
-const frontBumper = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        3.1,
-        0.25,
-        0.3
-    ),
-    bumperMaterial
-);
+
+const frontBumper =
+    new THREE.Mesh(
+        bumperGeometry,
+        bumperMaterial
+    );
 
 frontBumper.position.set(
     0,
-    0.62,
-    2.38
+    0.65,
+    -3.55
 );
 
 car.add(frontBumper);
 
-const rearBumper = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        3.1,
-        0.25,
-        0.3
-    ),
-    bumperMaterial
-);
 
-rearBumper.position.set(
-    0,
-    0.62,
-    -2.38
-);
+const rearBumper =
+    frontBumper.clone();
+
+rearBumper.position.z =
+    3.55;
 
 car.add(rearBumper);
 
-// =====================================================
-// ÉCHAPPEMENTS
-// =====================================================
 
-const exhaustMaterial =
+// ============================================================
+// SPOILER
+// ============================================================
+
+const spoilerGeometry =
+    new THREE.BoxGeometry(
+        3.2,
+        0.18,
+        0.45
+    );
+
+const spoilerMaterial =
     new THREE.MeshStandardMaterial({
-        color: 0x555555,
-        metalness: 0.7,
-        roughness: 0.3
+        color: 0x111111,
+        roughness: 0.4,
+        metalness: 0.4
     });
 
-function createExhaust(x) {
 
-    const exhaust = new THREE.Mesh(
-        new THREE.CylinderGeometry(
-            0.12,
-            0.12,
-            0.35,
-            12
-        ),
-        exhaustMaterial
+const spoiler =
+    new THREE.Mesh(
+        spoilerGeometry,
+        spoilerMaterial
     );
-
-    exhaust.rotation.x =
-        Math.PI / 2;
-
-    exhaust.position.set(
-        x,
-        0.55,
-        -2.58
-    );
-
-    car.add(exhaust);
-}
-
-createExhaust(-0.65);
-createExhaust(0.65);
-
-// =====================================================
-// AILERON
-// =====================================================
-
-const spoiler = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        2.5,
-        0.12,
-        0.3
-    ),
-    carBodyMaterial
-);
 
 spoiler.position.set(
     0,
-    1.65,
-    -2.05
+    2.05,
+    3.0
 );
+
+spoiler.castShadow = true;
 
 car.add(spoiler);
 
-scene.add(car);
 
-// =====================================================
-// CONTRÔLES
-// =====================================================
+// ============================================================
+// EXHAUSTS
+// ============================================================
+
+const exhaustGeometry =
+    new THREE.CylinderGeometry(
+        0.12,
+        0.12,
+        0.35,
+        12
+    );
+
+const exhaustMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x777777,
+        metalness: 0.9,
+        roughness: 0.25
+    });
+
+
+const exhaustLeft =
+    new THREE.Mesh(
+        exhaustGeometry,
+        exhaustMaterial
+    );
+
+exhaustLeft.rotation.x =
+    Math.PI / 2;
+
+exhaustLeft.position.set(
+    -0.9,
+    0.65,
+    3.7
+);
+
+car.add(exhaustLeft);
+
+
+const exhaustRight =
+    exhaustLeft.clone();
+
+exhaustRight.position.x =
+    0.9;
+
+car.add(exhaustRight);
+
+
+// ============================================================
+// CONTROLS
+// ============================================================
 
 const keys = {};
 
 window.addEventListener(
     "keydown",
     (event) => {
+
         keys[
             event.key.toLowerCase()
         ] = true;
+
+        if (
+            event.key.toLowerCase() === "e"
+        ) {
+
+            toggleVehicle();
+        }
     }
 );
+
 
 window.addEventListener(
     "keyup",
     (event) => {
+
         keys[
             event.key.toLowerCase()
         ] = false;
     }
 );
 
-// =====================================================
-// VARIABLES
-// =====================================================
 
-const playerSpeed = 7;
-const playerTurnSpeed = 2.8;
+// ============================================================
+// GAME STATE
+// ============================================================
 
-let walkTime = 0;
+let inCar = false;
 
-let driving = false;
 let carSpeed = 0;
 
-const carMaxSpeed = 20;
-const carReverseSpeed = 8;
-const carAcceleration = 10;
-const carFriction = 6;
-const carTurnSpeed = 1.9;
+let playerSpeed = 7;
 
-const clock =
-    new THREE.Clock();
+let playerTurnSpeed = 2.2;
+
+let carMaxSpeed = 20;
+
+let carReverseSpeed = 8;
+
+let carAcceleration = 10;
+
+let carFriction = 6;
+
+let carTurnSpeed = 1.9;
+
+
+// ============================================================
+// ENTER / EXIT CAR
+// ============================================================
+
+function toggleVehicle() {
+
+    if (!inCar) {
+
+        const distance =
+            player.position.distanceTo(
+                car.position
+            );
+
+        if (distance < 5) {
+
+            inCar = true;
+
+            player.visible = false;
+        }
+
+    } else {
+
+        inCar = false;
+
+        player.visible = true;
+
+        const exitPosition =
+            new THREE.Vector3(
+                4,
+                0,
+                0
+            );
+
+        exitPosition.applyQuaternion(
+            car.quaternion
+        );
+
+        player.position.copy(
+            car.position
+        ).add(
+            exitPosition
+        );
+
+        player.rotation.y =
+            car.rotation.y;
+
+        carSpeed = 0;
+    }
+}
+
+
+// ============================================================
+// CAMERA VARIABLES
+// ============================================================
 
 const cameraPosition =
     new THREE.Vector3();
@@ -1589,278 +1755,10 @@ const cameraPosition =
 const cameraTarget =
     new THREE.Vector3();
 
-// =====================================================
-// ANIMATION PERSONNAGE
-// =====================================================
 
-function animateCharacter(
-    moving,
-    delta
-) {
-
-    if (moving) {
-
-        walkTime +=
-            delta * 10;
-
-        const swing =
-            Math.sin(walkTime) *
-            0.65;
-
-        leftLeg.rotation.x =
-            swing;
-
-        rightLeg.rotation.x =
-            -swing;
-
-        leftArm.rotation.x =
-            -swing * 0.7;
-
-        rightArm.rotation.x =
-            swing * 0.7;
-
-    } else {
-
-        leftLeg.rotation.x *= 0.8;
-        rightLeg.rotation.x *= 0.8;
-        leftArm.rotation.x *= 0.8;
-        rightArm.rotation.x *= 0.8;
-    }
-}
-
-// =====================================================
-// ROUES
-// =====================================================
-
-function rotateWheels(amount) {
-
-    frontLeftWheel.wheel.rotation.x += amount;
-    frontRightWheel.wheel.rotation.x += amount;
-    rearLeftWheel.wheel.rotation.x += amount;
-    rearRightWheel.wheel.rotation.x += amount;
-}
-
-function steerWheels(steering) {
-
-    const maxAngle = 0.42;
-
-    const angle =
-        steering * maxAngle;
-
-    frontLeftWheel.steering.rotation.y =
-        angle;
-
-    frontRightWheel.steering.rotation.y =
-        angle;
-}
-
-// =====================================================
-// ENTRER DANS LA VOITURE
-// =====================================================
-
-function tryEnterCar() {
-
-    const distance =
-        player.position.distanceTo(
-            car.position
-        );
-
-    if (distance < 5) {
-
-        driving = true;
-
-        player.visible = false;
-
-        carSpeed = 0;
-    }
-}
-
-// =====================================================
-// SORTIR
-// =====================================================
-
-function exitCar() {
-
-    driving = false;
-
-    player.visible = true;
-
-    const exitOffset =
-        new THREE.Vector3(
-            3,
-            0,
-            0
-        );
-
-    exitOffset.applyQuaternion(
-        car.quaternion
-    );
-
-    player.position.copy(
-        car.position
-    );
-
-    player.position.add(
-        exitOffset
-    );
-
-    player.rotation.y =
-        car.rotation.y;
-}
-
-// =====================================================
-// CONDUITE
-// =====================================================
-
-function driveCar(delta) {
-
-    if (
-        keys["z"] ||
-        keys["w"] ||
-        keys["arrowup"]
-    ) {
-
-        carSpeed +=
-            carAcceleration *
-            delta;
-
-    } else if (
-        keys["s"] ||
-        keys["arrowdown"]
-    ) {
-
-        if (carSpeed > 0) {
-
-            carSpeed -=
-                carAcceleration *
-                1.5 *
-                delta;
-
-        } else {
-
-            carSpeed -=
-                carAcceleration *
-                0.7 *
-                delta;
-        }
-
-    } else {
-
-        if (carSpeed > 0) {
-
-            carSpeed -=
-                carFriction *
-                delta;
-
-        } else if (carSpeed < 0) {
-
-            carSpeed +=
-                carFriction *
-                delta;
-        }
-    }
-
-    carSpeed =
-        THREE.MathUtils.clamp(
-            carSpeed,
-            -carReverseSpeed,
-            carMaxSpeed
-        );
-
-    if (
-        Math.abs(carSpeed) < 0.05
-    ) {
-
-        carSpeed = 0;
-    }
-
-    let steering = 0;
-
-    if (
-        keys["q"] ||
-        keys["a"] ||
-        keys["arrowleft"]
-    ) {
-
-        steering = 1;
-    }
-
-    if (
-        keys["d"] ||
-        keys["arrowright"]
-    ) {
-
-        steering = -1;
-    }
-
-    steerWheels(steering);
-
-    if (
-        Math.abs(carSpeed) > 0.05
-    ) {
-
-        const steeringStrength =
-            Math.min(
-                Math.abs(carSpeed) /
-                carMaxSpeed,
-                1
-            );
-
-        car.rotation.y +=
-            steering *
-            carTurnSpeed *
-            steeringStrength *
-            delta *
-            Math.sign(carSpeed);
-    }
-
-    car.translateZ(
-        carSpeed * delta
-    );
-
-    rotateWheels(
-        carSpeed *
-        delta *
-        1.5
-    );
-}
-
-// =====================================================
-// CAMÉRA PERSONNAGE
-// =====================================================
-
-function updatePlayerCamera() {
-
-    const offset =
-        new THREE.Vector3(
-            0,
-            5,
-            8
-        );
-
-    offset.applyQuaternion(
-        player.quaternion
-    );
-
-    cameraPosition
-        .copy(player.position)
-        .add(offset);
-
-    camera.position.lerp(
-        cameraPosition,
-        0.10
-    );
-
-    cameraTarget.set(
-        player.position.x,
-        player.position.y + 1.2,
-        player.position.z
-    );
-}
-
-// =====================================================
-// CAMÉRA VOITURE — DERRIÈRE
-// =====================================================
+// ============================================================
+// CAR CAMERA
+// ============================================================
 
 function updateCarCamera() {
 
@@ -1875,9 +1773,11 @@ function updateCarCamera() {
         car.quaternion
     );
 
-    cameraPosition
-        .copy(car.position)
-        .add(offset);
+    cameraPosition.copy(
+        car.position
+    ).add(
+        offset
+    );
 
     camera.position.lerp(
         cameraPosition,
@@ -1889,11 +1789,67 @@ function updateCarCamera() {
         car.position.y + 1.1,
         car.position.z
     );
+
+    camera.lookAt(
+        cameraTarget
+    );
 }
 
-// =====================================================
-// BOUCLE PRINCIPALE
-// =====================================================
+
+// ============================================================
+// PLAYER CAMERA
+// ============================================================
+
+function updatePlayerCamera() {
+
+    const offset =
+        new THREE.Vector3(
+            0,
+            4,
+            6
+        );
+
+    offset.applyQuaternion(
+        player.quaternion
+    );
+
+    cameraPosition.copy(
+        player.position
+    ).add(
+        offset
+    );
+
+    camera.position.lerp(
+        cameraPosition,
+        0.12
+    );
+
+    cameraTarget.set(
+        player.position.x,
+        player.position.y + 1.4,
+        player.position.z
+    );
+
+    camera.lookAt(
+        cameraTarget
+    );
+}
+
+
+// ============================================================
+// CLOCK
+// ============================================================
+
+const clock =
+    new THREE.Clock();
+
+
+// ============================================================
+// ANIMATION
+// ============================================================
+
+let walkTime = 0;
+
 
 function animate() {
 
@@ -1903,41 +1859,49 @@ function animate() {
             0.05
         );
 
-    // =================================================
-    // E = ENTRER / SORTIR
-    // =================================================
 
-    if (
-        keys["e"] &&
-        !keys["_ePressed"]
-    ) {
+    // ========================================================
+    // PLAYER
+    // ========================================================
 
-        keys["_ePressed"] = true;
-
-        if (driving) {
-
-            exitCar();
-
-        } else {
-
-            tryEnterCar();
-        }
-    }
-
-    if (!keys["e"]) {
-
-        keys["_ePressed"] = false;
-    }
-
-    // =================================================
-    // PERSONNAGE
-    // =================================================
-
-    if (!driving) {
+    if (!inCar) {
 
         let moving = false;
 
-        // Q = GAUCHE
+
+        // Forward
+
+        if (
+            keys["z"] ||
+            keys["w"] ||
+            keys["arrowup"]
+        ) {
+
+            player.translateZ(
+                -playerSpeed * delta
+            );
+
+            moving = true;
+        }
+
+
+        // Reverse
+
+        if (
+            keys["s"] ||
+            keys["arrowdown"]
+        ) {
+
+            player.translateZ(
+                playerSpeed * delta
+            );
+
+            moving = true;
+        }
+
+
+        // Q = LEFT
+
         if (
             keys["q"] ||
             keys["a"] ||
@@ -1949,7 +1913,9 @@ function animate() {
                 delta;
         }
 
-        // D = DROITE
+
+        // D = RIGHT
+
         if (
             keys["d"] ||
             keys["arrowright"]
@@ -1960,56 +1926,222 @@ function animate() {
                 delta;
         }
 
-        // Z = AVANCER
+
+        // Walking animation
+
+        if (moving) {
+
+            walkTime +=
+                delta * 9;
+
+            leftArm.rotation.x =
+                Math.sin(
+                    walkTime
+                ) * 0.45;
+
+            rightArm.rotation.x =
+                -Math.sin(
+                    walkTime
+                ) * 0.45;
+
+            leftLeg.rotation.x =
+                -Math.sin(
+                    walkTime
+                ) * 0.5;
+
+            rightLeg.rotation.x =
+                Math.sin(
+                    walkTime
+                ) * 0.5;
+
+        } else {
+
+            leftArm.rotation.x *=
+                0.85;
+
+            rightArm.rotation.x *=
+                0.85;
+
+            leftLeg.rotation.x *=
+                0.85;
+
+            rightLeg.rotation.x *=
+                0.85;
+        }
+
+
+        updatePlayerCamera();
+    }
+
+
+    // ========================================================
+    // CAR
+    // ========================================================
+
+    if (inCar) {
+
+        let accelerating = false;
+
+
+        // Forward
+
         if (
             keys["z"] ||
             keys["w"] ||
             keys["arrowup"]
         ) {
 
-            player.translateZ(
-                -playerSpeed *
-                delta
-            );
+            carSpeed +=
+                carAcceleration *
+                delta;
 
-            moving = true;
+            accelerating = true;
         }
 
-        // S = RECULER
+
+        // Reverse
+
         if (
             keys["s"] ||
             keys["arrowdown"]
         ) {
 
-            player.translateZ(
-                playerSpeed *
-                delta
-            );
-
-            moving = true;
+            carSpeed -=
+                carAcceleration *
+                delta;
         }
 
-        animateCharacter(
-            moving,
-            delta
+
+        // Friction
+
+        if (!accelerating) {
+
+            if (carSpeed > 0) {
+
+                carSpeed -=
+                    carFriction *
+                    delta;
+
+                if (carSpeed < 0) {
+                    carSpeed = 0;
+                }
+
+            } else if (
+                carSpeed < 0
+            ) {
+
+                carSpeed +=
+                    carFriction *
+                    delta;
+
+                if (carSpeed > 0) {
+                    carSpeed = 0;
+                }
+            }
+        }
+
+
+        // Limit speed
+
+        carSpeed =
+            THREE.MathUtils.clamp(
+                carSpeed,
+                -carReverseSpeed,
+                carMaxSpeed
+            );
+
+
+        // Steering
+
+        let steering = 0;
+
+
+        if (
+            keys["q"] ||
+            keys["a"] ||
+            keys["arrowleft"]
+        ) {
+
+            steering = 1;
+        }
+
+
+        if (
+            keys["d"] ||
+            keys["arrowright"]
+        ) {
+
+            steering = -1;
+        }
+
+
+        if (
+            Math.abs(carSpeed) > 0.1
+        ) {
+
+            const direction =
+                carSpeed >= 0
+                    ? 1
+                    : -1;
+
+            car.rotation.y +=
+                steering *
+                carTurnSpeed *
+                delta *
+                direction *
+                Math.min(
+                    Math.abs(carSpeed) /
+                    8,
+                    1
+                );
+        }
+
+
+        // Move car
+
+        car.translateZ(
+            -carSpeed * delta
         );
 
-        updatePlayerCamera();
 
-    } else {
+        // Front wheel steering visual
 
-        // =================================================
-        // VOITURE
-        // =================================================
+        const wheelSteering =
+            steering * 0.45;
 
-        driveCar(delta);
+        frontLeft.rotation.y =
+            wheelSteering;
+
+        frontRight.rotation.y =
+            wheelSteering;
+
+
+        // Wheel rotation
+
+        const wheelRotation =
+            carSpeed *
+            delta /
+            0.65;
+
+        wheels.forEach(
+            (wheel) => {
+
+                wheel.children[0].rotation.x +=
+                    wheelRotation;
+
+                wheel.children[1].rotation.x +=
+                    wheelRotation;
+            }
+        );
+
 
         updateCarCamera();
     }
 
-    camera.lookAt(
-        cameraTarget
-    );
+
+    // ========================================================
+    // RENDER
+    // ========================================================
 
     renderer.render(
         scene,
@@ -2017,9 +2149,10 @@ function animate() {
     );
 }
 
-// =====================================================
-// REDIMENSIONNEMENT
-// =====================================================
+
+// ============================================================
+// RESIZE
+// ============================================================
 
 window.addEventListener(
     "resize",
@@ -2035,12 +2168,20 @@ window.addEventListener(
             window.innerWidth,
             window.innerHeight
         );
+
+        renderer.setPixelRatio(
+            Math.min(
+                window.devicePixelRatio,
+                2
+            )
+        );
     }
 );
 
-// =====================================================
-// DÉMARRAGE
-// =====================================================
+
+// ============================================================
+// START
+// ============================================================
 
 renderer.setAnimationLoop(
     animate
