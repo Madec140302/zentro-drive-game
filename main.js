@@ -1859,7 +1859,7 @@ function updatePlayerCamera() {
 }
 
 // =====================================================
-// CAMÉRA VOITURE — DERRIÈRE LA VOITURE
+// CAMÉRA VOITURE — DERRIÈRE
 // =====================================================
 
 function updateCarCamera() {
@@ -1903,7 +1903,9 @@ function animate() {
             0.05
         );
 
-    // E = entrer / sortir
+    // =================================================
+    // E = ENTRER / SORTIR
+    // =================================================
 
     if (
         keys["e"] &&
@@ -1935,20 +1937,11 @@ function animate() {
 
         let moving = false;
 
+        // Q = GAUCHE
         if (
             keys["q"] ||
             keys["a"] ||
             keys["arrowleft"]
-        ) {
-
-            player.rotation.y -=
-                playerTurnSpeed *
-                delta;
-        }
-
-        if (
-            keys["d"] ||
-            keys["arrowright"]
         ) {
 
             player.rotation.y +=
@@ -1956,6 +1949,18 @@ function animate() {
                 delta;
         }
 
+        // D = DROITE
+        if (
+            keys["d"] ||
+            keys["arrowright"]
+        ) {
+
+            player.rotation.y -=
+                playerTurnSpeed *
+                delta;
+        }
+
+        // Z = AVANCER
         if (
             keys["z"] ||
             keys["w"] ||
@@ -1970,6 +1975,7 @@ function animate() {
             moving = true;
         }
 
+        // S = RECULER
         if (
             keys["s"] ||
             keys["arrowdown"]
